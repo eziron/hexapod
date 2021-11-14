@@ -532,7 +532,12 @@ void val_to_buff_tx(int i,long val){
 }
 
 long buff_rx_to_val(int i){
-  return (long)(buff_rx[i+3] << 24) | (buff_rx[i+2] << 16) | (buff_rx[i+1] << 8) | buff_rx[i];
+  byte val[4];
+  val[0] = buff_rx[i+3];
+  val[1] = buff_rx[i+2];
+  val[2] = buff_rx[i+1];
+  val[3] = buff_rx[i];
+  return *((long *)val);
 }
 
 void write_values() {
@@ -663,6 +668,15 @@ void prepare_spi(){
   if(digitalRead(SS)){
     if(pos >= 303){
       read_values();
+
+      Serial.println("---");
+      Serial.println(sticks[0]);
+      Serial.println(sticks_conf[0][1]);
+      Serial.println(sticks_conf[0][3]);
+      Serial.println(sticks_conf[0][4]);
+      Serial.println(sticks_conf[0][5]);
+      Serial.println(sticks_conf[0][2]);
+      Serial.println("---");
     }
 
     for(int i = 0;i<BUFFER_SIZE;i++){

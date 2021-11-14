@@ -15,14 +15,14 @@ t_sap_ns = t_sap*(10**9)
 ns_ref = time_ns()
 while(time_ns()-ns_ref < t_sap_ns):
 
-    rcv_byte = spi.readbytes(74)
-    if(rcv_byte[0] == 200 and rcv_byte[1] == 127):
+    rx_byte = spi.readbytes(74)
+    if(rx_byte[0] == 200 and rx_byte[1] == 127):
         #print(struct.calcsize("l"*18))
         #print(len(rcv_byte))
         #print(type(rcv_byte))
         #print(rcv_byte)
         #print(bytes(rcv_byte))
-        print(struct.unpack(">"+"l"*18,bytes(rcv_byte[2:])))
+        print()
         count += 1
     else:
         print("error")

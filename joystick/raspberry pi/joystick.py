@@ -1,8 +1,7 @@
 import math
-
+import struct
 import json
 from time import sleep
-import serial
 
 class control_joystick:
     modos = json.loads("{}")
@@ -11,14 +10,12 @@ class control_joystick:
 
     arduino_conf = json.loads("{}")
     arduino_value = json.loads("{}")
-    device = ""
+    device = "hexapod"
 
-    W_id = "W"
-    R_id = "Z"
-
-    def __init__(self,device):
+    def __init__(self,spi,device="hexapod"):
 
         self.device = device
+        self.spi = spi
 
         file = open("modos.json","r")
         self.modos = json.loads(file.read())
@@ -32,78 +29,136 @@ class control_joystick:
         self.arduino_conf = json.loads(file.read())
         file.close()
 
-        index = list(self.arduino_conf["variables"])
+        index = list(self.arduino_conf)
         for x in index:
-            self.arduino_value[x] = self.arduino_conf["variables"][x]["value"]
+            self.arduino_value[x] = self.arduino_conf[x]["value"]
 
-        index_device = list(self.device_conf)
-        for x in index_device:
-            self.device_value[x] = {}
-
-        index = list(self.device_conf[device]["variables"])
+        index = list(self.device_conf[device])
         for x in index:
-            self.device_value[device][x] = self.device_conf[device]["variables"][x]["value"]
-
-        self.W_id = str(self.arduino_conf["coneccion"]["write_id"])
-        self.R_id = str(self.arduino_conf["coneccion"]["read_id"])
-
-        self.arduino = serial.Serial(self.arduino_conf["coneccion"]["port"],self.arduino_conf["coneccion"]["baudrate"])
-        self.arduino.timeout = 0.1
-        self.arduino.reset_input_buffer()
-        self.arduino.reset_output_buffer()
-        sleep(2)
-
-        self.write_arduino(self.arduino_conf["variables"])
-        sleep(0.1)
-
-        self.write_arduino(self.modos[device]["arduino"])
-        sleep(0.1)
+            self.device_value[device][x] = self.device_conf[device][x]["value"]
 
 
-    def write_arduino(self,msg):
-        msg = str(msg)
-        self.arduino.write(str(self.W_id+msg).encode('ascii'))
+    def write_arduino(self):
+        tx_value = []
+        tx_value.append(self.arduino_conf["x_izq"]["value"])
+        tx_value.append(self.arduino_conf["x_izq"]["modo"])
+        tx_value.append(self.arduino_conf["x_izq"]["min"])
+        tx_value.append(self.arduino_conf["x_izq"]["max"])
+        tx_value.append(self.arduino_conf["x_izq"]["PPS"])
+        tx_value.append(self.arduino_conf["x_izq"]["centro"])
+
+        tx_value.append(self.arduino_conf["y_izq"]["value"])
+        tx_value.append(self.arduino_conf["y_izq"]["modo"])
+        tx_value.append(self.arduino_conf["y_izq"]["min"])
+        tx_value.append(self.arduino_conf["y_izq"]["max"])
+        tx_value.append(self.arduino_conf["y_izq"]["PPS"])
+        tx_value.append(self.arduino_conf["y_izq"]["centro"])
+
+        tx_value.append(self.arduino_conf["x_der"]["value"])
+        tx_value.append(self.arduino_conf["x_der"]["modo"])
+        tx_value.append(self.arduino_conf["x_der"]["min"])
+        tx_value.append(self.arduino_conf["x_der"]["max"])
+        tx_value.append(self.arduino_conf["x_der"]["PPS"])
+        tx_value.append(self.arduino_conf["x_der"]["centro"])
+
+        tx_value.append(self.arduino_conf["y_der"]["value"])
+        tx_value.append(self.arduino_conf["y_der"]["modo"])
+        tx_value.append(self.arduino_conf["y_der"]["min"])
+        tx_value.append(self.arduino_conf["y_der"]["max"])
+        tx_value.append(self.arduino_conf["y_der"]["PPS"])
+        tx_value.append(self.arduino_conf["y_der"]["centro"])
+
+        tx_value.append(self.arduino_conf["cruz_izq_h"]["value"])
+        tx_value.append(self.arduino_conf["cruz_izq_h"]["modo"])
+        tx_value.append(self.arduino_conf["cruz_izq_h"]["continuo"])
+        tx_value.append(self.arduino_conf["cruz_izq_h"]["min"])
+        tx_value.append(self.arduino_conf["cruz_izq_h"]["max"])
+        tx_value.append(self.arduino_conf["cruz_izq_h"]["PPS"])
+
+        tx_value.append(self.arduino_conf["cruz_izq_v"]["value"])
+        tx_value.append(self.arduino_conf["cruz_izq_v"]["modo"])
+        tx_value.append(self.arduino_conf["cruz_izq_v"]["continuo"])
+        tx_value.append(self.arduino_conf["cruz_izq_v"]["min"])
+        tx_value.append(self.arduino_conf["cruz_izq_v"]["max"])
+        tx_value.append(self.arduino_conf["cruz_izq_v"]["PPS"])
+
+        tx_value.append(self.arduino_conf["cruz_der_h"]["value"])
+        tx_value.append(self.arduino_conf["cruz_der_h"]["modo"])
+        tx_value.append(self.arduino_conf["cruz_der_h"]["continuo"])
+        tx_value.append(self.arduino_conf["cruz_der_h"]["min"])
+        tx_value.append(self.arduino_conf["cruz_der_h"]["max"])
+        tx_value.append(self.arduino_conf["cruz_der_h"]["PPS"])
+
+        tx_value.append(self.arduino_conf["cruz_der_v"]["value"])
+        tx_value.append(self.arduino_conf["cruz_der_v"]["modo"])
+        tx_value.append(self.arduino_conf["cruz_der_v"]["continuo"])
+        tx_value.append(self.arduino_conf["cruz_der_v"]["min"])
+        tx_value.append(self.arduino_conf["cruz_der_v"]["max"])
+        tx_value.append(self.arduino_conf["cruz_der_v"]["PPS"])
+
+        tx_value.append(self.arduino_conf["but_analog_izq"]["value"])
+        tx_value.append(self.arduino_conf["but_analog_izq"]["modo"])
+        tx_value.append(self.arduino_conf["but_analog_izq"]["min"])
+        tx_value.append(self.arduino_conf["but_analog_izq"]["max"])
+
+        tx_value.append(self.arduino_conf["but_analog_der"]["value"])
+        tx_value.append(self.arduino_conf["but_analog_der"]["modo"])
+        tx_value.append(self.arduino_conf["but_analog_der"]["min"])
+        tx_value.append(self.arduino_conf["but_analog_der"]["max"])
+
+        tx_value.append(self.arduino_conf["but_der_a"]["value"])
+        tx_value.append(self.arduino_conf["but_der_a"]["modo"])
+        tx_value.append(self.arduino_conf["but_der_a"]["min"])
+        tx_value.append(self.arduino_conf["but_der_a"]["max"])
+
+        tx_value.append(self.arduino_conf["but_der_b"]["value"])
+        tx_value.append(self.arduino_conf["but_der_b"]["modo"])
+        tx_value.append(self.arduino_conf["but_der_b"]["min"])
+        tx_value.append(self.arduino_conf["but_der_b"]["max"])
+
+        tx_value.append(self.arduino_conf["but_der_c"]["value"])
+        tx_value.append(self.arduino_conf["but_der_c"]["modo"])
+        tx_value.append(self.arduino_conf["but_der_c"]["min"])
+        tx_value.append(self.arduino_conf["but_der_c"]["max"])
+
+        tx_value.append(self.arduino_conf["but_cruz_der"]["value"])
+        tx_value.append(self.arduino_conf["but_cruz_der"]["modo"])
+        tx_value.append(self.arduino_conf["but_cruz_der"]["min"])
+        tx_value.append(self.arduino_conf["but_cruz_der"]["max"])
+
+        tx_value.append(self.arduino_conf["analog_A"]["min"])
+        tx_value.append(self.arduino_conf["analog_A"]["max"])
+
+        tx_value.append(self.arduino_conf["analog_B"]["min"])
+        tx_value.append(self.arduino_conf["analog_B"]["max"])
+
+        tx_bytes = struct.pack(">"+"l"*len(tx_value),tx_value)
+        self.spi.writebytes(tx_bytes)
 
     def read_arduino(self):
-        try:
-            self.arduino.flush()
-            msg = self.arduino.readline().decode().replace("\'","\"")
+        rx_byte = self.spi.readbytes(74)
+        if(rx_byte[0] == 200 and rx_byte[1] == 127):
+            rx_values = struct.unpack(">"+"l"*18,bytes(rx_byte[2:]))
 
-            if(msg != ""):
-                valores = json.loads(msg)
+            self.arduino_value["x_izq"]=rx_values[0]
+            self.arduino_value["y_izq"]=rx_values[1]
+            self.arduino_value["x_der"]=rx_values[2]
+            self.arduino_value["y_der"]=rx_values[3]
+            self.arduino_value["cruz_izq_h"]=rx_values[4]
+            self.arduino_value["cruz_izq_v"]=rx_values[5]
+            self.arduino_value["cruz_der_h"]=rx_values[6]
+            self.arduino_value["cruz_der_v"]=rx_values[7]
+            self.arduino_value["but_analog_izq"]=rx_values[8]
+            self.arduino_value["but_analog_der"]=rx_values[9]
+            self.arduino_value["but_der_a"]=rx_values[10]
+            self.arduino_value["but_der_b"]=rx_values[11]
+            self.arduino_value["but_der_c"]=rx_values[12]
+            self.arduino_value["but_cruz_der"]=rx_values[13]
+            self.arduino_value["cruz_izq"]=rx_values[14]
+            self.arduino_value["cruz_der"]=rx_values[15]
+            self.arduino_value["analog_A"]=rx_values[16]
+            self.arduino_value["analog_B"]=rx_values[17]
 
-                index = list(valores)
-
-                for x in index:
-                    self.arduino_value[x] = valores[x]
-                
-                self.recargar_device()
-            
-            self.arduino.write(self.R_id.encode())
-        except:
-            print("error lectura arduino")
-            self.arduino.reset_input_buffer
-            self.arduino.reset_output_buffer
-
-    def recargar_device(self):
-        index = list(self.device_value[self.device])
-        
-        for x in index:
-            modo = self.modos[self.device]["salidas"][x]["modo"]
-            if(modo == "directo"):
-                self.device_value[self.device][x] = self.arduino_value[self.modos[self.device]["salidas"][x]["entrada"]]
-            elif(modo == "HSV_to_RGB"):
-                h = self.joystick_values(self.modos[self.device]["salidas"][x]["h"])
-                s = self.joystick_values(self.modos[self.device]["salidas"][x]["s"])
-                v = self.joystick_values(self.modos[self.device]["salidas"][x]["v"])
-                self.device_value[self.device][x] = self.HSV_to_RGB(h,s,v)
-
-    def joystick_values(self,variable):
-        variables_arduino = list(self.arduino_value)
-        if(variable in variables_arduino):
-            return(self.arduino_value[variable])
-        else:
-            return(variable)
     def HSV_to_RGB(self,h, s=1, v=1):
         h = float(h)
         s = float(s)
