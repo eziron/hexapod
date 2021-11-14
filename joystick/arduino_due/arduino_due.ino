@@ -665,22 +665,24 @@ void read_values(){
 }
 
 void prepare_spi(){
+  Serial.println(pos);
+  
   if(digitalRead(SS)){
     if(pos >= 303){
       read_values();
 
       Serial.println("---");
-      Serial.println(pos);
-      Serial.println(buff_rx_to_val(0));
-      Serial.println(buff_rx_to_val(4));
-      Serial.println(buff_rx_to_val(8));
-      Serial.println(buff_rx_to_val(12));
-      Serial.println(buff_rx_to_val(16));
-      Serial.println(buff_rx_to_val(20));
+      
+      Serial.println(sticks[2]);
+      Serial.println(sticks_conf[2][1]);
+      Serial.println(sticks_conf[2][3]);
+      Serial.println(sticks_conf[2][4]);
+      Serial.println(sticks_conf[2][5]);
+      Serial.println(sticks_conf[2][2]);
       Serial.println("---");
 
-      for(int i = 0; i < 24;i++){
-        Serial.print(buff_rx[i],HEX);
+      for(int i = 0; i < 20;i++){
+        Serial.print(buff_rx[i]);
         Serial.print(" - ");
       }
       Serial.println("---");
