@@ -9,7 +9,7 @@ spi = spidev.SpiDev()
 spi.open(spi_bus, spi_device)
 spi.max_speed_hz = 1000000
 
-tx_bytes = struct.pack(">ll",*[1024,127])
+tx_bytes = struct.pack(">ll",*[1024,-1270])
 
 #count = 0
 #t_sap = 10

@@ -533,10 +533,10 @@ void val_to_buff_tx(int i,long val){
 
 long buff_rx_to_val(int i){
   byte val[4];
-  val[3] = buff_rx[i+3];
-  val[2] = buff_rx[i+2];
-  val[1] = buff_rx[i+1];
-  val[0] = buff_rx[i];
+  val[0] = buff_rx[i+3];
+  val[1] = buff_rx[i+2];
+  val[2] = buff_rx[i+1];
+  val[3] = buff_rx[i];
   return *((long *)val);
 }
 
