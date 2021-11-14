@@ -25,7 +25,7 @@ if(rx_byte[0] == 200 and rx_byte[1] == 127):
     #print(type(rcv_byte))
     #print(rcv_byte)
     #print(bytes(rcv_byte))
-    print(struct.unpack(">"+"l"*18,bytes(rx_byte[2:])))
+    print(struct.unpack(">"+"l"*18,bytes(rx_byte[2:74])))
     #count += 1
 else:
     print("error")
