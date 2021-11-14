@@ -665,15 +665,6 @@ void prepare_spi(){
       read_values();
     }
 
-  Serial.println("-----");
-
-  Serial.println(sticks[0]);
-  Serial.println(sticks[1]);
-  Serial.println(sticks[2]);
-  Serial.println(sticks[3]);
-
-  Serial.println("-----");
-
     for(int i = 0;i<BUFFER_SIZE;i++){
       buff_rx[i] = 0;
       buff_tx[i] = 0;
