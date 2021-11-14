@@ -2,10 +2,10 @@
     "x_der":{
         "value":127,
         "modo":"normal",
-        "min":0,
-        "max":254,
+        "min":-100,
+        "max":100,
         "PPS":0,
-        "centro":127
+        "centro":0
     },
     "y_der":{
         "value":127,
