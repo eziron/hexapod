@@ -1,2 +1,3 @@
 /modelos/
 /.vscode/
+/hexapod/jetson_nano/__pycache__
