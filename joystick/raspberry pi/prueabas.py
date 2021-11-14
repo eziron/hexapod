@@ -9,7 +9,7 @@ spi = spidev.SpiDev()
 spi.open(spi_bus, spi_device)
 spi.max_speed_hz = 1000000
 
-send_byte = bytearray(100)
+send_byte = bytearray(73)
 
 ns_ref = time_ns()
 count = 0
@@ -17,7 +17,8 @@ t_sap = 1
 t_sap_ns = t_sap*(10**9)
 while(time_ns()-ns_ref < t_sap_ns):
     rcv_byte = spi.xfer2(send_byte)
-    print("___",count, len(rcv_byte),len(send_byte),"_",rcv_byte,"---")
+    rcv_values = struct.unpack("<"+"l"*17,send_byte[1:73])
+    print("___",count, len(rcv_byte[1:73]),len(send_byte),"_",rcv_byte[1:73],"---")
     count += 1
     
 print(count)
