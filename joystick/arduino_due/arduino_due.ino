@@ -1,6 +1,5 @@
 #include <SPI.h>
 #include <stdint.h>
-#include <ArduinoJson.h>
 
 #define debounce_time 20000
 #define sample_time 50000
@@ -59,15 +58,6 @@ int boton_simple[6][4] = {
   {0, 2, -10, 10},
   {0, 2, 0, 10},
 };
-static String boton_name[6] = 
-  {
-    "but_analog_izq",
-    "but_analog_der",
-    "but_der_a",
-    "but_der_b",
-    "but_der_c",
-    "but_cruz_der"
-  };
 
 
 //boton_flecha[0] = "cruz_izq_h" / cruz izquierda horizontal
@@ -91,13 +81,6 @@ int boton_flecha[4][10] = {
   {0, 2, 0, -50, 50, 50000, 0, 1, 10, 11}, //cruz derecha horizontal
   {0, 2, 1, -50, 50, 50000, 0, 1, 13, 12} //cruz derecha vertical
 };
-static String boton_flecha_name[4] = 
-  {
-    "cruz_izq_h",
-    "cruz_izq_v",
-    "cruz_der_h",
-    "cruz_der_v"
-  };
 
 //valor_flecha[0] = cruz izquierda
 //valor_flecha[1] = cruz derecha
@@ -121,11 +104,12 @@ int samples_count = 0;
 //reloj de referencia para muestreo de analogos
 unsigned long ms_analogos;
 
-//analogos_simple[n][0] = valor minimo
-//analogos_simple[n][1] = valor maximo
-int analogos_simple[2][2] = {
-  {0, 255},
-  {0, 255},
+//analogos_simple[n][0] = valor
+//analogos_simple[n][1] = valor minimo
+//analogos_simple[n][2] = valor maximo
+int analogos_simple[2][3] = {
+  {0, 0, 255},
+  {0, 0, 255},
 };
 
 
@@ -136,7 +120,6 @@ int analogos_simple[2][2] = {
 //sticks[2] = valor de salida analogo x izquierda
 //sticks[3] = valor de salida analogo y izquierda
 int sticks[4];
-static String sticks_name[4] = {"x_izq","y_izq","x_der","y_der"};
 
 //sticks_conf[0][i] = "x_izq" / analogo X izquierda
 //sticks_conf[1][i] = "y_izq" / analogo Y izquierda
@@ -159,10 +142,6 @@ int sticks_conf[4][8] = {
 };
 
 
-
-StaticJsonDocument<BUFFER_SIZE> mensaje_json;
-StaticJsonDocument<2000> ajustes_joystick;
-
 void SPI0_Handler( void )
 {
     d_rx = REG_SPI0_RDR; //registro byte de resivo
@@ -172,7 +151,7 @@ void SPI0_Handler( void )
     buff_rx[pos] = d_rx & 0xFF;
     d_tx = buff_tx[pos];
     pos++;
-    //d_rx = 0;
+    d_rx = 0;
     
 }
 
@@ -218,32 +197,6 @@ void setup() {
     sticks_conf[i][7] = micros();
   }
   analogReadResolution(12);
-
-  mensaje_json["but_analog_izq"] = 0;
-  mensaje_json["but_analog_der"] = 0;
-
-  mensaje_json["but_der_a"] = 0;
-  mensaje_json["but_der_b"] = 0;
-  mensaje_json["but_der_c"] = 0;
-
-  mensaje_json["but_cruz_der"] = 0;
-
-  mensaje_json["cruz_izq"] = 0;
-  mensaje_json["cruz_der"] = 0;
-
-  mensaje_json["cruz_izq_h"] = 0;
-  mensaje_json["cruz_izq_v"] = 0;
-  mensaje_json["cruz_der_h"] = 0;
-  mensaje_json["cruz_der_v"] = 0;
-
-  mensaje_json["x_izq"] = 127;
-  mensaje_json["y_izq"] = 127;
-
-  mensaje_json["x_der"] = 127;
-  mensaje_json["y_der"] = 127;
-
-  mensaje_json["analog_A"] = 0;
-  mensaje_json["analog_B"] = 0;
 
   attachInterrupt(digitalPinToInterrupt(SS), prepare_spi, CHANGE);
 
@@ -307,10 +260,10 @@ void loop() {
   interpretar_boton_flecha(3,true);
 
   samples_count++;
-  analogos[0][0] += analogRead(A11); //analogo X izquierda
+  analogos[0][0] += map(analogRead(A11),0,4095,4095,0); //analogo X izquierda
   analogos[1][0] += analogRead(A10); //analogo Y izquierda
 
-  analogos[2][0] += analogRead(A9); //analogo X derecha
+  analogos[2][0] += map(analogRead(A9),0,4095,4095,0); //analogo X derecha
   analogos[3][0] += analogRead(A8); //analogo Y derecha
 
   analogos[4][0] += analogRead(A7); //analogo panel presicion
@@ -332,7 +285,7 @@ void loop() {
 }
 
 void interpretar_boton_flecha(int i, bool continuo) {
-  if (boton_flecha[i][7] && continuo == boton_flecha[i][2]) {
+  if (continuo == boton_flecha[i][2]) {
     bool d1 = digitales[boton_flecha[i][8]][2];
     bool d2 = digitales[boton_flecha[i][9]][2];
     if (d1 != d2) {
@@ -568,26 +521,16 @@ int flecha_valor(bool arriba, bool abajo, bool izquierda, bool derecha) {
   }
 }
 
-int valor_modo(String modo){
-  if(modo == "normal"){
-    return 0;
-  }
-  if(modo == "incremental"){
-    return 1;
-  }
-  if(modo == "mantenido"){
-    return 1;
-  }
-  if(modo == "circular"){
-    return 2;
-  }
-}
 
-void val_to_buff(int i,long val){
+void val_to_buff_tx(int i,long val){
   buff_tx[i] = (byte) val & 0xFF;
   buff_tx[i+1] = (byte) (val << 4) & 0xFF;
   buff_tx[i+2] = (byte) (val << 8) & 0xFF;
   buff_tx[i+3] = (byte) (val << 16) & 0xFF;
+}
+
+long buff_rx_to_val(int i){
+  return (long)(buff_rx[i+3] << 24) | (buff_rx[i+2] << 16) | (buff_rx[i+1] << 8) | buff_rx[i];
 }
 
 void write_values() {
@@ -595,141 +538,129 @@ void write_values() {
   valor_flecha[0] = flecha_valor(digitales[6][2], digitales[7][2], digitales[8][2], digitales[9][2]);
   valor_flecha[1] = flecha_valor(digitales[10][2], digitales[11][2], digitales[12][2], digitales[13][2]);
 
-  val_to_buff(0,boton_simple[0][0]);
-  val_to_buff(4,boton_simple[1][0]);
+  analogos_simple[0][0] = map(analogos[4][1], 0, 4095, analogos_simple[0][1], analogos_simple[0][2]);
+  analogos_simple[1][0] = map(analogos[5][1], 0, 4095, analogos_simple[1][1], analogos_simple[1][2]);
 
-  val_to_buff(8,boton_simple[2][0]);
-  val_to_buff(12,boton_simple[3][0]);
-  val_to_buff(16,boton_simple[4][0]);
+  val_to_buff_tx(0,sticks[0]);
+  val_to_buff_tx(4,sticks[1]);
+  val_to_buff_tx(8,sticks[2]);
+  val_to_buff_tx(12,sticks[3]);
 
-  val_to_buff(20,boton_simple[5][0]);
+  val_to_buff_tx(16,boton_flecha[0][0]);
+  val_to_buff_tx(20,boton_flecha[1][0]);
+  val_to_buff_tx(24,boton_flecha[2][0]);
+  val_to_buff_tx(28,boton_flecha[3][0]);
 
-  val_to_buff(24,valor_flecha[0]);
-  val_to_buff(28,valor_flecha[1]);
+  val_to_buff_tx(32,boton_simple[0][0]);
+  val_to_buff_tx(36,boton_simple[1][0]);
+  val_to_buff_tx(40,boton_simple[2][0]);
+  val_to_buff_tx(44,boton_simple[3][0]);
+  val_to_buff_tx(48,boton_simple[4][0]);
+  val_to_buff_tx(52,boton_simple[5][0]);
 
-  val_to_buff(32,boton_flecha[0][0]);
-  val_to_buff(36,boton_flecha[1][0]);
-  val_to_buff(40,boton_flecha[2][0]);
-  val_to_buff(44,boton_flecha[3][0]);
+  val_to_buff_tx(56,valor_flecha[0]);
+  val_to_buff_tx(60,valor_flecha[1]);
 
-  val_to_buff(48,map(sticks[0],sticks_conf[0][3],sticks_conf[0][4],sticks_conf[0][4],sticks_conf[0][3]));
-  val_to_buff(52,sticks[1]);
-
-  val_to_buff(56,map(sticks[2],sticks_conf[2][3],sticks_conf[2][4],sticks_conf[2][4],sticks_conf[2][3]));
-  val_to_buff(60,sticks[3]);
-
-  val_to_buff(64,map(analogos[4][1], 0, 4095, analogos_simple[0][0], analogos_simple[0][1]));
-  val_to_buff(68,map(analogos[5][1], 0, 4095, analogos_simple[1][0], analogos_simple[1][1]));
-
-  REG_SPI0_TDR = 0;
-  d_tx = 0;
+  val_to_buff_tx(64,analogos_simple[0][0]);
+  val_to_buff_tx(68,analogos_simple[1][0]);
 }
 
 void read_values(){
+  sticks[0]=buff_rx_to_val(0);
+  sticks_conf[0][1]=buff_rx_to_val(4);
+  sticks_conf[0][3]=buff_rx_to_val(8);
+  sticks_conf[0][4]=buff_rx_to_val(12);
+  sticks_conf[0][5]=buff_rx_to_val(16);
+  sticks_conf[0][2]=buff_rx_to_val(20);
 
-  if(buff_rx[0] == 0xF0){
-    char char_json[BUFFER_SIZE-1];
-    for(int i = 1; i<BUFFER_SIZE;i++){
-      if(buff_rx[i] > 0){
-        char_json[i] = buff_rx[i];
-      }
-      else{
-        char_json[i] = ' ';
-      }
-    }
-    deserializeJson(ajustes_joystick,char_json);
+  sticks[1]=buff_rx_to_val(24);
+  sticks_conf[1][1]=buff_rx_to_val(28);
+  sticks_conf[1][3]=buff_rx_to_val(32);
+  sticks_conf[1][4]=buff_rx_to_val(36);
+  sticks_conf[1][5]=buff_rx_to_val(40);
+  sticks_conf[1][2]=buff_rx_to_val(44);
 
-    for (int i = 0;i<4;i++){
+  sticks[2]=buff_rx_to_val(48);
+  sticks_conf[2][1]=buff_rx_to_val(52);
+  sticks_conf[2][3]=buff_rx_to_val(56);
+  sticks_conf[2][4]=buff_rx_to_val(60);
+  sticks_conf[2][5]=buff_rx_to_val(64);
+  sticks_conf[2][2]=buff_rx_to_val(68);
 
-      String name = sticks_name[i];
-      if(ajustes_joystick.containsKey(name)){
-        if(ajustes_joystick[name].containsKey("value")){
-          sticks[i] = ajustes_joystick[name]["value"];
-        }
-        if(ajustes_joystick[name].containsKey("modo")){
-          sticks_conf[i][1] = valor_modo(ajustes_joystick[name]["modo"]);
-        }
-        if(ajustes_joystick[name].containsKey("centro")){
-          sticks_conf[i][2] = ajustes_joystick[name]["centro"];
-        }
-        if(ajustes_joystick[name].containsKey("min")){
-          sticks_conf[i][3] = ajustes_joystick[name]["min"];
-        }
-        if(ajustes_joystick[name].containsKey("max")){
-          sticks_conf[i][4] = ajustes_joystick[name]["max"];
-        }
-        if(ajustes_joystick[name].containsKey("PPS")){
-          sticks_conf[i][5] = ajustes_joystick[name]["PPS"];
-        }
-      }
+  sticks[3]=buff_rx_to_val(72);
+  sticks_conf[3][1]=buff_rx_to_val(76);
+  sticks_conf[3][3]=buff_rx_to_val(80);
+  sticks_conf[3][4]=buff_rx_to_val(84);
+  sticks_conf[3][5]=buff_rx_to_val(88);
+  sticks_conf[3][2]=buff_rx_to_val(92);
 
+  boton_flecha[0][0]=buff_rx_to_val(96);
+  boton_flecha[0][1]=buff_rx_to_val(100);
+  boton_flecha[0][2]=buff_rx_to_val(104);
+  boton_flecha[0][3]=buff_rx_to_val(108);
+  boton_flecha[0][4]=buff_rx_to_val(112);
+  boton_flecha[0][5]=buff_rx_to_val(116);
 
-      name = boton_flecha_name[i];
-      if(ajustes_joystick.containsKey(name)){
-        if(ajustes_joystick[name].containsKey("value")){
-          boton_flecha[i][0] = ajustes_joystick[name]["value"];
-        }
-        if(ajustes_joystick[name].containsKey("modo")){
-          boton_flecha[i][1] = valor_modo(ajustes_joystick[name]["modo"]);
-        }
-        if(ajustes_joystick[name].containsKey("continuo")){
-          boton_flecha[i][2] = ajustes_joystick[name]["continuo"];
-        }
-        if(ajustes_joystick[name].containsKey("min")){
-          boton_flecha[i][3] = ajustes_joystick[name]["min"];
-        }
-        if(ajustes_joystick[name].containsKey("max")){
-          boton_flecha[i][4] = ajustes_joystick[name]["max"];
-        }
-        if(ajustes_joystick[name].containsKey("PPS")){
-          boton_flecha[i][5] = 1000000/int(ajustes_joystick[name]["PPS"]);
-        }
-        if(ajustes_joystick[name].containsKey("EN")){
-          boton_flecha[i][7] = ajustes_joystick[name]["EN"];
-        }
-      }
-    }
-    for (int i = 0;i<6;i++){
-      String name = boton_name[i];
-      if(ajustes_joystick.containsKey(name)){
-        if(ajustes_joystick[name].containsKey("value")){
-          boton_simple[i][0] = ajustes_joystick[name]["value"];
-        }
-        if(ajustes_joystick[name].containsKey("modo")){
-          boton_simple[i][1] = valor_modo(ajustes_joystick[name]["modo"]);
-        }
-        if(ajustes_joystick[name].containsKey("min")){
-          boton_simple[i][2] = ajustes_joystick[name]["min"];
-        }
-        if(ajustes_joystick[name].containsKey("max")){
-          boton_simple[i][3] = ajustes_joystick[name]["max"];
-        }
-      }
-    }
+  boton_flecha[1][0]=buff_rx_to_val(120);
+  boton_flecha[1][1]=buff_rx_to_val(124);
+  boton_flecha[1][2]=buff_rx_to_val(128);
+  boton_flecha[1][3]=buff_rx_to_val(132);
+  boton_flecha[1][4]=buff_rx_to_val(136);
+  boton_flecha[1][5]=buff_rx_to_val(140);
 
-    //analogos_simple
-    if(ajustes_joystick.containsKey("analog_A")){
-      if(ajustes_joystick["analog_A"].containsKey("min")){
-        analogos_simple[0][0] = ajustes_joystick["analog_A"]["min"];
-      }
-      if(ajustes_joystick["analog_A"].containsKey("max")){
-        analogos_simple[0][1] = ajustes_joystick["analog_A"]["max"];
-      }
-    }
-    if(ajustes_joystick.containsKey("analog_B")){
-      if(ajustes_joystick["analog_B"].containsKey("min")){
-        analogos_simple[1][0] = ajustes_joystick["analog_B"]["min"];
-      }
-      if(ajustes_joystick["analog_B"].containsKey("max")){
-        analogos_simple[1][1] = ajustes_joystick["analog_B"]["max"];
-      }
-    }
-  }
+  boton_flecha[2][0]=buff_rx_to_val(144);
+  boton_flecha[2][1]=buff_rx_to_val(148);
+  boton_flecha[2][2]=buff_rx_to_val(152);
+  boton_flecha[2][3]=buff_rx_to_val(156);
+  boton_flecha[2][4]=buff_rx_to_val(160);
+  boton_flecha[2][5]=buff_rx_to_val(164);
+
+  boton_flecha[3][0]=buff_rx_to_val(168);
+  boton_flecha[3][1]=buff_rx_to_val(172);
+  boton_flecha[3][2]=buff_rx_to_val(176);
+  boton_flecha[3][3]=buff_rx_to_val(180);
+  boton_flecha[3][4]=buff_rx_to_val(184);
+  boton_flecha[3][5]=buff_rx_to_val(188);
+
+  boton_simple[0][0]=buff_rx_to_val(192);
+  boton_simple[0][1]=buff_rx_to_val(196);
+  boton_simple[0][2]=buff_rx_to_val(200);
+  boton_simple[0][3]=buff_rx_to_val(204);
+
+  boton_simple[1][0]=buff_rx_to_val(208);
+  boton_simple[1][1]=buff_rx_to_val(212);
+  boton_simple[1][2]=buff_rx_to_val(216);
+  boton_simple[1][3]=buff_rx_to_val(220);
+
+  boton_simple[2][0]=buff_rx_to_val(224);
+  boton_simple[2][1]=buff_rx_to_val(228);
+  boton_simple[2][2]=buff_rx_to_val(232);
+  boton_simple[2][3]=buff_rx_to_val(236);
+
+  boton_simple[3][0]=buff_rx_to_val(240);
+  boton_simple[3][1]=buff_rx_to_val(244);
+  boton_simple[3][2]=buff_rx_to_val(248);
+  boton_simple[3][3]=buff_rx_to_val(252);
+
+  boton_simple[4][0]=buff_rx_to_val(256);
+  boton_simple[4][1]=buff_rx_to_val(260);
+  boton_simple[4][2]=buff_rx_to_val(264);
+  boton_simple[4][3]=buff_rx_to_val(268);
+
+  boton_simple[5][0]=buff_rx_to_val(272);
+  boton_simple[5][1]=buff_rx_to_val(276);
+  boton_simple[5][2]=buff_rx_to_val(280);
+  boton_simple[5][3]=buff_rx_to_val(284);
+
+  analogos_simple[0][1]=buff_rx_to_val(288);
+  analogos_simple[0][2]=buff_rx_to_val(292);
+  analogos_simple[1][1]=buff_rx_to_val(296);
+  analogos_simple[1][2]=buff_rx_to_val(300);
 }
 
 void prepare_spi(){
   if(digitalRead(SS)){
-    if(pos == 100){
+    if(pos >= 303){
       read_values();
     }
     for(int i = 0;i<BUFFER_SIZE;i++){
@@ -741,29 +672,6 @@ void prepare_spi(){
     write_values();
     pos = 0;
     d_tx = 0;
+    REG_SPI0_TDR = 0;
   }
 }
-
-/*
-{
-  {"but_analog_izq":9999},
-  {"but_analog_der":9999},
-  {"but_der_a":9999},
-  {"but_der_b":9999},
-  {"but_der_c":9999},
-  {"but_cruz_der":9999},
-  {"cruz_izq":9999},
-  {"cruz_der":9999},
-  {"cruz_izq_h":9999},
-  {"cruz_izq_v":9999},
-  {"cruz_der_h":9999},
-  {"cruz_der_v":9999},
-  {"x_izq":9999},
-  {"y_izq":9999},
-  {"x_der":9999},
-  {"y_der":9999},
-  {"analog_A":9999},
-  {"analog_B":9999}
-}
-
-*/

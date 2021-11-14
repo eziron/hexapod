@@ -63,8 +63,7 @@
             "continuo": true,
             "min":0,
             "max":254,
-            "PPS":1,
-            "EN":false
+            "PPS":1
         },
         "cruz_der_v":{
             "value":0,
@@ -72,8 +71,7 @@
             "continuo": true,
             "min":0,
             "max":255,
-            "PPS":1,
-            "EN":false
+            "PPS":1
         },
         "but_cruz_der":{
             "value":0,
@@ -92,8 +90,7 @@
             "continuo": true,
             "min":0,
             "max":255,
-            "PPS":1,
-            "EN":false
+            "PPS":1
         },
         "cruz_izq_v":{
             "value":0,
@@ -101,8 +98,7 @@
             "continuo": true,
             "min":0,
             "max":255,
-            "PPS":1,
-            "EN":false
+            "PPS":1
         },
 
 
