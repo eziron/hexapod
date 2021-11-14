@@ -23,12 +23,12 @@
     },
 
     "x_izq":{
-        "value":127,
-        "modo":"normal",
-        "min":0,
-        "max":254,
+        "value":500,
+        "modo":"incremental",
+        "min":250,
+        "max":750,
         "PPS":0,
-        "centro":127
+        "centro":500
     },
     "y_izq":{
         "value":127,
