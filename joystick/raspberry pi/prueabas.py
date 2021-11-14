@@ -16,9 +16,9 @@ count = 0
 t_sap = 1
 t_sap_ns = t_sap*(10**9)
 while(time_ns()-ns_ref < t_sap_ns):
-    rcv_byte = spi.xfer2(send_byte)
-    rcv_values = struct.unpack("<"+"l"*17,send_byte[1:73])
-    print("___",count, len(rcv_byte[1:73]),len(send_byte),"_",rcv_byte[1:73],"---")
+    rcv_byte = spi.readbytes(73)
+    #rcv_values = struct.unpack("<"+"l"*17,send_byte[1:73])
+    print("___",count, len(rcv_byte),type(rcv_byte),"_",rcv_byte,"---")
     count += 1
     
 print(count)
