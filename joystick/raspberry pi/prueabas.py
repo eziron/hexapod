@@ -10,7 +10,7 @@ spi.open(spi_bus, spi_device)
 spi.max_speed_hz = 1000000
 
 count = 0
-t_sap = 0.1
+t_sap = 10
 t_sap_ns = t_sap*(10**9)
 ns_ref = time_ns()
 while(time_ns()-ns_ref < t_sap_ns):
