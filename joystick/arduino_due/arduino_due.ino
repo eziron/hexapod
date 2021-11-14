@@ -52,11 +52,11 @@ unsigned long ms_digitales[14];
 //boton_simple[n][3] = "max"   / valor maximo
 int boton_simple[6][4] = {
   {0, 0, 0, 1},
-  {0, 0, 0, 5},
-  {0, 1, 0, 1},
-  {0, 1, 0, 5},
-  {0, 2, -10, 10},
-  {0, 2, 0, 10},
+  {0, 0, 0, 1},
+  {0, 0, 0, 1},
+  {0, 0, 0, 1},
+  {0, 0, 0, 1},
+  {0, 0, 0, 1},
 };
 
 
@@ -76,10 +76,10 @@ int boton_simple[6][4] = {
 //boton_flecha[n][8] = numero digiral suma
 //boton_flecha[n][9] = numero digital resta
 int boton_flecha[4][10] = {
-  {0, 1, 0, -50, 50, 50000, 0, 1, 6, 7}, //cruz izquierda horizontal
-  {0, 1, 1, -50, 50, 50000, 0, 1, 9, 8}, //cruz izquierda vertical
-  {0, 2, 0, -50, 50, 50000, 0, 1, 10, 11}, //cruz derecha horizontal
-  {0, 2, 1, -50, 50, 50000, 0, 1, 13, 12} //cruz derecha vertical
+  {0, 0, 0, 0, 10, 50000, 0, 1, 6, 7}, //cruz izquierda horizontal
+  {0, 0, 0, 0, 10, 50000, 0, 1, 9, 8}, //cruz izquierda vertical
+  {0, 0, 0, 0, 10, 50000, 0, 1, 10, 11}, //cruz derecha horizontal
+  {0, 0, 0, 0, 10, 50000, 0, 1, 13, 12} //cruz derecha vertical
 };
 
 //valor_flecha[0] = cruz izquierda
@@ -135,10 +135,10 @@ int sticks[4];
 //sticks_conf[n][6] = periodo en us de imcrementacion de 1 punto
 //sticks_conf[n][7] = us ref
 int sticks_conf[4][8] = {
-  {2088, 1, 127, 0, 254, 20, 0, 0},
-  {2060, 1, 127, 0, 254, 20, 0, 0},
-  {2186, 2, 127, 0, 254, 20, 0, 0},
-  {1932, 2, 127, 0, 254, 20, 0, 0}
+  {2088, 0, 0, -10000, 10000, 20, 0, 0},
+  {2060, 0, 127, 0, 254, 20, 0, 0},
+  {2186, 0, 127, 0, 254, 20, 0, 0},
+  {1932, 0, 127, 0, 254, 20, 0, 0}
 };
 
 
@@ -524,10 +524,11 @@ int flecha_valor(bool arriba, bool abajo, bool izquierda, bool derecha) {
 
 
 void val_to_buff_tx(int i,long val){
-  buff_tx[i] = (byte) (val);
-  buff_tx[i+1] = (byte) (val >> 8);
-  buff_tx[i+2] = (byte) (val >> 16);
-  buff_tx[i+3] = (byte) (val >> 24);
+  byte * byte_val = (byte*)&val;
+  buff_tx[i]   = byte_val[3];
+  buff_tx[i+1] = byte_val[2];
+  buff_tx[i+2] = byte_val[1];
+  buff_tx[i+3] = byte_val[0];
 }
 
 long buff_rx_to_val(int i){
@@ -542,28 +543,27 @@ void write_values() {
   analogos_simple[0][0] = map(analogos[4][1], 0, 4095, analogos_simple[0][1], analogos_simple[0][2]);
   analogos_simple[1][0] = map(analogos[5][1], 0, 4095, analogos_simple[1][1], analogos_simple[1][2]);
 
-  val_to_buff_tx(1,sticks[0]);
-  val_to_buff_tx(5,sticks[1]);
-  val_to_buff_tx(9,sticks[2]);
-  val_to_buff_tx(13,sticks[3]);
+  val_to_buff_tx(0,sticks[0]);
+  val_to_buff_tx(4,sticks[1]);
+  val_to_buff_tx(8,sticks[2]);
+  val_to_buff_tx(12,sticks[3]);
 
-  val_to_buff_tx(17,boton_flecha[0][0]);
-  val_to_buff_tx(21,boton_flecha[1][0]);
-  val_to_buff_tx(25,boton_flecha[2][0]);
-  val_to_buff_tx(29,boton_flecha[3][0]);
+  val_to_buff_tx(16,boton_flecha[0][0]);
+  val_to_buff_tx(20,boton_flecha[1][0]);
+  val_to_buff_tx(24,boton_flecha[2][0]);
+  val_to_buff_tx(28,boton_flecha[3][0]);
+  val_to_buff_tx(32,boton_simple[0][0]);
+  val_to_buff_tx(36,boton_simple[1][0]);
+  val_to_buff_tx(40,boton_simple[2][0]);
+  val_to_buff_tx(44,boton_simple[3][0]);
+  val_to_buff_tx(48,boton_simple[4][0]);
+  val_to_buff_tx(52,boton_simple[5][0]);
 
-  val_to_buff_tx(33,boton_simple[0][0]);
-  val_to_buff_tx(37,boton_simple[1][0]);
-  val_to_buff_tx(41,boton_simple[2][0]);
-  val_to_buff_tx(45,boton_simple[3][0]);
-  val_to_buff_tx(49,boton_simple[4][0]);
-  val_to_buff_tx(53,boton_simple[5][0]);
+  val_to_buff_tx(56,valor_flecha[0]);
+  val_to_buff_tx(60,valor_flecha[1]);
 
-  val_to_buff_tx(57,valor_flecha[0]);
-  val_to_buff_tx(61,valor_flecha[1]);
-
-  val_to_buff_tx(65,analogos_simple[0][0]);
-  val_to_buff_tx(69,analogos_simple[1][0]);
+  val_to_buff_tx(64,analogos_simple[0][0]);
+  val_to_buff_tx(68,analogos_simple[1][0]);
 }
 
 void read_values(){
@@ -665,28 +665,14 @@ void prepare_spi(){
       read_values();
     }
 
+  Serial.println("-----");
+
   Serial.println(sticks[0]);
   Serial.println(sticks[1]);
   Serial.println(sticks[2]);
   Serial.println(sticks[3]);
 
-  Serial.println(boton_flecha[0][0]);
-  Serial.println(boton_flecha[1][0]);
-  Serial.println(boton_flecha[2][0]);
-  Serial.println(boton_flecha[3][0]);
-
-  Serial.println(boton_simple[0][0]);
-  Serial.println(boton_simple[1][0]);
-  Serial.println(boton_simple[2][0]);
-  Serial.println(boton_simple[3][0]);
-  Serial.println(boton_simple[4][0]);
-  Serial.println(boton_simple[5][0]);
-
-  Serial.println(valor_flecha[0]);
-  Serial.println(valor_flecha[1]);
-
-  Serial.println(analogos_simple[0][0]);
-  Serial.println(analogos_simple[1][0]);
+  Serial.println("-----");
 
     for(int i = 0;i<BUFFER_SIZE;i++){
       buff_rx[i] = 0;
@@ -696,7 +682,7 @@ void prepare_spi(){
   else{
     write_values();
     pos = 0;
-    d_tx = 0;
-    REG_SPI0_TDR = 0;
+    d_tx = 255;
+    REG_SPI0_TDR = 255;
   }
 }
