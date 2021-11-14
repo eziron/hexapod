@@ -16,7 +16,7 @@ count = 0
 t_sap = 0.1
 t_sap_ns = t_sap*(10**9)
 while(time_ns()-ns_ref < t_sap_ns):
-    joystick.write_arduino()
+    joystick.read_arduino()
     print(joystick.arduino_value)
     count += 1
 

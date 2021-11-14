@@ -143,9 +143,6 @@ class control_joystick:
         tx_value.append(self.arduino_conf["analog_B"]["min"])
         tx_value.append(self.arduino_conf["analog_B"]["max"])
 
-        print(len(tx_value))
-        print(struct.calcsize("l"*len(tx_value)))
-
         tx_bytes = struct.pack(">"+"l"*len(tx_value),*tx_value)
         self.spi.writebytes(tx_bytes)
 
