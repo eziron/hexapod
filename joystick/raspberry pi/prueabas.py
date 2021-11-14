@@ -19,10 +19,11 @@ send_byte = bytearray(73)
 #while(time_ns()-ns_ref < t_sap_ns):
 
 rcv_byte = spi.readbytes(72)
-print(struct.calcsize("l"*17))
+print(struct.calcsize("l"*18))
 print(len(rcv_byte))
 print(type(rcv_byte))
 print(rcv_byte)
+print(struct.unpack("<"+"l"*18,rcv_byte))
 
 
 #count += 1
