@@ -1,0 +1,143 @@
+{
+    "coneccion":{
+        "port":"/dev/ttyS0",
+        "baudrate":250000,
+        "read_id":"Z",
+        "write_id":"W"
+    },
+    "variables":{
+        "x_der":{
+            "value":127,
+            "modo":"normal",
+            "min":0,
+            "max":254,
+            "PPS":0,
+            "centro":127
+        },
+        "y_der":{
+            "value":127,
+            "modo":"normal",
+            "min":0,
+            "max":254,
+            "PPS":0,
+            "centro":127
+        },
+        "but_analog_der":{
+            "value":0,
+            "modo":"normal",
+            "min":0,
+            "max":1
+        },
+
+
+        "x_izq":{
+            "value":127,
+            "modo":"normal",
+            "min":0,
+            "max":254,
+            "PPS":0,
+            "centro":127
+        },
+        "y_izq":{
+            "value":127,
+            "modo":"normal",
+            "min":0,
+            "max":254,
+            "PPS":0,
+            "centro":127
+        },
+        "but_analog_izq":{
+            "value":0,
+            "modo":"normal",
+            "min":0,
+            "max":1
+        },
+
+
+        "cruz_der":{
+            "value":0
+        },
+        "cruz_der_h":{
+            "value":0,
+            "modo":"normal",
+            "continuo": true,
+            "min":0,
+            "max":254,
+            "PPS":1,
+            "EN":false
+        },
+        "cruz_der_v":{
+            "value":0,
+            "modo":"normal",
+            "continuo": true,
+            "min":0,
+            "max":255,
+            "PPS":1,
+            "EN":false
+        },
+        "but_cruz_der":{
+            "value":0,
+            "modo":"normal",
+            "min":0,
+            "max":1
+        },
+
+
+        "cruz_izq":{
+            "value":0
+        },
+        "cruz_izq_h":{
+            "value":0,
+            "modo":"normal",
+            "continuo": true,
+            "min":0,
+            "max":255,
+            "PPS":1,
+            "EN":false
+        },
+        "cruz_izq_v":{
+            "value":0,
+            "modo":"normal",
+            "continuo": true,
+            "min":0,
+            "max":255,
+            "PPS":1,
+            "EN":false
+        },
+
+
+        "but_der_a":{
+            "value":0,
+            "modo":"normal",
+            "min":0,
+            "max":1
+        }
+        ,
+        "but_der_b":{
+            "value":0,
+            "modo":"normal",
+            "min":0,
+            "max":1
+        }
+        ,
+        "but_der_c":{
+            "value":0,
+            "modo":"normal",
+            "min":0,
+            "max":1
+        },
+
+
+        "analog_A":{
+            "value":0,
+            "min":0,
+            "max":255
+        },
+        "analog_B":{
+            "value":0,
+            "min":0,
+            "max":255
+        }
+    }
+}
+
