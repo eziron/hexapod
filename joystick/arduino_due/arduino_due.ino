@@ -666,26 +666,10 @@ void read_values(){
 
 void prepare_spi(){
   Serial.println(pos);
-  
+
   if(digitalRead(SS)){
     if(pos >= 303){
       read_values();
-
-      Serial.println("---");
-      
-      Serial.println(sticks[2]);
-      Serial.println(sticks_conf[2][1]);
-      Serial.println(sticks_conf[2][3]);
-      Serial.println(sticks_conf[2][4]);
-      Serial.println(sticks_conf[2][5]);
-      Serial.println(sticks_conf[2][2]);
-      Serial.println("---");
-
-      for(int i = 0; i < 20;i++){
-        Serial.print(buff_rx[i]);
-        Serial.print(" - ");
-      }
-      Serial.println("---");
     }
 
     for(int i = 0;i<BUFFER_SIZE;i++){

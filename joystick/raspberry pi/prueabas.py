@@ -29,6 +29,7 @@ if(rx_byte[0] == 200 and rx_byte[1] == 127):
     #count += 1
 else:
     print("error")
+    print(rx_byte[0:74])
 
 #print(count)
 #print(count/t_sap)
