@@ -156,6 +156,7 @@ void SPI0_Handler( void )
 }
 
 void setup() {
+  Serial.begin(115200);
   NVIC_ClearPendingIRQ(SPI0_INTERRUPT_NUMBER);
   NVIC_EnableIRQ(SPI0_INTERRUPT_NUMBER);
 
@@ -523,10 +524,10 @@ int flecha_valor(bool arriba, bool abajo, bool izquierda, bool derecha) {
 
 
 void val_to_buff_tx(int i,long val){
-  buff_tx[i] = (byte) val & 0xFF;
-  buff_tx[i+1] = (byte) (val << 4) & 0xFF;
-  buff_tx[i+2] = (byte) (val << 8) & 0xFF;
-  buff_tx[i+3] = (byte) (val << 16) & 0xFF;
+  buff_tx[i] = (byte) (val);
+  buff_tx[i+1] = (byte) (val >> 8);
+  buff_tx[i+2] = (byte) (val >> 16);
+  buff_tx[i+3] = (byte) (val >> 24);
 }
 
 long buff_rx_to_val(int i){
@@ -541,28 +542,28 @@ void write_values() {
   analogos_simple[0][0] = map(analogos[4][1], 0, 4095, analogos_simple[0][1], analogos_simple[0][2]);
   analogos_simple[1][0] = map(analogos[5][1], 0, 4095, analogos_simple[1][1], analogos_simple[1][2]);
 
-  val_to_buff_tx(0,sticks[0]);
-  val_to_buff_tx(4,sticks[1]);
-  val_to_buff_tx(8,sticks[2]);
-  val_to_buff_tx(12,sticks[3]);
+  val_to_buff_tx(1,sticks[0]);
+  val_to_buff_tx(5,sticks[1]);
+  val_to_buff_tx(9,sticks[2]);
+  val_to_buff_tx(13,sticks[3]);
 
-  val_to_buff_tx(16,boton_flecha[0][0]);
-  val_to_buff_tx(20,boton_flecha[1][0]);
-  val_to_buff_tx(24,boton_flecha[2][0]);
-  val_to_buff_tx(28,boton_flecha[3][0]);
+  val_to_buff_tx(17,boton_flecha[0][0]);
+  val_to_buff_tx(21,boton_flecha[1][0]);
+  val_to_buff_tx(25,boton_flecha[2][0]);
+  val_to_buff_tx(29,boton_flecha[3][0]);
 
-  val_to_buff_tx(32,boton_simple[0][0]);
-  val_to_buff_tx(36,boton_simple[1][0]);
-  val_to_buff_tx(40,boton_simple[2][0]);
-  val_to_buff_tx(44,boton_simple[3][0]);
-  val_to_buff_tx(48,boton_simple[4][0]);
-  val_to_buff_tx(52,boton_simple[5][0]);
+  val_to_buff_tx(33,boton_simple[0][0]);
+  val_to_buff_tx(37,boton_simple[1][0]);
+  val_to_buff_tx(41,boton_simple[2][0]);
+  val_to_buff_tx(45,boton_simple[3][0]);
+  val_to_buff_tx(49,boton_simple[4][0]);
+  val_to_buff_tx(53,boton_simple[5][0]);
 
-  val_to_buff_tx(56,valor_flecha[0]);
-  val_to_buff_tx(60,valor_flecha[1]);
+  val_to_buff_tx(57,valor_flecha[0]);
+  val_to_buff_tx(61,valor_flecha[1]);
 
-  val_to_buff_tx(64,analogos_simple[0][0]);
-  val_to_buff_tx(68,analogos_simple[1][0]);
+  val_to_buff_tx(65,analogos_simple[0][0]);
+  val_to_buff_tx(69,analogos_simple[1][0]);
 }
 
 void read_values(){
@@ -663,6 +664,30 @@ void prepare_spi(){
     if(pos >= 303){
       read_values();
     }
+
+  Serial.println(sticks[0]);
+  Serial.println(sticks[1]);
+  Serial.println(sticks[2]);
+  Serial.println(sticks[3]);
+
+  Serial.println(boton_flecha[0][0]);
+  Serial.println(boton_flecha[1][0]);
+  Serial.println(boton_flecha[2][0]);
+  Serial.println(boton_flecha[3][0]);
+
+  Serial.println(boton_simple[0][0]);
+  Serial.println(boton_simple[1][0]);
+  Serial.println(boton_simple[2][0]);
+  Serial.println(boton_simple[3][0]);
+  Serial.println(boton_simple[4][0]);
+  Serial.println(boton_simple[5][0]);
+
+  Serial.println(valor_flecha[0]);
+  Serial.println(valor_flecha[1]);
+
+  Serial.println(analogos_simple[0][0]);
+  Serial.println(analogos_simple[1][0]);
+
     for(int i = 0;i<BUFFER_SIZE;i++){
       buff_rx[i] = 0;
       buff_tx[i] = 0;
