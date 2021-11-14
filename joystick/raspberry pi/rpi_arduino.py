@@ -7,7 +7,7 @@ spi_device = 2
 
 spi = spidev.SpiDev()
 spi.open(spi_bus, spi_device)
-spi.max_speed_hz = 10000000
+spi.max_speed_hz = 1000000
 
 joystick = control_joystick(spi)
 joystick.write_arduino()
