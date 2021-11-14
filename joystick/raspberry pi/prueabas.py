@@ -16,7 +16,7 @@ tx_bytes = bytearray(304)
 #t_sap_ns = t_sap*(10**9)
 #ns_ref = time_ns()
 #while(time_ns()-ns_ref < t_sap_ns):
-tx_bytes[3] = 127
+tx_bytes[2] = 64
 
 rx_byte = spi.xfer2(tx_bytes)
 if(rx_byte[0] == 200 and rx_byte[1] == 127):

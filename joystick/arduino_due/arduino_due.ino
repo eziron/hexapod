@@ -665,11 +665,18 @@ void read_values(){
 }
 
 void prepare_spi(){
-  Serial.println(pos);
-
   if(digitalRead(SS)){
     if(pos >= 303){
       read_values();
+
+      Serial.println("----");
+      Serial.println(buff_rx_to_val(0));
+
+      for(int i = 0; i<24;i++){
+        Serial.print(buff_rx[i],HEX);
+        Serial.print("-");
+      }
+      Serial.println("----");
     }
 
     for(int i = 0;i<BUFFER_SIZE;i++){
