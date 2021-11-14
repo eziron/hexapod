@@ -33,6 +33,10 @@ class control_joystick:
         for x in index:
             self.arduino_value[x] = self.arduino_conf[x]["value"]
 
+        index = list(self.device_conf)
+        for x in index:
+            self.device_value[x] = {}
+
         index = list(self.device_conf[device])
         for x in index:
             self.device_value[device][x] = self.device_conf[device][x]["value"]
