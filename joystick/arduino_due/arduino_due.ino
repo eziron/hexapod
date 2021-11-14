@@ -670,6 +670,7 @@ void prepare_spi(){
       read_values();
 
       Serial.println("---");
+      Serial.println(pos);
       Serial.println(sticks[0]);
       Serial.println(sticks_conf[0][1]);
       Serial.println(sticks_conf[0][3]);
