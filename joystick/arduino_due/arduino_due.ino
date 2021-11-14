@@ -682,7 +682,7 @@ void prepare_spi(){
   else{
     write_values();
     pos = 0;
-    d_tx = 255;
-    REG_SPI0_TDR = 255;
+    d_tx = 127;
+    REG_SPI0_TDR = 200;
   }
 }
