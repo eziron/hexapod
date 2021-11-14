@@ -138,8 +138,8 @@ class control_joystick:
 
         print(len(tx_value))
         print(struct.calcsize("l"*len(tx_value)))
-        
-        tx_bytes = struct.pack(">"+"l"*len(tx_value),tx_value)
+
+        tx_bytes = struct.pack(">"+"l"*len(tx_value),*tx_value)
         self.spi.writebytes(tx_bytes)
 
     def read_arduino(self):
