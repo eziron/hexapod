@@ -671,12 +671,18 @@ void prepare_spi(){
 
       Serial.println("---");
       Serial.println(pos);
-      Serial.println(sticks[0]);
-      Serial.println(sticks_conf[0][1]);
-      Serial.println(sticks_conf[0][3]);
-      Serial.println(sticks_conf[0][4]);
-      Serial.println(sticks_conf[0][5]);
-      Serial.println(sticks_conf[0][2]);
+      Serial.println(buff_rx_to_val(0));
+      Serial.println(buff_rx_to_val(4));
+      Serial.println(buff_rx_to_val(8));
+      Serial.println(buff_rx_to_val(12));
+      Serial.println(buff_rx_to_val(16));
+      Serial.println(buff_rx_to_val(20));
+      Serial.println("---");
+
+      for(int i = 0; i < 24;i++){
+        Serial.print(buff_rx[i],HEX);
+        Serial.print(" - ");
+      }
       Serial.println("---");
     }
 
