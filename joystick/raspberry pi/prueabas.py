@@ -23,6 +23,7 @@ print(struct.calcsize("l"*18))
 print(len(rcv_byte))
 print(type(rcv_byte))
 print(rcv_byte)
+print(bytes(rcv_byte))
 print(struct.unpack("<"+"l"*18,bytes(rcv_byte)))
 
 
