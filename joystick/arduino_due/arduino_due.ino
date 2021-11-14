@@ -533,10 +533,10 @@ void val_to_buff_tx(int i,long val){
 
 long buff_rx_to_val(int i){
   byte val[4];
-  val[0] = buff_rx[i+3];
-  val[1] = buff_rx[i+2];
-  val[2] = buff_rx[i+1];
-  val[3] = buff_rx[i];
+  val[3] = buff_rx[i+3];
+  val[2] = buff_rx[i+2];
+  val[1] = buff_rx[i+1];
+  val[0] = buff_rx[i];
   return *((long *)val);
 }
 
@@ -668,16 +668,17 @@ void prepare_spi(){
   if(digitalRead(SS)){
     if(pos >= 303){
       read_values();
-
-      Serial.println("----");
-      Serial.println(buff_rx_to_val(0));
-
-      for(int i = 0; i<24;i++){
-        Serial.print(buff_rx[i],HEX);
-        Serial.print("-");
-      }
-      Serial.println("----");
     }
+
+    Serial.println("----");
+    Serial.println(buff_rx_to_val(0));
+    Serial.println(buff_rx_to_val(4));
+
+    for(int i = 0; i<10;i++){
+      Serial.print(buff_rx[i],HEX);
+      Serial.print("-");
+    }
+    Serial.println("----");
 
     for(int i = 0;i<BUFFER_SIZE;i++){
       buff_rx[i] = 0;
