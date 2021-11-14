@@ -12,6 +12,13 @@ class control_joystick:
     arduino_value = json.loads("{}")
     device = "hexapod"
 
+    modo_values = {
+        "normal":0,
+        "mantenido":1,
+        "incremental":1,
+        "circular":2,
+    }
+
     def __init__(self,spi,device="hexapod"):
 
         self.device = device
@@ -45,88 +52,88 @@ class control_joystick:
     def write_arduino(self):
         tx_value = []
         tx_value.append(self.arduino_conf["x_izq"]["value"])
-        tx_value.append(self.arduino_conf["x_izq"]["modo"])
+        tx_value.append(self.modo_values[self.arduino_conf["x_izq"]["modo"]])
         tx_value.append(self.arduino_conf["x_izq"]["min"])
         tx_value.append(self.arduino_conf["x_izq"]["max"])
         tx_value.append(self.arduino_conf["x_izq"]["PPS"])
         tx_value.append(self.arduino_conf["x_izq"]["centro"])
 
         tx_value.append(self.arduino_conf["y_izq"]["value"])
-        tx_value.append(self.arduino_conf["y_izq"]["modo"])
+        tx_value.append(self.modo_values[self.arduino_conf["y_izq"]["modo"]])
         tx_value.append(self.arduino_conf["y_izq"]["min"])
         tx_value.append(self.arduino_conf["y_izq"]["max"])
         tx_value.append(self.arduino_conf["y_izq"]["PPS"])
         tx_value.append(self.arduino_conf["y_izq"]["centro"])
 
         tx_value.append(self.arduino_conf["x_der"]["value"])
-        tx_value.append(self.arduino_conf["x_der"]["modo"])
+        tx_value.append(self.modo_values[self.arduino_conf["x_der"]["modo"]])
         tx_value.append(self.arduino_conf["x_der"]["min"])
         tx_value.append(self.arduino_conf["x_der"]["max"])
         tx_value.append(self.arduino_conf["x_der"]["PPS"])
         tx_value.append(self.arduino_conf["x_der"]["centro"])
 
         tx_value.append(self.arduino_conf["y_der"]["value"])
-        tx_value.append(self.arduino_conf["y_der"]["modo"])
+        tx_value.append(self.modo_values[self.arduino_conf["y_der"]["modo"]])
         tx_value.append(self.arduino_conf["y_der"]["min"])
         tx_value.append(self.arduino_conf["y_der"]["max"])
         tx_value.append(self.arduino_conf["y_der"]["PPS"])
         tx_value.append(self.arduino_conf["y_der"]["centro"])
 
         tx_value.append(self.arduino_conf["cruz_izq_h"]["value"])
-        tx_value.append(self.arduino_conf["cruz_izq_h"]["modo"])
+        tx_value.append(self.modo_values[self.arduino_conf["cruz_izq_h"]["modo"]])
         tx_value.append(self.arduino_conf["cruz_izq_h"]["continuo"])
         tx_value.append(self.arduino_conf["cruz_izq_h"]["min"])
         tx_value.append(self.arduino_conf["cruz_izq_h"]["max"])
         tx_value.append(self.arduino_conf["cruz_izq_h"]["PPS"])
 
         tx_value.append(self.arduino_conf["cruz_izq_v"]["value"])
-        tx_value.append(self.arduino_conf["cruz_izq_v"]["modo"])
+        tx_value.append(self.modo_values[self.arduino_conf["cruz_izq_v"]["modo"]])
         tx_value.append(self.arduino_conf["cruz_izq_v"]["continuo"])
         tx_value.append(self.arduino_conf["cruz_izq_v"]["min"])
         tx_value.append(self.arduino_conf["cruz_izq_v"]["max"])
         tx_value.append(self.arduino_conf["cruz_izq_v"]["PPS"])
 
         tx_value.append(self.arduino_conf["cruz_der_h"]["value"])
-        tx_value.append(self.arduino_conf["cruz_der_h"]["modo"])
+        tx_value.append(self.modo_values[self.arduino_conf["cruz_der_h"]["modo"]])
         tx_value.append(self.arduino_conf["cruz_der_h"]["continuo"])
         tx_value.append(self.arduino_conf["cruz_der_h"]["min"])
         tx_value.append(self.arduino_conf["cruz_der_h"]["max"])
         tx_value.append(self.arduino_conf["cruz_der_h"]["PPS"])
 
         tx_value.append(self.arduino_conf["cruz_der_v"]["value"])
-        tx_value.append(self.arduino_conf["cruz_der_v"]["modo"])
+        tx_value.append(self.modo_values[self.arduino_conf["cruz_der_v"]["modo"]])
         tx_value.append(self.arduino_conf["cruz_der_v"]["continuo"])
         tx_value.append(self.arduino_conf["cruz_der_v"]["min"])
         tx_value.append(self.arduino_conf["cruz_der_v"]["max"])
         tx_value.append(self.arduino_conf["cruz_der_v"]["PPS"])
 
         tx_value.append(self.arduino_conf["but_analog_izq"]["value"])
-        tx_value.append(self.arduino_conf["but_analog_izq"]["modo"])
+        tx_value.append(self.modo_values[self.arduino_conf["but_analog_izq"]["modo"]])
         tx_value.append(self.arduino_conf["but_analog_izq"]["min"])
         tx_value.append(self.arduino_conf["but_analog_izq"]["max"])
 
         tx_value.append(self.arduino_conf["but_analog_der"]["value"])
-        tx_value.append(self.arduino_conf["but_analog_der"]["modo"])
+        tx_value.append(self.modo_values[self.arduino_conf["but_analog_der"]["modo"]])
         tx_value.append(self.arduino_conf["but_analog_der"]["min"])
         tx_value.append(self.arduino_conf["but_analog_der"]["max"])
 
         tx_value.append(self.arduino_conf["but_der_a"]["value"])
-        tx_value.append(self.arduino_conf["but_der_a"]["modo"])
+        tx_value.append(self.modo_values[self.arduino_conf["but_der_a"]["modo"]])
         tx_value.append(self.arduino_conf["but_der_a"]["min"])
         tx_value.append(self.arduino_conf["but_der_a"]["max"])
 
         tx_value.append(self.arduino_conf["but_der_b"]["value"])
-        tx_value.append(self.arduino_conf["but_der_b"]["modo"])
+        tx_value.append(self.modo_values[self.arduino_conf["but_der_b"]["modo"]])
         tx_value.append(self.arduino_conf["but_der_b"]["min"])
         tx_value.append(self.arduino_conf["but_der_b"]["max"])
 
         tx_value.append(self.arduino_conf["but_der_c"]["value"])
-        tx_value.append(self.arduino_conf["but_der_c"]["modo"])
+        tx_value.append(self.modo_values[self.arduino_conf["but_der_c"]["modo"]])
         tx_value.append(self.arduino_conf["but_der_c"]["min"])
         tx_value.append(self.arduino_conf["but_der_c"]["max"])
 
         tx_value.append(self.arduino_conf["but_cruz_der"]["value"])
-        tx_value.append(self.arduino_conf["but_cruz_der"]["modo"])
+        tx_value.append(self.modo_values[self.arduino_conf["but_cruz_der"]["modo"]])
         tx_value.append(self.arduino_conf["but_cruz_der"]["min"])
         tx_value.append(self.arduino_conf["but_cruz_der"]["max"])
 
