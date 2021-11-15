@@ -135,7 +135,7 @@ int sticks[4];
 //sticks_conf[n][6] = periodo en us de imcrementacion de 1 punto
 //sticks_conf[n][7] = us ref
 int sticks_conf[4][8] = {
-  {2088, 0, 0, -10000, 10000, 20, 0, 0},
+  {2088, 0, 127, 0, 254, 20, 0, 0},
   {2060, 0, 127, 0, 254, 20, 0, 0},
   {2186, 0, 127, 0, 254, 20, 0, 0},
   {1932, 0, 127, 0, 254, 20, 0, 0}
@@ -156,7 +156,7 @@ void SPI0_Handler( void )
 }
 
 void setup() {
-  Serial.begin(115200);
+  //Serial.begin(115200);
   NVIC_ClearPendingIRQ(SPI0_INTERRUPT_NUMBER);
   NVIC_EnableIRQ(SPI0_INTERRUPT_NUMBER);
 
@@ -669,16 +669,6 @@ void prepare_spi(){
     if(pos >= 303){
       read_values();
     }
-
-    Serial.println("----");
-    Serial.println(buff_rx_to_val(0));
-    Serial.println(buff_rx_to_val(4));
-
-    for(int i = 0; i<10;i++){
-      Serial.print(buff_rx[i],HEX);
-      Serial.print("-");
-    }
-    Serial.println("----");
 
     for(int i = 0;i<BUFFER_SIZE;i++){
       buff_rx[i] = 0;
