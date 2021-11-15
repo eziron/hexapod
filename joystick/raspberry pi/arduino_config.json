@@ -1,6 +1,6 @@
 {
     "x_der":{
-        "value":127,
+        "value":0,
         "modo":"normal",
         "min":-100,
         "max":100,
@@ -27,7 +27,7 @@
         "modo":"incremental",
         "min":250,
         "max":750,
-        "PPS":0,
+        "PPS":10,
         "centro":500
     },
     "y_izq":{
