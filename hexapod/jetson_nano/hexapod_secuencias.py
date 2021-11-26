@@ -119,3 +119,7 @@ for n in range(30):
 
 hexapod.set_param_time(2,h=0)
 bucle_movimiento()
+
+for i in range(6):
+    hexapod.lineal_set_target_time(i,hexapod.Pierna_param[i][3],1)
+bucle_movimiento()
