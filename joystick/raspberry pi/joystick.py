@@ -170,6 +170,10 @@ class control_joystick:
             self.arduino_value["analog_A"]=rx_values[16]
             self.arduino_value["analog_B"]=rx_values[17]
 
+            return rx_values
+        
+        return None
+
     def HSV_to_RGB(self,h, s=1, v=1):
         h = float(h)
         s = float(s)

@@ -1,12 +1,20 @@
+import struct
+from joystick import control_joystick
+import spidev
 from socket import *
-import serial
 from time import sleep
 from time import time_ns
 
-arduino = serial.Serial("/dev/ttyS0",250000)
-arduino.timeout = 0.01
-arduino.reset_input_buffer()
-arduino.reset_output_buffer()
+spi_bus = 1
+spi_device = 2
+
+spi = spidev.SpiDev()
+spi.open(spi_bus, spi_device)
+spi.max_speed_hz = 1000000
+
+joystick = control_joystick(spi)
+joystick.write_arduino()
+
 sleep(2)
 
 s = socket(AF_INET, SOCK_DGRAM)
@@ -19,10 +27,10 @@ count = 0
 t_sap = 20
 t_sap_ns = t_sap*(10**9)
 while(time_ns()-ns_ref < t_sap_ns):
-
-    arduino.write(b"Z")
-    s.send(arduino.readline())
-    count += 1
+    val = joystick.read_arduino()
+    if(not val is None):
+        s.send(struct.pack("<"+"l"*18,val))
+        count += 1
 
 print(count)
 print(count/t_sap)
