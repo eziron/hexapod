@@ -1,4 +1,4 @@
-import math
+
 import serial
 import struct
 from time import sleep, time
