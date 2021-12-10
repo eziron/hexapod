@@ -2,18 +2,18 @@
     "x_der":{
         "value":0,
         "modo":"normal",
-        "min":-100,
-        "max":100,
+        "min":-1000,
+        "max":1000,
         "PPS":0,
         "centro":0
     },
     "y_der":{
-        "value":127,
+        "value":0,
         "modo":"normal",
-        "min":0,
-        "max":254,
+        "min":-1000,
+        "max":1000,
         "PPS":0,
-        "centro":127
+        "centro":0
     },
     "but_analog_der":{
         "value":0,
@@ -23,20 +23,20 @@
     },
 
     "x_izq":{
-        "value":500,
+        "value":0,
         "modo":"incremental",
-        "min":250,
-        "max":750,
+        "min":-10,
+        "max":10,
         "PPS":10,
-        "centro":500
+        "centro":0
     },
     "y_izq":{
-        "value":127,
+        "value":0,
         "modo":"normal",
-        "min":0,
-        "max":254,
+        "min":-10,
+        "max":10,
         "PPS":0,
-        "centro":127
+        "centro":0
     },
     "but_analog_izq":{
         "value":0,
@@ -119,12 +119,12 @@
     "analog_A":{
         "value":0,
         "min":0,
-        "max":255
+        "max":120
     },
     "analog_B":{
         "value":0,
         "min":0,
-        "max":255
+        "max":120
     }
     
 }

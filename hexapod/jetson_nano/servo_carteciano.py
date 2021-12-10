@@ -139,44 +139,44 @@ class Hexapod():
 #secuencias_caminata[n][1] = altura
     secuencias_caminata = [
         [#secuencia caminata
-            [#paso 0
-                [  1, -1,  1, -1,  1, -1], 
-                [  0,  0,  0,  0,  0,  0],
-            ],[#paso 1
-                [  1, -1,  1, -1,  1, -1], 
-                [  0,  1,  0,  1,  0,  1],
+            [#paso 1
+                [  None, None, None, None, None, None], 
+                [     0,    1,    0,    1,    0,    1],
             ],[#paso 2
-                [ -1,  1, -1,  1, -1,  1], 
-                [  0,  1,  0,  1,  0,  1],
+                [    -1,    1,   -1,    1,   -1,    1], 
+                [  None, None, None, None, None, None],
             ],[#paso 3
-                [ -1,  1, -1,  1, -1,  1], 
-                [  0,  0,  0,  0,  0,  0],
+                [  None, None, None, None, None, None], 
+                [     0,    0,    0,    0,    0,    0],
             ],[#paso 4
-                [ -1,  1, -1,  1, -1,  1], 
-                [  1,  0,  1,  0,  1,  0],
+                [  None, None, None, None, None, None], 
+                [     1,    0,    1,    0,    1,    0],
             ],[#paso 5
-                [  1, -1,  1, -1,  1, -1],
-                [  1,  0,  1,  0,  1,  0],
+                [     1,   -1,    1,   -1,    1,   -1],
+                [  None, None, None, None, None, None],
+            ],[#paso 6
+                [  None, None, None, None, None, None], 
+                [     0,    0,    0,    0,    0,    0],
             ]
         ],[#secuencia giro
-            [#paso 0
-                [  1, -1,  1,  1, -1,  1], 
-                [  0,  0,  0,  0,  0,  0],
-            ],[#paso 1
-                [  1, -1,  1,  1, -1,  1], 
-                [  0,  1,  0,  1,  0,  1],
+            [#paso 1
+                [  None, None, None, None, None, None], 
+                [     0,    1,    0,    1,    0,    1],
             ],[#paso 2
-                [ -1,  1, -1, -1,  1, -1], 
-                [  0,  1,  0,  1,  0,  1],
+                [    -1,    1,   -1,   -1,    1,   -1], 
+                [  None, None, None, None, None, None],
             ],[#paso 3
-                [ -1,  1, -1, -1,  1, -1], 
-                [  0,  0,  0,  0,  0,  0],
+                [  None, None, None, None, None, None], 
+                [     0,    0,    0,    0,    0,    0],
             ],[#paso 4
-                [ -1,  1, -1, -1,  1, -1], 
-                [  1,  0,  1,  0,  1,  0],
+                [  None, None, None, None, None, None], 
+                [     1,    0,    1,    0,    1,    0],
             ],[#paso 5
-                [  1, -1,  1,  1, -1,  1], 
-                [  1,  0,  1,  0,  1,  0],
+                [     1,   -1,    1,    1,   -1,    1], 
+                [  None, None, None, None, None, None],
+            ],[#paso 0
+                [  None, None, None, None, None, None], 
+                [     0,    0,    0,    0,    0,    0],
             ]
         ]
     ]
@@ -461,21 +461,23 @@ class Hexapod():
             ang_speed = math.radians(ang_speed)
 
         
+        if(not ang is None):
+            self.movimiento_circular[3][index] = radio
+            self.movimiento_circular[6][index] = cord_rot
+
         
-        self.movimiento_circular[3][index] = radio
-        self.movimiento_circular[6][index] = cord_rot
+            self.movimiento_circular[1][index] = ang
+            if(self.movimiento_circular[0][index] > ang):
+                self.movimiento_circular[2][index] = -abs(ang_speed)
+            else:
+                self.movimiento_circular[2][index] = abs(ang_speed)
 
-        self.movimiento_circular[1][index] = ang
-        if(self.movimiento_circular[0][index] > ang):
-            self.movimiento_circular[2][index] = -abs(ang_speed)
-        else:
-            self.movimiento_circular[2][index] = abs(ang_speed)
-
-        self.movimiento_circular[4][index] = z
-        if(self.cord_global[index][2] > z):
-            self.movimiento_circular[5][index] = -abs(z_speed)
-        else:
-            self.movimiento_circular[5][index] = abs(z_speed)
+        if(not z is None):
+            self.movimiento_circular[4][index] = z
+            if(self.cord_global[index][2] > z):
+                self.movimiento_circular[5][index] = -abs(z_speed)
+            else:
+                self.movimiento_circular[5][index] = abs(z_speed)
 
 
     #fija los parametros de rotacion y desplazamientos en el robot
@@ -764,17 +766,23 @@ class Hexapod():
                 angulos[4][n] = angulos[1][n] - (d_ang*angulos[2][n])
 
                 if(estado):
-                    if(self.secuencias_caminata[n_sec][n_step][0][n]==1):
-                        ang = angulos[3][n]
-                    elif(self.secuencias_caminata[n_sec][n_step][0][n]==-1):
-                        ang = angulos[4][n]
+                    if(self.secuencias_caminata[n_sec][n_step][0][n] is None):
+                        ang = None
                     else:
-                        ang = angulos[1][n]
+                        if(self.secuencias_caminata[n_sec][n_step][0][n]==1):
+                            ang = angulos[3][n]
+                        elif(self.secuencias_caminata[n_sec][n_step][0][n]==-1):
+                            ang = angulos[4][n]
+                        else:
+                            ang = angulos[1][n]
                     
-                    if(self.secuencias_caminata[n_sec][n_step][1][n]==1):
-                        z_tar = z
+                    if(self.secuencias_caminata[n_sec][n_step][1][n] is None):
+                        z_tar = None
                     else:
-                        z_tar = 0
+                        if(self.secuencias_caminata[n_sec][n_step][1][n]==1):
+                            z_tar = z
+                        else:
+                            z_tar = 0
                     
                     self.polar_set_target_speed(
                         n,
