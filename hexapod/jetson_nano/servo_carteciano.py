@@ -201,6 +201,8 @@ class Hexapod():
             self.set_cord(n,self.cord_global[n])
 
             self.movimiento_circular[0][n] = self.angulo_positivo(math.atan2(self.Pierna_param[n][3][1],self.Pierna_param[n][3][0]))
+            self.movimiento_circular[1][n] = self.movimiento_circular[0][n]
+            self.movimiento_circular[3][n] = self.dis_PaP_R2([0,0],[self.Pierna_param[n][3][0],self.Pierna_param[n][3][1]]) 
 
         sleep(1)
     
