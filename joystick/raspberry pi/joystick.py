@@ -171,7 +171,7 @@ class control_joystick:
             self.arduino_value["analog_A"]=rx_values[16]
             self.arduino_value["analog_B"]=rx_values[17]
 
-            return array(rx_values)
+            return rx_values
         
         return None
 
