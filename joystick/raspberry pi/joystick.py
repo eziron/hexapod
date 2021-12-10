@@ -1,3 +1,4 @@
+from array import array
 import math
 import struct
 import json
@@ -170,7 +171,7 @@ class control_joystick:
             self.arduino_value["analog_A"]=rx_values[16]
             self.arduino_value["analog_B"]=rx_values[17]
 
-            return rx_values
+            return array(rx_values[:])
         
         return None
 

@@ -29,7 +29,7 @@ t_sap_ns = t_sap*(10**9)
 while(time_ns()-ns_ref < t_sap_ns):
     val = joystick.read_arduino()
     if(not val is None):
-        print(val)
+        print(len(val),val)
         s.send(struct.pack("<"+"l"*18,val))
         count += 1
 
