@@ -174,6 +174,7 @@ secuencia = [
 seq = 2
 
 Serial = serial.Serial("/dev/ttyTHS1",1000000,timeout=0.1)
+print("iniciado")
 sleep(1)
 hexapod = Hexapod()
 
@@ -220,7 +221,7 @@ for n in range(2):
         bucle_movimiento()
 """
 #caminatas rotacion
-"""hexapod.set_param_time(2,h=80)
+hexapod.set_param_time(2,h=80)
 bucle_movimiento()
 
 for n in range(10):
@@ -236,7 +237,7 @@ for n in range(10):
             r_por_pie=True,
             estado=True
         )
-        bucle_movimiento()"""
+        bucle_movimiento()
 
 #caminatas lineal
 """hexapod.set_param_time(2,h=80)
