@@ -8,5 +8,5 @@ while True:
     data = s.recv(72)
     if not data:
         break
-    print("--",data,"--",struct.unpack("<"+"l"*18,data))
+    print(struct.unpack("<"+"l"*18,data))
     

@@ -21,18 +21,12 @@ s = socket(AF_INET, SOCK_DGRAM)
 s.connect(('192.168.1.106', 8888))
 
 
+ns_dt = (1/5)*1000000
 ns_ref = time_ns()
-count = 0
-
-t_sap = 20
-t_sap_ns = t_sap*(10**9)
-while(time_ns()-ns_ref < t_sap_ns):
-    val = joystick.read_arduino()
-    if(not val is None):
-        print(len(val),val)
-        s.send(struct.pack("<"+"l"*len(val),*val))
-        count += 1
-
-print(count)
-print(count/t_sap)
-print((t_sap*1000)/count)
+while(True):
+    if(time_ns()-ns_ref >= ns_dt):
+        ns_ref = time_ns()
+        val = joystick.read_arduino()
+        if(not val is None):
+            print(val)
+            s.send(struct.pack("<"+"l"*len(val),*val))
