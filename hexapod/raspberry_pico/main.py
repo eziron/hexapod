@@ -9,6 +9,8 @@ i2c = I2C(1,sda=SDA,scl=SCL,freq=1000000)
 
 sleep_ms(100)
 
+print(i2c.scan())
+
 if not 0x40 in i2c.scan():
     print("El Driver PWM PCA9685 no esta conectado")
 sleep_ms(100)

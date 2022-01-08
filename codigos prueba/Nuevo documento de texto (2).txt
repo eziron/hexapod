@@ -1,0 +1,9 @@
+
+sudo nano /boot/config.txt
+
+dtoverlay=pi3-disable-bt
+
+dtoverlay=spi1-3cs,cs0_pin=05,cs1_pin=06,cs2_pin=16
+
+
+radio.begin(29, 12)
