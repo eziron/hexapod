@@ -173,7 +173,7 @@ secuencia = [
 ]
 seq = 2
 
-Serial = serial.Serial("/dev/ttyTHS1",1000000,timeout=0.1)
+Serial = serial.Serial("/dev/ttyTHS1",115200,timeout=0.1)
 print("iniciado")
 sleep(1)
 hexapod = Hexapod()
