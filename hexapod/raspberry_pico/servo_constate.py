@@ -26,8 +26,8 @@ sv17.freq(333)
 
 #pierna 6
 pca.set_duty_us(1,1560)  #sv0 = 1
-#sv16.duty_ns(1930000)    #sv1 = 16
-sv16.duty_ns(1000000)    #sv1 = 16
+sv16.duty_ns(1930000)    #sv1 = 16
+#sv16.duty_ns(1000000)    #sv1 = 16
 pca.set_duty_us(0,2130)  #sv2 = 0
 
 
@@ -64,8 +64,8 @@ pca.set_duty_us(12,750) #sv2 = 12
 
 #pierna 1
 pca.set_duty_us(14,1500) #sv0 = 14
-#sv17.duty_ns(1000000)    #sv1 = 17
-sv17.duty_ns(2000000)    #sv1 = 17
+sv17.duty_ns(1000000)    #sv1 = 17
+#sv17.duty_ns(2000000)    #sv1 = 17
 pca.set_duty_us(15,800) #sv2 = 15
 
 
