@@ -180,6 +180,7 @@ hexapod = Hexapod()
 
 def actualizar_duty():
     duty_vals = hexapod.sv_duty()
+    print(duty_vals)
     msg_tx = struct.pack("<"+"H"*18,*duty_vals)
     Serial.write(msg_tx)
     msg_rx = Serial.readline()
