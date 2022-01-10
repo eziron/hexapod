@@ -1,10 +1,10 @@
 import ustruct
 from time import sleep, sleep_us
 from utime import sleep_ms, ticks_us
-
+from machine import Pin, I2C
 class pca9685:
-    A=1.09972
-    freq_clk = 24501490.59296
+    A=1.09971
+    freq_clk = 25123059.74960
 
     def __init__(self, i2c, address=0x40, freq_refr=50, freq_clk=None, A=None):
         
