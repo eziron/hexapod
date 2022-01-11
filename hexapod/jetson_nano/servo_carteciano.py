@@ -700,7 +700,7 @@ class Hexapod():
 
         angulos = [
             [0.0, 0.0, 0.0, 0.0, 0.0, 0.0], #[0][n] = radio
-            [0.0, 0.0, 0.0, 0.0, 0.0, 0.0], #[1][n] = angulos bace/central
+            [0.0, 0.0, 0.0, 0.0, 0.0, 0.0], #[1][n] = angulos base/central
             [0.0, 0.0, 0.0, 0.0, 0.0, 0.0], #[2][n] = posicion -1 es a la derecha y 1 es a la izquierda
             [0.0, 0.0, 0.0, 0.0, 0.0, 0.0], #[3][n] = angulos frontal
             [0.0, 0.0, 0.0, 0.0, 0.0, 0.0], #[4][n] = angulos trasero
@@ -761,14 +761,27 @@ class Hexapod():
             for n in range(6):
                 angulos[1][n] = self.angulo_positivo(angulos[1][n])
 
-                if(self.movimiento_circular[6][n][0] != cord_r[0] or self.movimiento_circular[6][n][1] != cord_r[1]):
-                    self.movimiento_circular[0][n] = angulos[1][n]
+                #if(self.movimiento_circular[6][n][0] != cord_r[0] or self.movimiento_circular[6][n][1] != cord_r[1]):
+                #    self.movimiento_circular[0][n] = angulos[1][n]
 
                 angulos[3][n] = angulos[1][n] + (d_ang*angulos[2][n])
                 angulos[4][n] = angulos[1][n] - (d_ang*angulos[2][n])
 
                 if(estado):
                     if(self.secuencias_caminata[n_sec][n_step][0][n] is None):
+                        
+
+                        r_actual=self.dis_PaP_R2(self.cord_global[n][0:2],cord_r)
+                        ang_actual = math.atan2((self.cord_global[n][1]-cord_r[1]),(self.cord_global[n][0]-cord_r[0]))
+
+                        if((angulos[3][n] > 0 and angulos[4][n] > 0) or (angulos[3][n] < 0 and angulos[4][n] < 0)):
+                            ang_actual = self.angulo_positivo(ang_actual)
+
+                        self.movimiento_circular[0][n] = ang_actual
+                        self.movimiento_circular[1][n] = ang_actual
+                        self.movimiento_circular[2][n] = 0
+                        self.movimiento_circular[3][n] = r_actual
+                        self.movimiento_circular[6][n] = cord_r
                         ang = None
                     else:
                         if(self.secuencias_caminata[n_sec][n_step][0][n]==1):
@@ -786,6 +799,7 @@ class Hexapod():
                         else:
                             z_tar = 0
                     
+
                     self.polar_set_target_speed(
                         n,
                         ang,
