@@ -8,7 +8,7 @@ import math
 
 secuencia = [
     [
-        [
+        [#secuencia[0]
             [ 100.0, 350.0, 100.0], #[0] pie 1
             [ 250.0, 100.0,   0.0], #[1] pie 2
             [ 210.0,-285.0,   0.0], #[2] pie 3
@@ -61,7 +61,7 @@ secuencia = [
             80.0, #[10] H 
             0.3   #[11] step time
         ]
-    ],[
+    ],[#secuencia[1]
         [
             [ 210.0, 285.0,   0.0], #[0] pie 1
             [ 300.0,   0.0,   0.0], #[1] pie 2
@@ -115,7 +115,7 @@ secuencia = [
             80.0, #[10] H 
             0.3   #[11] step time
         ]
-    ],[
+    ],[#secuencia[2]
         [
             [ 210.0, 285.0,   0.0], #[0] pie 1
             [ 300.0,   0.0,   0.0], #[1] pie 2
@@ -170,11 +170,57 @@ secuencia = [
             2.0   #[11] step time
         ]
         
+    ],[#secuencia[3]
+        [
+            [ 250.0, 335.0,   0.0], #[0] pie 1
+            [ 350.0,   0.0,   0.0], #[1] pie 2
+            [ 250.0,-335.0,   0.0], #[2] pie 3
+            [-250.0,-335.0,   0.0], #[3] pie 4
+            [-350.0,   0.0,   0.0], #[4] pie 5
+            [-250.0, 335.0,   0.0], #[5] pie 6
+            [   0.0, -10.0,   0.0], #[6] Rotaciones
+            [  50.0,   0.0,   0.0], #[7] punto de rotacion
+            [  50.0,   0.0,   0.0], #[8] desplazamiento simple
+            [True,True,True,True,True,True],#[9] desplazamientos y rotaciones
+            100.0, #[10] H 
+            0.8   #[11] step time
+        ],
+        [
+            [ 250.0, 335.0,   0.0], #[0] pie 1
+            [ 350.0,   0.0,   0.0], #[1] pie 2
+            [ 250.0,-335.0,   0.0], #[2] pie 3
+            [-250.0,-335.0,   0.0], #[3] pie 4
+            [-350.0,   0.0,   0.0], #[4] pie 5
+            [-250.0, 335.0,   0.0], #[5] pie 6
+            [   0.0,  10.0,   0.0], #[6] Rotaciones
+            [ -50.0,   0.0,   0.0], #[7] punto de rotacion
+            [ -50.0,   0.0,   0.0], #[8] desplazamiento simple
+            [True,True,True,True,True,True],#[9] desplazamientos y rotaciones
+            100.0, #[10] H 
+            0.8   #[11] step time
+        ]
+    ],[
+        [
+            [ 250.0, 335.0,   0.0], #[0] pie 1
+            [ 350.0,   0.0,   0.0], #[1] pie 2
+            [ 250.0,-335.0,   0.0], #[2] pie 3
+            [-250.0,-335.0,   0.0], #[3] pie 4
+            [-350.0,   0.0,   0.0], #[4] pie 5
+            [-250.0, 335.0,   0.0], #[5] pie 6
+            [   0.0,   0.0,   0.0], #[6] Rotaciones
+            [   0.0,   0.0,   0.0], #[7] punto de rotacion
+            [   0.0,   0.0,   0.0], #[8] desplazamiento simple
+            [True,True,True,True,True,True],#[9] desplazamientos y rotaciones
+            80.0, #[10] H 
+            1.0   #[11] step time
+        ],
     ]
 ]
 seq = 2
 
-
+h = 80
+z = 50
+n_rep = 10
 
 try:
     Serial = serial.Serial("/dev/ttyTHS1",115200,timeout=0.1)
@@ -247,7 +293,7 @@ while estado:
     if(accion == 1):
 
         hexapod.reset_dt()
-        seq = 0
+        seq = 3
         for i in range(6):
             hexapod.lineal_set_target_time(i,secuencia[seq][0][i],1,False)
         bucle_movimiento()
@@ -255,7 +301,7 @@ while estado:
         hexapod.set_param_time(1,h=secuencia[seq][0][10])
         bucle_movimiento()
 
-        for n in range(5):
+        for n in range(n_rep):
             for x in secuencia[seq]:
                 for i in range(6):
                     hexapod.lineal_set_target_time(i,x[i],x[11],x[9][i])
@@ -281,7 +327,7 @@ while estado:
         hexapod.set_param_time(1,h=secuencia[seq][0][10])
         bucle_movimiento()
 
-        for n in range(5):
+        for n in range(n_rep):
             for x in secuencia[seq]:
                 for i in range(6):
                     hexapod.lineal_set_target_time(i,x[i],x[11],x[9][i])
@@ -328,7 +374,7 @@ while estado:
     elif(accion == 4):
         hexapod.reset_dt()
 
-        hexapod.set_param_time(2,h=100)
+        hexapod.set_param_time(2,h=h)
         bucle_movimiento()
 
         ang_speed = 3.0
@@ -366,7 +412,7 @@ while estado:
 
         hexapod.reset_dt()
 
-        hexapod.set_param_time(2,h=80)
+        hexapod.set_param_time(2,h=h)
         bucle_movimiento()
 
         for n in range(n_rep):
@@ -375,7 +421,7 @@ while estado:
                     n_sec=0,
                     n_step=n_step,
                     dis_arco=70,
-                    z=30,
+                    z=z,
                     lineal_speed=vel,
                     cord_r=[100000,0],
                     doble_cent_r=False,
@@ -390,13 +436,13 @@ while estado:
     elif(accion == 7 or accion == 8):
         if(accion == 7):
             vel = 300
-            n_rep = 5
+            n_rep = 10
         else:
             vel = 800
-            n_rep = 10
+            n_rep = 20
 
         hexapod.reset_dt()
-        hexapod.set_param_time(2,h=80)
+        hexapod.set_param_time(2,h=h)
         bucle_movimiento()
 
         for n in range(n_rep):
@@ -405,7 +451,7 @@ while estado:
                     n_sec=1,
                     n_step=n_step,
                     dis_arco=70,
-                    z=30,
+                    z=z,
                     lineal_speed=vel,
                     cord_r=[0,0],
                     doble_cent_r=False,
@@ -419,7 +465,7 @@ while estado:
     elif(accion == 9):
         hexapod.reset_dt()
 
-        hexapod.set_param_time(2,h=80)
+        hexapod.set_param_time(2,h=h)
         bucle_movimiento()
 
         for n in range(5):
@@ -428,7 +474,7 @@ while estado:
                     n_sec=0,
                     n_step=n_step,
                     dis_arco=70,
-                    z=30,
+                    z=z,
                     lineal_speed=300,
                     cord_r=[500,0],
                     doble_cent_r=False,
@@ -440,7 +486,7 @@ while estado:
     #giro descentralizado
     elif(accion == 10):
         hexapod.reset_dt()
-        hexapod.set_param_time(2,h=80)
+        hexapod.set_param_time(2,h=h)
         bucle_movimiento()
 
         for n in range(5):
@@ -449,7 +495,7 @@ while estado:
                     n_sec=1,
                     n_step=n_step,
                     dis_arco=70,
-                    z=30,
+                    z=z,
                     lineal_speed=300,
                     cord_r=[0,300],
                     doble_cent_r=False,
