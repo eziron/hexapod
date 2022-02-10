@@ -3,19 +3,20 @@ import serial
 import struct
 
 try:
-    Serial = serial.Serial("/dev/ttyTHS1",115200,timeout=0.1)
+    Serial = serial.Serial("/dev/ttyTHS1",2000000,timeout=0.1)
 except:
     os.system("echo 102938 | sudo -S chmod 666 /dev/ttyTHS1")
-    Serial = serial.Serial("/dev/ttyTHS1",115200,timeout=0.1)
+    Serial = serial.Serial("/dev/ttyTHS1",2000000,timeout=0.1)
 
 def actualizar_duty(duty_vals):
     msg_tx = struct.pack("<"+"H"*18,*duty_vals)
     Serial.write(msg_tx)
     msg_rx = Serial.readline()
+    print(msg_rx)
     if(msg_rx is None):
         print("raspberry pi pico no responde")
 
-duty = [
+"""duty = [
     2130, #[0]  - N    P6 sv2
     1520, #[1]  - N    P6 sv0
     1990, #[2]  - inv  P5 sv1
@@ -34,7 +35,10 @@ duty = [
     850 , #[15] - inv  P1 sv2
     1930, #[16] - inv  P6 sv1
     1000  #[17] - N    P1 sv1
-    ]
+    ]"""
+
+duty = [869, 1560, 1027, 719, 1580, 1215, 939, 1540, 1570, 2031, 1785, 1500, 2131, 1983, 1500, 2061, 1075, 1855]
+
 actualizar_duty(duty)
 
 

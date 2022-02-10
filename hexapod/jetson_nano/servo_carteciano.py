@@ -1,6 +1,8 @@
 import math
 from time import sleep, time
 
+from pandas import array
+
 class Hexapod():
     H = [20.0 ,20.0 ,0.0 ]
 
@@ -206,18 +208,18 @@ class Hexapod():
 
         sleep(1)
     
-    def angulo_positivo(self,ang,rad=True):
+    def angulo_positivo(self,ang: float,rad: bool =True):
         if(ang < 0):
             if(rad):
                 return (2*math.pi) + ang
             else:
-                return 360 + ang
+                return 360.0 + ang
         else:
             return ang
             
 
     #convierte cordenadas globales en cordenadas locales para cada pierna
-    def global_to_local(self,index,cord):
+    def global_to_local(self,index: int,cord: list):
         if(self.Pierna_param[index][2]):
             X = cord[0]-self.Pierna_param[index][1][0]
         else:
@@ -229,7 +231,7 @@ class Hexapod():
         return [X,Y,Z]
 
     #convierte cordenadas locales en cordenadas globales para cada pierna
-    def loca_to_global(self,index,cord):
+    def loca_to_global(self,index: int,cord: list):
         if(self.Pierna_param[index][2]):
             X = self.Pierna_param[index][1][0]+cord[0]
         else:
@@ -249,10 +251,10 @@ class Hexapod():
         return value
 
     #fija el largo de pulso de PWM de una mierna
-    def set_duty_pierna(self,index,duty_0,duty_1,duty_2):
-        self.all_duty_us[self.Pierna_param[index][0][0]] = self.contrain(round(duty_0),500,2500)
-        self.all_duty_us[self.Pierna_param[index][0][1]] = self.contrain(round(duty_1),500,2500)
-        self.all_duty_us[self.Pierna_param[index][0][2]] = self.contrain(round(duty_2),500,2500)
+    def set_duty_pierna(self,index:int,duty_0:int,duty_1:int,duty_2:int):
+        self.all_duty_us[self.Pierna_param[index][0][0]] = self.contrain(duty_0,500,2500)
+        self.all_duty_us[self.Pierna_param[index][0][1]] = self.contrain(duty_1,500,2500)
+        self.all_duty_us[self.Pierna_param[index][0][2]] = self.contrain(duty_2,500,2500)
 
     #actualiza el largo de pulso PWM de todo el robot
     def sv_duty(self):
@@ -269,12 +271,14 @@ class Hexapod():
         return math.sqrt(math.pow(X,2)+math.pow(Y,2)+math.pow(Z,2))
 
     #convierte el angulo del servo en su equivalente en largo de pulso PWM
-    def ang_a_duty(self,index_sv,ang):
+    def ang_a_duty(self,index_sv:int,ang:float)->int:
         if(self.servo_param[index_sv][1]):
             ang = self.contrain(ang+self.servo_param[index_sv][2],self.servo_param[index_sv][4][0],self.servo_param[index_sv][4][1])
         else:
             ang = self.contrain(ang+self.servo_param[index_sv][2],self.servo_param[index_sv][4][1],self.servo_param[index_sv][4][0])
-        return self.servo_param[index_sv][3][0]*ang+self.servo_param[index_sv][3][1]
+        
+        duty = self.servo_param[index_sv][3][0]*ang+self.servo_param[index_sv][3][1]
+        return round(duty)
     
     #fija y convierte el angulo de una pierna a sus equivalentes en largo de pulso PWM
     def set_ang_pierna(self,index,ang0,ang1,ang2):
@@ -289,7 +293,7 @@ class Hexapod():
         self.set_duty_pierna(index,duty_sv0,duty_sv1,duty_sv2)
 
     #toma las cordenadas globales de una pierna y calcula los angulos de cada servo
-    def set_cord(self,index,cord):
+    def set_cord(self,index:int,cord:list):
         P = self.global_to_local(index,cord)
         #P[0] = x
         #P[1] = y

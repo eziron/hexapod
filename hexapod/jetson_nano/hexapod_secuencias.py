@@ -322,15 +322,50 @@ h = 80
 z = 50
 n_rep = 10
 
+
 try:
-    Serial = serial.Serial("/dev/ttyTHS1",115200,timeout=0.1)
+    Serial = serial.Serial("/dev/ttyTHS1",1500000,timeout=0.1)
 except:
     os.system("echo 102938 | sudo -S chmod 666 /dev/ttyTHS1")
-    Serial = serial.Serial("/dev/ttyTHS1",115200,timeout=0.1)
+    Serial = serial.Serial("/dev/ttyTHS1",1500000,timeout=0.1)
+
+os.system("""sudo renice -20 -p $(pgrep "python3")""")
+
+
 
 print("iniciado")
 sleep(1)
 hexapod = Hexapod()
+
+def send_command(tipo,buffer):
+
+    if(isinstance(buffer,list)):
+        len_msg = len(buffer)
+        if(len_msg == 0):
+            return(False)
+    else:
+        len_msg = 1
+
+    if(tipo == 0):
+        #tipo ping pong, la RPI pico responde con los mismo bytes +1
+        buffer_type = "B"*len_msg
+
+    elif(tipo == 1 and len_msg == 18):
+        #envio de los duty
+        buffer_type = "H"*18
+    else:
+        return False
+    
+    try:
+        msg_tx = struct.pack("<HBB"+buffer_type,65.276,*tipo,*len_msg,*buffer)
+        Serial.write(msg_tx)
+        return True
+    except:
+        return False
+
+    
+def read_command():
+
 
 def truncar(val, val_min, val_max):
     if(val < val_min):
@@ -342,20 +377,28 @@ def truncar(val, val_min, val_max):
 
     return val
 
-def actualizar_duty():
-    duty_vals = hexapod.sv_duty()
-    #print(duty_vals)
-    msg_tx = struct.pack("<"+"H"*18,*duty_vals)
-    Serial.write(msg_tx)
+def actualizar_duty(duty_vals):
+    send_command(1,duty_vals)
     msg_rx = Serial.readline()
-    if(msg_rx is None):
-        print("raspberry pi pico no responde")
+    
+    if("Hola Mundo" in msg_rx.decode()):
+        return True
+    print("raspberry pi pico no responde")
+    return False
 
 def bucle_movimiento():
     estado = False
     while(not estado):
         estado,_,_,_,_,_ =hexapod.actualizar_cord()
-        actualizar_duty()
+        actualizar_duty(hexapod.sv_duty())
+
+duty = hexapod.sv_duty()
+while(not actualizar_duty(duty)):
+    print("error al conectar con la RPI pico")
+    Serial.close()
+    sleep(1)
+    Serial = serial.Serial("/dev/ttyTHS1",1500000,timeout=0.1)
+    sleep(1)
 
 hexapod.reset_dt()
 
@@ -396,7 +439,7 @@ while estado:
     if(accion == 1):
 
         hexapod.reset_dt()
-        seq = 3
+        seq = 0
         for i in range(6):
             hexapod.lineal_set_target_time(i,secuencia[seq][0][i],1,False)
         bucle_movimiento()

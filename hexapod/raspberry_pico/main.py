@@ -23,7 +23,7 @@ sv16.freq(333)
 sv17 = PWM(Pin(21,Pin.OUT))
 sv17.freq(333)
 
-serial = UART(0, 115200,tx=Pin(12),rx=Pin(13)) 
+serial = UART(0, 1500000,tx=Pin(12),rx=Pin(13)) 
 #print("Iniciado")
 
 pass_duty = [869, 1560, 1027, 719, 1580, 1215, 939, 1540, 1570, 2031, 1785, 1500, 2131, 1983, 1500, 2061, 1075, 1855]

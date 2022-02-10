@@ -6,7 +6,7 @@ class pca9685:
     A=1.09971
     freq_clk = 25123059.74960
 
-    def __init__(self, i2c, address=0x40, freq_refr=50, freq_clk=None, A=None):
+    def __init__(self, i2c: I2C, address=0x40, freq_refr=50, freq_clk=None, A=None):
         
         self.i2c = i2c 
         self.address = address
