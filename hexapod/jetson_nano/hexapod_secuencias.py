@@ -211,8 +211,108 @@ secuencia = [
             [   0.0,   0.0,   0.0], #[7] punto de rotacion
             [   0.0,   0.0,   0.0], #[8] desplazamiento simple
             [True,True,True,True,True,True],#[9] desplazamientos y rotaciones
-            80.0, #[10] H 
-            1.0   #[11] step time
+            150.0, #[10] H 
+            1.0,   #[11] step time
+            10.0 #[12] time sleep
+        ],[
+            [ 250.0, 335.0,  30.0], #[0] pie 1
+            [ 350.0,   0.0,   0.0], #[1] pie 2
+            [ 250.0,-335.0,  30.0], #[2] pie 3
+            [-250.0,-335.0,   0.0], #[3] pie 4
+            [-350.0,   0.0,  30.0], #[4] pie 5
+            [-250.0, 335.0,   0.0], #[5] pie 6
+            [   0.0,   0.0,   0.0], #[6] Rotaciones
+            [   0.0,   0.0,   0.0], #[7] punto de rotacion
+            [   0.0,   0.0,   0.0], #[8] desplazamiento simple
+            [True,True,True,True,True,True],#[9] desplazamientos y rotaciones
+            150.0, #[10] H 
+            1.0,   #[11] step time
+            0.0 #[12] time sleep
+        ],[
+            [ 145.0, 230.0,  10.0], #[0] pie 1
+            [ 350.0,   0.0,   0.0], #[1] pie 2
+            [ 145.0,-230.0,  10.0], #[2] pie 3
+            [-250.0,-335.0,   0.0], #[3] pie 4
+            [-222.0,   0.0,  10.0], #[4] pie 5
+            [-250.0, 335.0,   0.0], #[5] pie 6
+            [   0.0,   0.0,   0.0], #[6] Rotaciones
+            [   0.0,   0.0,   0.0], #[7] punto de rotacion
+            [   0.0,   0.0,   0.0], #[8] desplazamiento simple
+            [True,True,True,True,True,True],#[9] desplazamientos y rotaciones
+            150.0, #[10] H 
+            1.0,   #[11] step time
+            0.0 #[12] time sleep
+        ],
+        [
+            [ 145.0, 230.0,   0.0], #[0] pie 1
+            [ 350.0,   0.0,   0.0], #[1] pie 2
+            [ 145.0,-230.0,   0.0], #[2] pie 3
+            [-250.0,-335.0,   0.0], #[3] pie 4
+            [-222.0,   0.0,   0.0], #[4] pie 5
+            [-250.0, 335.0,   0.0], #[5] pie 6
+            [   0.0,   0.0,   0.0], #[6] Rotaciones
+            [   0.0,   0.0,   0.0], #[7] punto de rotacion
+            [   0.0,   0.0,   0.0], #[8] desplazamiento simple
+            [True,True,True,True,True,True],#[9] desplazamientos y rotaciones
+            150.0, #[10] H 
+            1.0,   #[11] step time
+            0.0 #[12] time sleep
+        ],[
+            [ 145.0, 230.0,   0.0], #[0] pie 1
+            [ 350.0,   0.0,  30.0], #[1] pie 2
+            [ 145.0,-230.0,   0.0], #[2] pie 3
+            [-250.0,-335.0,  30.0], #[3] pie 4
+            [-222.0,   0.0,   0.0], #[4] pie 5
+            [-250.0, 335.0,  30.0], #[5] pie 6
+            [   0.0,   0.0,   0.0], #[6] Rotaciones
+            [   0.0,   0.0,   0.0], #[7] punto de rotacion
+            [   0.0,   0.0,   0.0], #[8] desplazamiento simple
+            [True,True,True,True,True,True],#[9] desplazamientos y rotaciones
+            150.0, #[10] H 
+            1.0,   #[11] step time
+            0.0 #[12] time sleep
+        ],[
+            [ 145.0, 230.0,   0.0], #[0] pie 1
+            [ 222.0,   0.0,  10.0], #[1] pie 2
+            [ 145.0,-230.0,   0.0], #[2] pie 3
+            [-145.0,-230.0,  10.0], #[3] pie 4
+            [-222.0,   0.0,   0.0], #[4] pie 5
+            [-145.0, 230.0,  10.0], #[5] pie 6
+            [   0.0,   0.0,   0.0], #[6] Rotaciones
+            [   0.0,   0.0,   0.0], #[7] punto de rotacion
+            [   0.0,   0.0,   0.0], #[8] desplazamiento simple
+            [True,True,True,True,True,True],#[9] desplazamientos y rotaciones
+            150.0, #[10] H 
+            1.0,   #[11] step time
+            0.0 #[12] time sleep
+        ],[
+            [ 145.0, 230.0,   0.0], #[0] pie 1
+            [ 222.0,   0.0,   0.0], #[1] pie 2
+            [ 145.0,-230.0,   0.0], #[2] pie 3
+            [-145.0,-230.0,   0.0], #[3] pie 4
+            [-222.0,   0.0,   0.0], #[4] pie 5
+            [-145.0, 230.0,   0.0], #[5] pie 6
+            [   0.0,   0.0,   0.0], #[6] Rotaciones
+            [   0.0,   0.0,   0.0], #[7] punto de rotacion
+            [   0.0,   0.0,   0.0], #[8] desplazamiento simple
+            [True,True,True,True,True,True],#[9] desplazamientos y rotaciones
+            150.0, #[10] H 
+            1.0,   #[11] step time
+            0.0 #[12] time sleep
+        ],[
+            [ 145.0, 230.0,   0.0], #[0] pie 1
+            [ 222.0,   0.0,   0.0], #[1] pie 2
+            [ 145.0,-230.0,   0.0], #[2] pie 3
+            [-145.0,-230.0,   0.0], #[3] pie 4
+            [-222.0,   0.0,   0.0], #[4] pie 5
+            [-145.0, 230.0,   0.0], #[5] pie 6
+            [   0.0,   0.0,   0.0], #[6] Rotaciones
+            [   0.0,   0.0,   0.0], #[7] punto de rotacion
+            [   0.0,   0.0,   0.0], #[8] desplazamiento simple
+            [True,True,True,True,True,True],#[9] desplazamientos y rotaciones
+            280.0, #[10] H 
+            1.0,   #[11] step time
+            5.0 #[12] time sleep
         ],
     ]
 ]
@@ -276,9 +376,12 @@ while estado:
     print("8) giro rapido")
     print("9) caminata con giro")
     print("10) giro descentralizado")
+    print("11) salto")
 
     accion = int(input("ingrese el numero de accion: "))
-
+    #accion = 11
+    #estado = False
+    
     #cerrar codigo
     if(accion == 0):
         estado = False
@@ -504,6 +607,37 @@ while estado:
                 )
                 bucle_movimiento()
 
+    #salto
+    elif(accion == 11):
+        hexapod.reset_dt()
+        seq = 4
+        for i in range(6):
+            hexapod.lineal_set_target_time(i,secuencia[seq][0][i],1,False)
+        bucle_movimiento()
+
+        hexapod.set_param_time(1,h=secuencia[seq][0][10])
+        bucle_movimiento()
+
+        sleep(2)
+        hexapod.reset_dt()
+
+        for x in secuencia[seq]:
+            hexapod.reset_dt()
+
+            for i in range(6):
+                hexapod.lineal_set_target_time(i,x[i],x[11],x[9][i])
+            
+            hexapod.set_param_time(
+                    time=x[11],
+                    h=x[10],
+                    rot=x[6],
+                    p_rot=x[7],
+                    desp=x[8]
+                )
+            
+            bucle_movimiento()
+
+            sleep(x[12])
 
 
     hexapod.set_param_time(1,h=0,rot=[0,0,0],p_rot=[0,0,0],desp=[0,0,0])
