@@ -5,8 +5,8 @@ from machine import Pin, I2C
 class pca9685:
     A=1.09971
     freq_clk = 25123059.74960
-
-    def __init__(self, i2c: I2C, address=0x40, freq_refr=50, freq_clk=None, A=None):
+    i2c: I2C
+    def __init__(self, i2c: I2C, address:int=0x40, freq_refr:int=50, freq_clk=None, A=None):
         
         self.i2c = i2c 
         self.address = address
@@ -23,7 +23,7 @@ class pca9685:
         self._write(0x00, 0x00) # Mode1
         sleep(0.1)
 
-    def set_freq(self, freq_refr, freq_clk=None,A=None):
+    def set_freq(self, freq_refr:int, freq_clk=None,A=None):
         if(not freq_clk is None):
             self.freq_clk = freq_clk
         if(not A is None):
@@ -33,7 +33,7 @@ class pca9685:
         self.freq_refr = self.freq_clk/((prescale+self.A)*4096.0)
         self.set_prescale(prescale)
         
-    def set_prescale(self,prescale):
+    def set_prescale(self,prescale:int):
         prescale = self._contrain(round(prescale),0,255)
         old_mode = self._read(0x00) # Mode 1
         self._write(0x00, (old_mode & 0x7F) | 0x10) # Mode 1, sleep
@@ -43,14 +43,14 @@ class pca9685:
         self._write(0x00, old_mode | 0xa1) # Mode 1, autoincrement on
         sleep_ms(1)
 
-    def pwm(self, index, on=None, off=None):
+    def pwm(self, index:int, on=None, off=None):
         if on is None or off is None:
             data = self.i2c.readfrom_mem(self.address, 0x06 + 4 * index, 4)
             return ustruct.unpack('<HH', data)
         data = ustruct.pack('<HH', on, off)
         self.i2c.writeto_mem(self.address, 0x06 + 4 * index,  data)
 
-    def massive_pwm(self, array_vals=[]):
+    def massive_pwm(self, array_vals:list=[]):
         # array format
         # [
         #   [on,off], values for servo 0
@@ -79,11 +79,11 @@ class pca9685:
             return min_val
         return value
 
-    def set_duty_us(self,index ,duty_us):
+    def set_duty_us(self,index:int ,duty_us:int):
         count_val = round((duty_us*self.freq_refr*4096)/1000000)
         self.pwm(index,0,self._contrain(count_val,0,4096))
 
-    def set_massive_us(self,duty_us_array=[]):
+    def set_massive_us(self,duty_us_array:list=[]):
         # array format
         # [duty_0, duty_1, duty_2...duty_15]
 
@@ -115,7 +115,7 @@ class pca9685:
             [0,0]
         ])
 
-    def auto_calibration(self,feedback_pin,feedback_port,sample_time=1,print_samp = False):
+    def auto_calibration(self,feedback_pin:Pin,feedback_port:int,sample_time:float=1.0,print_samp:bool = False):
         samples = []
         sample_time = sample_time*1000000
         for prescale in range(3,256,1):
