@@ -1,5 +1,7 @@
 import os
 
-for x in os.listdir():
+files = os.listdir()
+print(files)
+for x in files:
     print ("remove: ",x) 
     os.remove(x)

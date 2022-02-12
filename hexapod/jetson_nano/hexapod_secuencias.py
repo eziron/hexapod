@@ -1,8 +1,9 @@
+import imp
 import os
 import serial
-import struct
 from time import sleep, time
 from servo_carteciano import Hexapod
+from protocolo_serial import pro_Serial
 import math
 
 
@@ -324,47 +325,18 @@ n_rep = 10
 
 
 try:
-    Serial = serial.Serial("/dev/ttyTHS1",1500000,timeout=0.1)
+    Serial = serial.Serial("/dev/ttyTHS1",1500000,timeout=0.01)
 except:
     os.system("echo 102938 | sudo -S chmod 666 /dev/ttyTHS1")
-    Serial = serial.Serial("/dev/ttyTHS1",1500000,timeout=0.1)
+    Serial = serial.Serial("/dev/ttyTHS1",1500000,timeout=0.01)
 
 os.system("""sudo renice -20 -p $(pgrep "python3")""")
 
-
+serial_com = pro_Serial(Serial)
 
 print("iniciado")
 sleep(1)
 hexapod = Hexapod()
-
-def send_command(tipo,buffer):
-
-    if(isinstance(buffer,list)):
-        len_msg = len(buffer)
-        if(len_msg == 0):
-            return(False)
-    else:
-        len_msg = 1
-
-    if(tipo == 0):
-        #tipo ping pong, la RPI pico responde con los mismo bytes +1
-        buffer_type = "B"*len_msg
-
-    elif(tipo == 1 and len_msg == 18):
-        #envio de los duty
-        buffer_type = "H"*18
-    else:
-        return False
-    
-    try:
-        msg_tx = struct.pack("<HBB"+buffer_type,65.276,*tipo,*len_msg,*buffer)
-        Serial.write(msg_tx)
-        return True
-    except:
-        return False
-
-    
-def read_command():
 
 
 def truncar(val, val_min, val_max):
@@ -377,27 +349,19 @@ def truncar(val, val_min, val_max):
 
     return val
 
-def actualizar_duty(duty_vals):
-    send_command(1,duty_vals)
-    msg_rx = Serial.readline()
-    
-    if("Hola Mundo" in msg_rx.decode()):
-        return True
-    print("raspberry pi pico no responde")
-    return False
 
 def bucle_movimiento():
     estado = False
     while(not estado):
         estado,_,_,_,_,_ =hexapod.actualizar_cord()
-        actualizar_duty(hexapod.sv_duty())
+        serial_com.send_duty(hexapod.sv_duty())
 
-duty = hexapod.sv_duty()
-while(not actualizar_duty(duty)):
+while(serial_com.ping() is None):
     print("error al conectar con la RPI pico")
     Serial.close()
     sleep(1)
     Serial = serial.Serial("/dev/ttyTHS1",1500000,timeout=0.1)
+    serial_com = pro_Serial(Serial)
     sleep(1)
 
 hexapod.reset_dt()

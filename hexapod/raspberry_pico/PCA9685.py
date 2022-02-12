@@ -83,7 +83,7 @@ class pca9685:
         count_val = round((duty_us*self.freq_refr*4096)/1000000)
         self.pwm(index,0,self._contrain(count_val,0,4096))
 
-    def set_massive_us(self,duty_us_array:list=[]):
+    def set_massive_us(self,duty_us_array=[]):
         # array format
         # [duty_0, duty_1, duty_2...duty_15]
 
