@@ -1,4 +1,3 @@
-import imp
 import os
 import serial
 from time import sleep, time
@@ -323,12 +322,11 @@ h = 80
 z = 50
 n_rep = 10
 
-
 try:
-    Serial = serial.Serial("/dev/ttyTHS1",1500000,timeout=0.01)
+    Serial = serial.Serial("/dev/ttyTHS1",1500000,timeout=0.05)
 except:
     os.system("echo 102938 | sudo -S chmod 666 /dev/ttyTHS1")
-    Serial = serial.Serial("/dev/ttyTHS1",1500000,timeout=0.01)
+    Serial = serial.Serial("/dev/ttyTHS1",1500000,timeout=0.05)
 
 os.system("""sudo renice -20 -p $(pgrep "python3")""")
 
@@ -337,7 +335,6 @@ serial_com = pro_Serial(Serial)
 print("iniciado")
 sleep(1)
 hexapod = Hexapod()
-
 
 def truncar(val, val_min, val_max):
     if(val < val_min):
@@ -360,7 +357,7 @@ while(serial_com.ping() is None):
     print("error al conectar con la RPI pico")
     Serial.close()
     sleep(1)
-    Serial = serial.Serial("/dev/ttyTHS1",1500000,timeout=0.1)
+    Serial = serial.Serial("/dev/ttyTHS1",1500000,timeout=0.05)
     serial_com = pro_Serial(Serial)
     sleep(1)
 
@@ -506,7 +503,7 @@ while estado:
             hexapod.rotacion[1][1] = hexapod.rotacion[0][1]
 
             hexapod.actualizar_rot_desp()
-            actualizar_duty()
+            serial_com.send_duty(hexapod.sv_duty())
 
         hexapod.set_param_time(1,rot=[math.sin(ang)*max_ang,math.cos(ang)*max_ang,0])
         bucle_movimiento()
