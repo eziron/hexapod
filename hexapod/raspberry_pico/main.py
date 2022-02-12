@@ -1,7 +1,10 @@
-from machine import Pin, PWM, I2C, UART
+from machine import Pin, PWM, I2C, UART, freq
 from time import sleep_ms
 from PCA9685 import pca9685
 from protocolo_serial import pro_Serial
+
+freq(240000000)
+#print(freq())
 
 SDA = Pin(2)
 SCL = Pin(3)
@@ -36,7 +39,6 @@ while True:
                     buffer[i] = buffer[i]+1
                     if(buffer[i] > 255):
                         buffer[i] = 0
-                
                 serial_com.send_command(0,"B",buffer)
             elif(tipo == 1 and len(buffer) == 18):
                 serial_com.send_command(1,"B",[5,5])

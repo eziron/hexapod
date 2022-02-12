@@ -17,9 +17,8 @@ class pro_Serial():
                 len_msg = 1
                 buffer = [buffer]
         
-        
             msg_tx = struct.pack(
-                ">BBBcB"+(tipo_dato*len_msg),
+                ">BBBsB"+(tipo_dato*len_msg),
                 self.synq_Byte1,#B
                 self.synq_Byte2,#B
                 tipo_command,#B
@@ -34,9 +33,9 @@ class pro_Serial():
 
         
     def read_command(self):
-        C = self.Serial.read()
+        C = self.Serial.read(1)
         if(not (C is None) and (C[0] == self.synq_Byte1)):
-            C = self.Serial.read()
+            C = self.Serial.read(1)
             if(not (C is None) and (C[0] == self.synq_Byte2)):
                 info_bytes = self.Serial.read(3)
                 if(not info_bytes is None):
