@@ -318,8 +318,8 @@ secuencia = [
 ]
 seq = 2
 
-h = 80
-z = 50
+h = 180
+z = 120
 n_rep = 10
 
 try:
@@ -512,10 +512,10 @@ while estado:
     elif(accion == 5 or accion == 6):
         if(accion == 5):
             vel = 300
-            n_rep = 5
+            n_rep = 20
         else:
             vel = 800
-            n_rep = 10
+            n_rep = 40
 
         hexapod.reset_dt()
 
