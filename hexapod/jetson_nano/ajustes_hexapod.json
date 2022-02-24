@@ -1,0 +1,196 @@
+{
+    "general": {
+        "m": [
+            71.0,
+            110.0,
+            150.0
+        ],
+        "baudrate": 1500000
+    },
+    "P1": {
+        "sv0": {
+            "giro_inv": false,
+            "duty_base": 1550,
+            "ang_desfase": 135,
+            "n_sv": 17
+        },
+        "sv1": {
+            "giro_inv": true,
+            "duty_base": 1056,
+            "ang_desfase": 0,
+            "n_sv": 14
+        },
+        "sv2": {
+            "giro_inv": false,
+            "duty_base": 678,
+            "ang_desfase": -90,
+            "n_sv": 15
+        },
+        "pierna": {
+            "giro_inf": true,
+            "cord_sv": [
+                80.0,
+                165.0
+            ],
+            "cord_base": [
+                250.0,
+                335.0
+            ]
+        }
+    },
+    "P2": {
+        "sv0": {
+            "giro_inv": false,
+            "duty_base": 1500,
+            "ang_desfase": 90,
+            "n_sv": 11
+        },
+        "sv1": {
+            "giro_inv": true,
+            "duty_base": 1056,
+            "ang_desfase": 0,
+            "n_sv": 13
+        },
+        "sv2": {
+            "giro_inv": false,
+            "duty_base": 678,
+            "ang_desfase": -90,
+            "n_sv": 12
+        },
+        "pierna": {
+            "giro_inf": true,
+            "cord_sv": [
+                130.0,
+                0.0
+            ],
+            "cord_base": [
+                350.0,
+                0.0
+            ]
+        }
+    },
+    "P3": {
+        "sv0": {
+            "giro_inv": false,
+            "duty_base": 1500,
+            "ang_desfase": 15,
+            "n_sv": 8
+        },
+        "sv1": {
+            "giro_inv": true,
+            "duty_base": 1056,
+            "ang_desfase": 0,
+            "n_sv": 10
+        },
+        "sv2": {
+            "giro_inv": false,
+            "duty_base": 678,
+            "ang_desfase": -90,
+            "n_sv": 9
+        },
+        "pierna": {
+            "giro_inf": true,
+            "cord_sv": [
+                80.0,
+                165.0
+            ],
+            "cord_base": [
+                250.0,
+                -335.0
+            ]
+        }
+    },
+    "P4": {
+        "sv0": {
+            "giro_inv": true,
+            "duty_base": 1500,
+            "ang_desfase": 45,
+            "n_sv": 7
+        },
+        "sv1": {
+            "giro_inv": false,
+            "duty_base": 1944,
+            "ang_desfase": 0,
+            "n_sv": 5
+        },
+        "sv2": {
+            "giro_inv": true,
+            "duty_base": 2322,
+            "ang_desfase": -90,
+            "n_sv": 6
+        },
+        "pierna": {
+            "giro_inf": false,
+            "cord_sv": [
+                -80.0,
+                -165.0
+            ],
+            "cord_base": [
+                -250.0,
+                -335.0
+            ]
+        }
+    },
+    "P5": {
+        "sv0": {
+            "giro_inv": true,
+            "duty_base": 1500,
+            "ang_desfase": 90,
+            "n_sv": 4
+        },
+        "sv1": {
+            "giro_inv": false,
+            "duty_base": 1944,
+            "ang_desfase": 0,
+            "n_sv": 2
+        },
+        "sv2": {
+            "giro_inv": true,
+            "duty_base": 2322,
+            "ang_desfase": -90,
+            "n_sv": 3
+        },
+        "pierna": {
+            "giro_inv": false,
+            "cord_sv": [
+                -130.0,
+                0.0
+            ],
+            "cord_base": [
+                -350.0,
+                0.0
+            ]
+        }
+    },
+    "P6": {
+        "sv0": {
+            "giro_inv": true,
+            "duty_base": 1500,
+            "ang_desfase": 135,
+            "n_sv": 16
+        },
+        "sv1": {
+            "giro_inv": false,
+            "duty_base": 1944,
+            "ang_desfase": 0,
+            "n_sv": 1
+        },
+        "sv2": {
+            "giro_inv": true,
+            "duty_base": 2322,
+            "ang_desfase": -90,
+            "n_sv": 0
+        },
+        "pierna": {
+            "giro_inf": false,
+            "cord_sv": [
+                -80.0,
+                165.0
+            ],
+            "cord_base": [
+                -250.0,
+                335.0
+            ]
+        }
+    }
+}

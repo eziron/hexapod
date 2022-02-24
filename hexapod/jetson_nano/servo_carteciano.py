@@ -14,24 +14,24 @@ class Hexapod():
         #[n][2] = angulo de desfase
         #[n][3] = parametros de una ecuacion lineal [m,A] , donde x es el
         #[n][4] = angulos limite, para 500us y 2500us
-        [2380,True , -90, [0,0],[0,0]], #[0]  - N    P6 sv2
-        [1520,True , 135, [0,0],[0,0]], #[1]  - N    P6 sv0
+        [2322,True , -90, [0,0],[0,0]], #[0]  - N    P6 sv2
+        [1930,False,   0, [0,0],[0,0]], #[1]  - inv  P6 sv1
         [1990,False,   0, [0,0],[0,0]], #[2]  - inv  P5 sv1
-        [2170,True , -90, [0,0],[0,0]], #[3]  - N    P5 sv2
-        [1540,True ,  90, [0,0],[0,0]], #[4]  - N    P5 sv0
+        [2322,True , -90, [0,0],[0,0]], #[3]  - N    P5 sv2
+        [1500,True ,  90, [0,0],[0,0]], #[4]  - N    P5 sv0
         [2070,False,   0, [0,0],[0,0]], #[5]  - inv  P4 sv1
         [2322,True , -90, [0,0],[0,0]], #[6]  - N    P4 sv2
-        [1540,True ,  45, [0,0],[0,0]], #[7]  - N    P4 sv0
-        [1510,False,  45, [0,0],[0,0]], #[8]  - inv  P3 sv0
+        [1500,True ,  45, [0,0],[0,0]], #[7]  - N    P4 sv0
+        [1500,False,  45, [0,0],[0,0]], #[8]  - inv  P3 sv0
         [678 ,False, -90, [0,0],[0,0]], #[9]  - inv  P3 sv2
-        [930 ,True ,   0, [0,0],[0,0]], #[10] - N    P3 sv1
-        [1450,False,  90, [0,0],[0,0]], #[11] - inv  P2 sv0
+        [1056,True ,   0, [0,0],[0,0]], #[10] - N    P3 sv1
+        [1500,False,  90, [0,0],[0,0]], #[11] - inv  P2 sv0
         [678 ,False, -90, [0,0],[0,0]], #[12] - inv  P2 sv2
-        [1020,True ,   0, [0,0],[0,0]], #[13] - N    P2 sv1
-        [1550,False, 135, [0,0],[0,0]], #[14] - inv  P1 sv0
-        [850 ,False, -90, [0,0],[0,0]], #[15] - inv  P1 sv2
-        [1930,False,   0, [0,0],[0,0]], #[16] - inv  P6 sv1
-        [1000,True ,   0, [0,0],[0,0]], #[17] - N    P1 sv1
+        [1056,True ,   0, [0,0],[0,0]], #[13] - N    P2 sv1
+        [1056,True ,   0, [0,0],[0,0]], #[14] - N    P1 sv1
+        [678 ,False, -90, [0,0],[0,0]], #[15] - inv  P1 sv2
+        [1500,True , 135, [0,0],[0,0]], #[16] - N    P6 sv0
+        [1500,False, 135, [0,0],[0,0]], #[17] - inv  P1 sv0
     ]
 
     Pierna_param = [
@@ -39,12 +39,12 @@ class Hexapod():
         #[n][1][0:1] cordenadas [x,y] del origen de la pierna
         #[n][2] eje X inverso
         #[n][3] cordenadas de origen movimiento
-        [[14, 17, 15], [  80.0   , 165.0  ], True  ,[ 250.0, 335.0, 0.0]], #[0]
+        [[17, 14, 15], [  80.0   , 165.0  ], True  ,[ 250.0, 335.0, 0.0]], #[0]
         [[11, 13, 12], [ 130.0   ,   0.0  ], True  ,[ 350.0,   0.0, 0.0]], #[1]
         [[ 8, 10,  9], [  80.0   ,-165.0  ], True  ,[ 250.0,-335.0, 0.0]], #[2]
         [[ 7,  5,  6], [ -80.0   ,-165.0  ], False ,[-250.0,-335.0, 0.0]], #[3]
         [[ 4,  2,  3], [-130.0   ,   0.0  ], False ,[-350.0,   0.0, 0.0]], #[4]
-        [[ 1, 16,  0], [ -80.0   , 165.0  ], False ,[-250.0, 335.0, 0.0]], #[5]
+        [[16,  1,  0], [ -80.0   , 165.0  ], False ,[-250.0, 335.0, 0.0]], #[5]
         [71.0, 110.0, 180.0]  #[6] distancias entre ejes, m0, m1, m2
     ]
     #[0][n][xyz] Cordenadas actuales
@@ -184,7 +184,30 @@ class Hexapod():
     ]
 
 
-    def __init__(self):
+    def __init__(self,conf_hexapod = None):
+        if(not conf_hexapod is None):
+            for n_p,P in enumerate(["P1","P2","P3","P4","P5","P6"]):
+                for n_sv,sv in enumerate(["sv0","sv1","sv2"]):
+                    n_duty = conf_hexapod[P][sv]["n_sv"]
+                    self.servo_param[n_duty][0] = conf_hexapod[P][sv]["duty_base"]
+                    self.servo_param[n_duty][1] = conf_hexapod[P][sv]["giro_inv"]
+                    self.servo_param[n_duty][2] = conf_hexapod[P][sv]["ang_desfase"]
+                
+                    self.Pierna_param[n_p][0][n_sv] = n_duty
+                
+                self.Pierna_param[n_p][1][0] = conf_hexapod[P]["pierna"]["cord_sv"][0]
+                self.Pierna_param[n_p][1][1] = conf_hexapod[P]["pierna"]["cord_sv"][1]
+
+                self.Pierna_param[n_p][3][0] = conf_hexapod[P]["pierna"]["cord_base"][0]
+                self.Pierna_param[n_p][3][1] = conf_hexapod[P]["pierna"]["cord_base"][1]
+                self.Pierna_param[n_p][3][2] = 0.0
+
+                self.Pierna_param[n_p][2] = conf_hexapod[P]["pierna"]["giro_inv"]
+            
+            self.Pierna_param[6][0] = conf_hexapod["general"]["m"][0]
+            self.Pierna_param[6][1] = conf_hexapod["general"]["m"][1]
+            self.Pierna_param[6][2] = conf_hexapod["general"]["m"][2]
+            
         for n in range(len(self.servo_param)):
             if(self.servo_param[n][1]):
                 self.servo_param[n][3][0] = 1000/90
