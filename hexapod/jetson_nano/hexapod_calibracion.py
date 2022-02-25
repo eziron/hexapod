@@ -31,13 +31,13 @@ while(serial_com.ping() is None):
     serial_com = pro_Serial(Serial)
     sleep(1)
 
-def actualizar_duty(duty_vals):
-    msg_tx = struct.pack("<"+"H"*18,*duty_vals)
-    Serial.write(msg_tx)
-    msg_rx = Serial.readline()
-    print(msg_rx)
-    if(msg_rx is None):
-        print("raspberry pi pico no responde")
+def constrain(val, min_val, max_val):
+    if(val < min_val):
+        return min_val
+    elif(val > max_val):
+        return max_val
+    else:
+        return val
 #duty perfecto
 #para sv2 N   - 2322 = 164gr
 #para sv2 INV - 678  = 164gr
@@ -76,7 +76,6 @@ for P in ["P1","P2","P3","P4","P5","P6"]:
 
 serial_com.send_duty(duty)
 
-
 duty_val = 0
 estado = True
 estado2 = True
@@ -91,15 +90,21 @@ while(estado):
             print("duty actual de P"+str(n_p)+" / sv"+str(n_sv)+" / n_duty=",n_duty," es: ", duty[n_duty])
 
             while(estado2):
-                duty_val = int(input("ingrese duty [500-2500]: "))
-                if(duty_val >= 500 and duty_val <= 2500):
+                #duty_val = int(input("ingrese duty [500-2500]: "))
+                duty_str = input("ingrese duty [500-2500]: ")
+                duty_val = int(duty_str)
+                if("+" in duty_str or "-" in duty_str):
+                    duty[n_duty] = constrain(duty[n_duty] + duty_val,500,2500)
+                    print("nuevo duty = ",duty[n_duty])
+                elif(duty_val >= 500 and duty_val <= 2500):
                     duty[n_duty] = duty_val
-                    serial_com.send_duty(duty)
                 elif(duty_val == 9):
                     estado2 = False
                     estado = False
                 else:
                     estado2 = False
+
+                serial_com.send_duty(duty)
         elif(n_sv == 9):
             estado = False
     elif(n_p == 9):
