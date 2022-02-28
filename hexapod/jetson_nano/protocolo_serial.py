@@ -2,6 +2,14 @@ import struct
 from serial import Serial
 from time import time
 
+#Formato de los paquetes
+#byte[0] = primer byte de sincronisacion
+#byte[1] = segundo byte de sincronisacion
+#byte[2] = Tipo de comando
+#byte[3] = formato de los datos
+#byte[4] = numero de datos
+#byte[5:] = datos
+
 class pro_Serial():
     def __init__(self,Serial:Serial,synq_Byte1 = 254,synq_Byte2 = 252):
         self.Serial = Serial
