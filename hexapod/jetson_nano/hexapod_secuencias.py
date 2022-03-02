@@ -6,7 +6,6 @@ from servo_carteciano import Hexapod
 from protocolo_serial import pro_Serial
 import math
 
-
 secuencia = [
     [#secuencia[0] Baile 1
         [
@@ -382,8 +381,8 @@ secuencia = [
 ]
 seq = 2
 
-h = 70
-z = 50
+h = 100
+z = 60
 n_rep = 10
 
 json_PATH = 'hexapod/jetson_nano/ajustes_hexapod.json'
@@ -392,13 +391,17 @@ with open(json_PATH) as json_file:
 
 baud = conf_hexapod["general"]["baudrate"]
 
-try:
-    Serial = serial.Serial("/dev/ttyTHS1",baud,timeout=0.05)
-except:
-    os.system("echo 102938 | sudo -S chmod 666 /dev/ttyTHS1")
-    Serial = serial.Serial("/dev/ttyTHS1",baud,timeout=0.05)
+while True:
+    try:
+        Serial = serial.Serial("/dev/ttyTHS1",baud,timeout=0.05)
+        os.system("""sudo renice -20 -p $(pgrep "python3")""")
+        break
+    except:
+        print("Error al inisiar el serial")
+        os.system("echo 102938 | sudo -S chmod 666 /dev/ttyTHS1")
+        Serial = serial.Serial("/dev/ttyTHS1",baud,timeout=0.05)
 
-os.system("""sudo renice -20 -p $(pgrep "python3")""")
+    
 
 serial_com = pro_Serial(Serial)
 
@@ -548,7 +551,7 @@ while estado:
             n_rep = 20
         else:
             vel = 800
-            n_rep = 40
+            n_rep = 20
 
         hexapod.reset_dt()
 
