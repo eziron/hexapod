@@ -68,10 +68,8 @@ class pro_Serial():
 
             tipo,buffer = self.read_command()
             if(not (tipo is None or buffer is None)):
-                print(buffer)
-                #if(tipo == 1 and len(buffer) == 3 and (buffer[0] > 400 and buffer[0] < 2600) and (buffer[1] > 400 and buffer[1] < 2600) and (buffer[2] > 400 and buffer[2] < 2600)):
-
-                return True
+                if(tipo == 1 and len(buffer) == 2 and buffer[0] == 5 and buffer[1] == 5):
+                    return True
         
         return False
 
