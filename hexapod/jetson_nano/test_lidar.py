@@ -36,7 +36,7 @@ while (time.time() - time_ref < 25):
         z = math.cos(ang2)*dist
 
         hipo = abs(x)
-        ang = math.atan2(0,x)+(ang1-90)
+        ang = math.atan2(0,x)+(ang1-math.pi/2)
 
         X = math.sin(ang)*hipo
         Y = math.cos(ang)*hipo
@@ -51,4 +51,6 @@ print(len(samp)/25)
 
 pcd = o3d.geometry.PointCloud()
 pcd.points = o3d.utility.Vector3dVector(samp)
+
+o3d.io.write_point_cloud("sync.ply", pcd)
 o3d.visualization.draw_geometries([pcd])
