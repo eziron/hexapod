@@ -379,13 +379,21 @@ secuencia = [
         ],
     ]
 ]
-seq = 2
 
-h = 100
-z = 60
-n_rep = 10
+h = 120
+z = 80
+arco = 70
+n_rep = 2
+low_speed = 300
+high_speed = 800
+caminata_p_rot = [100000,0]
+caminata_giro_izq = [500,0]
+caminata_giro_der = [-500,0]
+giro_des_frontal = [0,500]
+giro_des_trasero = [0,-500]
 
-json_PATH = 'hexapod/jetson_nano/ajustes_hexapod.json'
+#json_PATH = '/home/rodrigo/hexapod/jetson_nano/ajustes_hexapod.json'
+json_PATH = "/home/rodrigo/hexapod/hexapod/jetson_nano/ajustes_hexapod.json"
 with open(json_PATH) as json_file:
     conf_hexapod = json.load(json_file)
 
@@ -456,7 +464,29 @@ def ejecutar_secuencia(n_seq:int,rep:int):
             bucle_movimiento()
 
             sleep(x[12])
-        
+
+
+def ejecutar_caminata(n_seqf,n_repf=5,speedf=300,hf=80,zf=50,arcof=70,cent_rotf = [0,0]):
+    hexapod.reset_dt()
+
+    hexapod.set_param_time(2,h=hf)
+    bucle_movimiento()
+
+    for n in range(n_repf):
+        for n_step in range(6):
+            hexapod.polar_set_step_caminata(
+                n_sec=n_seqf,
+                n_step=n_step,
+                dis_arco=arcof,
+                z=zf,
+                lineal_speed=speedf,
+                cord_r=cent_rotf,
+                doble_cent_r=False,
+                r_por_pie=True,
+                estado=True
+            )
+            bucle_movimiento()
+
 while(serial_com.ping() is None):
     print("error al conectar con la RPI pico")
     Serial.close()
@@ -474,18 +504,38 @@ estado = True
 while estado:
     print("acciones posibles:")
     print("0) cerrar codigo")
-    print("1) baile 1")
-    print("2) baile 2")
-    print("3) movimiento random")
-    print("4) rotacion")
-    print("5) caminata")
-    print("6) caminata rapida")
-    print("7) giro")
-    print("8) giro rapido")
+    print("--------")
+    print("8) caminata hacia adelante")
+    print("2) caminata hacia atras")
+    print("88) caminata rapida hacia adelante")
+    print("22) caminata rapida hacia atras")
+    print("--------")
+    print("4) giro hacia la izquierda")
+    print("6) giro hacia la derecha")
+    print("44) giro rapido hacia la izquierda")
+    print("66) giro rapido hacia la derecha")
+    print("--------")
+    print("9) caminata hacia adelante con giro a la izquierda")
+    print("7) caminata hacia adelante con giro a la derecha")
+    print("3) caminata hacia atras con giro a la izquierda")
+    print("1) caminata hacia atras con giro a la derecha")
+    print("--------")
+    print("99) giro descentralizado, frontal derecha")
+    print("77) giro descentralizado, frontal izquierda")
+    print("33) giro descentralizado, tracera derecha")
+    print("11) giro descentralizado, tracera izquierda")
+    print("--------")
+    print("10) baile 1")
+    print("12) baile 2")
+    print("13) movimiento random")
+    print("14) rotacion")
+    print("15) salto")
+    print("16) test de carga")
+    
+
     print("9) caminata con giro")
     print("10) giro descentralizado")
-    print("11) salto")
-    print("12) test de carga")
+    
 
     accion = int(input("ingrese el numero de accion: "))
     #accion = 11
@@ -500,21 +550,83 @@ while estado:
         for i in range(6):
             hexapod.lineal_set_target_time(i,hexapod.Pierna_param[i][3],1)
         bucle_movimiento()
+
+    #8) caminata hacia adelante")
+    elif(accion == 8):
+        ejecutar_caminata(0,n_rep,low_speed,h,z,arco,caminata_p_rot)
+
+    #2) caminata hacia atras")
+    elif(accion == 2):
+        ejecutar_caminata(1,n_rep,low_speed,h,z,arco,caminata_p_rot)
+
+    #88) caminata rapida hacia adelante")
+    elif(accion == 88):
+        ejecutar_caminata(0,n_rep,high_speed,h,z,arco,caminata_p_rot)
+
+    #22) caminata rapida hacia atras")
+    elif(accion == 22):
+        ejecutar_caminata(1,n_rep,high_speed,h,z,arco,caminata_p_rot)
     
+    #4) giro hacia la izquierda")
+    elif(accion == 4):
+        ejecutar_caminata(2,n_rep,low_speed,h,z,arco,[0,0])
+    #6) giro hacia la derecha")
+    elif(accion == 6):
+        ejecutar_caminata(3,n_rep,low_speed,h,z,arco,[0,0])
+    #44) giro rapido hacia la izquierda")
+    elif(accion == 44):
+        ejecutar_caminata(2,n_rep,high_speed,h,z,arco,[0,0])
+    #66) giro rapido hacia la derecha")
+    elif(accion == 66):
+        ejecutar_caminata(3,n_rep,high_speed,h,z,arco,[0,0])
+    
+    #9) caminata hacia adelante con giro a la izquierda")
+    elif(accion == 9):
+        ejecutar_caminata(0,n_rep,low_speed,h,z,arco,caminata_giro_izq)
+
+    #7) caminata hacia adelante con giro a la derecha")
+    elif(accion == 7):
+        ejecutar_caminata(0,n_rep,low_speed,h,z,arco,caminata_giro_der)
+
+    #3) caminata hacia atras con giro a la izquierda")
+    elif(accion == 3):
+        ejecutar_caminata(1,n_rep,low_speed,h,z,arco,caminata_giro_izq)
+
+    #1) caminata hacia atras con giro a la derecha")
+    elif(accion == 1):
+        ejecutar_caminata(1,n_rep,low_speed,h,z,arco,caminata_giro_der)
+
+    #99) giro descentralizado, frontal derecha")
+    elif(accion == 99):
+        ejecutar_caminata(2,n_rep,low_speed,h,z,arco,giro_des_frontal)
+
+    #77) giro descentralizado, frontal izquierda")
+    elif(accion == 77):
+        ejecutar_caminata(3,n_rep,low_speed,h,z,arco,giro_des_frontal)
+
+    #33) giro descentralizado, tracera derecha")
+    elif(accion == 33):
+        ejecutar_caminata(3,n_rep,low_speed,h,z,arco,giro_des_trasero)
+
+    #11) giro descentralizado, tracera izquierda")
+    elif(accion == 11):
+        ejecutar_caminata(2,n_rep,low_speed,h,z,arco,giro_des_trasero)
+
+
     #baile 1
-    if(accion == 1):
+    if(accion == 10):
         ejecutar_secuencia(0,10)
 
     #baile 2
-    elif(accion == 2):
+    elif(accion == 12):
         ejecutar_secuencia(1,10)
 
     #movimiento random
-    elif(accion == 3):
+    elif(accion == 13):
         ejecutar_secuencia(2,1)
 
     #Rotacion
-    elif(accion == 4):
+    elif(accion == 14):
         hexapod.reset_dt()
 
         hexapod.set_param_time(2,h=h)
@@ -544,113 +656,12 @@ while estado:
         hexapod.set_param_time(1,rot=[math.sin(ang)*max_ang,math.cos(ang)*max_ang,0])
         bucle_movimiento()
 
-    #caminata
-    elif(accion == 5 or accion == 6):
-        if(accion == 5):
-            vel = 300
-            n_rep = 20
-        else:
-            vel = 800
-            n_rep = 20
-
-        hexapod.reset_dt()
-
-        hexapod.set_param_time(2,h=h)
-        bucle_movimiento()
-
-        for n in range(n_rep):
-            for n_step in range(6):
-                hexapod.polar_set_step_caminata(
-                    n_sec=0,
-                    n_step=n_step,
-                    dis_arco=70,
-                    z=z,
-                    lineal_speed=vel,
-                    cord_r=[100000,0],
-                    doble_cent_r=False,
-                    r_por_pie=True,
-                    estado=True
-                )
-                bucle_movimiento()
-
-    #giro
-    elif(accion == 7 or accion == 8):
-        if(accion == 7):
-            vel = 300
-            n_rep = 2
-        else:
-            vel = 800
-            n_rep = 2
-
-        hexapod.reset_dt()
-        hexapod.set_param_time(2,h=h)
-        bucle_movimiento()
-
-        for n in range(n_rep):
-            for n_step in range(6):
-                hexapod.polar_set_step_caminata(
-                    n_sec=1,
-                    n_step=n_step,
-                    dis_arco=70,
-                    z=z,
-                    lineal_speed=vel,
-                    cord_r=[0,0],
-                    doble_cent_r=False,
-                    r_por_pie=True,
-                    estado=True
-                )
-                bucle_movimiento()
-
-
-    #caminata con giro
-    elif(accion == 9):
-        hexapod.reset_dt()
-
-        hexapod.set_param_time(2,h=h)
-        bucle_movimiento()
-
-        for n in range(5):
-            for n_step in range(6):
-                hexapod.polar_set_step_caminata(
-                    n_sec=0,
-                    n_step=n_step,
-                    dis_arco=70,
-                    z=z,
-                    lineal_speed=300,
-                    cord_r=[500,0],
-                    doble_cent_r=False,
-                    r_por_pie=True,
-                    estado=True
-                )
-                bucle_movimiento()
-
-    #giro descentralizado
-    elif(accion == 10):
-        hexapod.reset_dt()
-        hexapod.set_param_time(2,h=h)
-        bucle_movimiento()
-
-        for n in range(5):
-            for n_step in range(6):
-                hexapod.polar_set_step_caminata(
-                    n_sec=1,
-                    n_step=n_step,
-                    dis_arco=70,
-                    z=z,
-                    lineal_speed=300,
-                    cord_r=[0,300],
-                    doble_cent_r=False,
-                    r_por_pie=True,
-                    estado=True
-                )
-                bucle_movimiento()
-
     #salto
-    elif(accion == 11):
+    elif(accion == 15):
         ejecutar_secuencia(3,1)
 
     #prueba de carga
-    elif(accion == 12):
+    elif(accion == 16):
         ejecutar_secuencia(5,1)
 
 

@@ -140,7 +140,7 @@ class Hexapod():
 #secuencias_caminata[n][0] = posicion
 #secuencias_caminata[n][1] = altura
     secuencias_caminata = [
-        [#secuencia caminata
+        [#[0] secuencia caminata hacia adelante
             [#paso 1
                 [  None, None, None, None, None, None], 
                 [     0,    1,    0,    1,    0,    1],
@@ -160,7 +160,27 @@ class Hexapod():
                 [  None, None, None, None, None, None], 
                 [     0,    0,    0,    0,    0,    0],
             ]
-        ],[#secuencia giro
+        ],[#[1] secuencia caminata hacia atras
+            [#paso 1
+                [  None, None, None, None, None, None], 
+                [     0,    1,    0,    1,    0,    1],
+            ],[#paso 2
+                [     1,   -1,    1,   -1,    1,   -1], 
+                [  None, None, None, None, None, None],
+            ],[#paso 3
+                [  None, None, None, None, None, None], 
+                [     0,    0,    0,    0,    0,    0],
+            ],[#paso 4
+                [  None, None, None, None, None, None], 
+                [     1,    0,    1,    0,    1,    0],
+            ],[#paso 5
+                [    -1,    1,   -1,    1,   -1,    1],
+                [  None, None, None, None, None, None],
+            ],[#paso 6
+                [  None, None, None, None, None, None], 
+                [     0,    0,    0,    0,    0,    0],
+            ]
+        ],[#[2] secuencia giro izquierda
             [#paso 1
                 [  None, None, None, None, None, None], 
                 [     0,    1,    0,    1,    0,    1],
@@ -175,6 +195,26 @@ class Hexapod():
                 [     1,    0,    1,    0,    1,    0],
             ],[#paso 5
                 [     1,   -1,    1,    1,   -1,    1], 
+                [  None, None, None, None, None, None],
+            ],[#paso 0
+                [  None, None, None, None, None, None], 
+                [     0,    0,    0,    0,    0,    0],
+            ]
+        ],[#[3] secuencia giro derecha
+            [#paso 1
+                [  None, None, None, None, None, None], 
+                [     0,    1,    0,    1,    0,    1],
+            ],[#paso 2
+                [     1,   -1,    1,    1,   -1,    1], 
+                [  None, None, None, None, None, None],
+            ],[#paso 3
+                [  None, None, None, None, None, None], 
+                [     0,    0,    0,    0,    0,    0],
+            ],[#paso 4
+                [  None, None, None, None, None, None], 
+                [     1,    0,    1,    0,    1,    0],
+            ],[#paso 5
+                [    -1,    1,   -1,   -1,    1,   -1], 
                 [  None, None, None, None, None, None],
             ],[#paso 0
                 [  None, None, None, None, None, None], 
