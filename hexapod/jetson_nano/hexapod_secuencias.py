@@ -577,10 +577,10 @@ while estado:
     elif(accion == 7 or accion == 8):
         if(accion == 7):
             vel = 300
-            n_rep = 10
+            n_rep = 2
         else:
             vel = 800
-            n_rep = 20
+            n_rep = 2
 
         hexapod.reset_dt()
         hexapod.set_param_time(2,h=h)
@@ -654,7 +654,8 @@ while estado:
         ejecutar_secuencia(5,1)
 
 
-    hexapod.set_param_time(1,h=0,rot=[0,0,0],p_rot=[0,0,0],desp=[0,0,0])
-    for i in range(6):
-        hexapod.lineal_set_target_time(i,hexapod.Pierna_param[i][3],1)
-    bucle_movimiento()
+    if(accion != 0):
+        hexapod.set_param_time(0.1,h=h,rot=[0,0,0],p_rot=[0,0,0],desp=[0,0,0])
+        for i in range(6):
+            hexapod.lineal_set_target_time(i,hexapod.Pierna_param[i][3],0.1)
+        bucle_movimiento()
