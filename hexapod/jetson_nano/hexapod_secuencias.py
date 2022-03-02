@@ -509,6 +509,8 @@ while estado:
     print("2) caminata hacia atras")
     print("88) caminata rapida hacia adelante")
     print("22) caminata rapida hacia atras")
+    print("888) caminata larga hacia adelante")
+    print("222) caminata larga hacia atras")
     print("--------")
     print("4) giro hacia la izquierda")
     print("6) giro hacia la derecha")
@@ -561,11 +563,19 @@ while estado:
 
     #88) caminata rapida hacia adelante")
     elif(accion == 88):
-        ejecutar_caminata(0,n_rep,high_speed,h,z,arco,caminata_p_rot)
+        ejecutar_caminata(0,n_rep*2,high_speed,h,z,arco,caminata_p_rot)
 
     #22) caminata rapida hacia atras")
     elif(accion == 22):
-        ejecutar_caminata(1,n_rep,high_speed,h,z,arco,caminata_p_rot)
+        ejecutar_caminata(1,n_rep*2,high_speed,h,z,arco,caminata_p_rot)
+
+    #888) caminata larga hacia adelante")
+    elif(accion == 888):
+        ejecutar_caminata(0,n_rep*4,low_speed,h,z,arco,caminata_p_rot)
+
+    #222) caminata larga hacia atras")
+    elif(accion == 222):
+        ejecutar_caminata(1,n_rep*4,low_speed,h,z,arco,caminata_p_rot)
     
     #4) giro hacia la izquierda")
     elif(accion == 4):
