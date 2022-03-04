@@ -1,16 +1,12 @@
 import socket
 import struct
 from time import time
-import sys
 import fcntl, os
-import errno
 
-s1, s2 = socket.socketpair()
-fcntl.fcntl(s2, fcntl.F_SETFL, os.O_NONBLOCK)
-
-s1.send(struct.pack("BBBBH",0,1,2,3,5000))
-
-
-
-print(s2.recv(10))
-print(s2.recv(1))
+s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+s.connect(("8.8.8.8", 80))
+local_ip = s.getsockname()[0].split(".")
+print(local_ip)
+local_ip[-1] = str(0)
+print(local_ip)
+s.close()

@@ -380,8 +380,8 @@ secuencia = [
     ]
 ]
 
-h = 120
-z = 80
+h = 130
+z = 90
 arco = 70
 n_rep = 2
 low_speed = 300
