@@ -1,6 +1,5 @@
 import struct
 import socket
-import fcntl, os
 
 #Formato de los paquetes
 #byte[0] = primer byte de sincronisacion
@@ -10,12 +9,15 @@ import fcntl, os
 #byte[4] = numero de datos
 #byte[5:] = datos
 
-class pro_Serial():
-    def __init__(self,s:socket.socket,synq_Byte1 = 254,synq_Byte2 = 252):
-        fcntl.fcntl(s, fcntl.F_SETFL, os.O_NONBLOCK)
+class pro_UDP():
+    def __init__(self,s:socket.socket,ip:str,port:int=8888,synq_Byte1 = 254,synq_Byte2 = 252):
         self.s = s
         self.synq_Byte1 = synq_Byte1
         self.synq_Byte2 = synq_Byte2
+        self.ip = ip
+        self.port = port
+        self.s.bind(("0.0.0.0",self.port))
+        self.s.setblocking(0)
 
     def send_command(self,tipo_command:int,tipo_dato:str,buffer) -> bool:
         try:
@@ -37,7 +39,7 @@ class pro_Serial():
                 len_msg,#B
                 *buffer
                 )
-            self.s.send(msg_tx)
+            self.s.sendto(msg_tx,(self.ip,self.port))
             return True
         except:
             return False
@@ -45,21 +47,21 @@ class pro_Serial():
         
     def read_command(self):
         try:
-            C = self.s.recv(1)
-            if(len(C) == 1):
-                if(C[0] == self.synq_Byte1):
-                    C = self.s.recv(1)
-                    if(C[0] == self.synq_Byte2):
-                        info_bytes = self.s.recv(3)
-                        if(len(info_bytes) == 3):
-                            buffer_type = chr(info_bytes[1])*info_bytes[2]
+            C = self.s.recv(550)
+            if(len(C) > 5):
+                n= 0
+                while(C[n] != self.synq_Byte1 and n<len(C)):
+                    n += 1
 
-                            buffer_len = struct.calcsize(">"+buffer_type)
-                            buffer_bytes = self.s.recv(buffer_len)
+                if(C[n] == self.synq_Byte1):
+                    if(C[n+1] == self.synq_Byte2):
+                        buffer_type = chr(C[n+3])*C[n+4]
 
-                            if(len(buffer_bytes) == buffer_len):
-                                buffer_values = struct.unpack(">"+buffer_type,buffer_bytes)
-                                return int(info_bytes[0]),list(buffer_values)
+                        buffer_len = struct.calcsize(">"+buffer_type)
+
+                        if(len(C) == n+buffer_len+5):
+                            buffer_values = struct.unpack(">"+buffer_type,C[n+5:])
+                            return int(C[n+2]),list(buffer_values)
         except:
             return None, None
             
