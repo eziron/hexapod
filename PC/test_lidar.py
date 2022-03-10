@@ -26,7 +26,7 @@ samp = np.asarray([[0,0,0]])
 time_ref = time.time()
 while (time.time() - time_ref < 25):
     _,sample = serial_com.read_command()
-
+    
     if(not sample is None):
         ang1 = math.radians(sample[0]/64)
         ang2 = math.radians(sample[1]/64)

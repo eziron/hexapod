@@ -4,3 +4,4 @@ pico-go.json
 __pycache__
 *modelos*
 build
+sync.ply
