@@ -380,13 +380,13 @@ secuencia = [
     ]
 ]
 
-h = 130
-z = 90
+h = 90
+z = 50
 arco = 70
 n_rep = 2
 low_speed = 300
 high_speed = 800
-caminata_p_rot = [100000,0]
+caminata_p_rot = [1000000,0]
 caminata_giro_izq = [500,0]
 caminata_giro_der = [-500,0]
 giro_des_frontal = [0,500]
@@ -469,7 +469,7 @@ def ejecutar_secuencia(n_seq:int,rep:int):
 def ejecutar_caminata(n_seqf,n_repf=5,speedf=300,hf=80,zf=50,arcof=70,cent_rotf = [0,0]):
     hexapod.reset_dt()
 
-    hexapod.set_param_time(2,h=hf)
+    hexapod.set_param_time(0.5,h=hf)
     bucle_movimiento()
 
     for n in range(n_repf):
@@ -673,7 +673,6 @@ while estado:
     #prueba de carga
     elif(accion == 16):
         ejecutar_secuencia(5,1)
-
 
     if(accion != 0):
         hexapod.set_param_time(0.1,h=h,rot=[0,0,0],p_rot=[0,0,0],desp=[0,0,0])
