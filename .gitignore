@@ -1,6 +1,6 @@
 /modelos/
-/.vscode/
-/hexapod/jetson_nano/__pycache__
+.vscode
+pico-go.json
+__pycache__
 *modelos*
-hexapod/RPI_pico_C/.vscode
-hexapod/RPI_pico_C/build
+build
