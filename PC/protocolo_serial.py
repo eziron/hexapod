@@ -43,23 +43,25 @@ class pro_Serial():
 
         
     def read_command(self):
-        C = self.Serial.read(1)
-        if(not (C is None)):
-            if(len(C) == 1):
-                if(C[0] == self.synq_Byte1):
-                    C = self.Serial.read(1)
-                    if(not (C is None) and (C[0] == self.synq_Byte2)):
-                        info_bytes = self.Serial.read(3)
-                        if(not info_bytes is None):
-                            buffer_type = chr(info_bytes[1])*info_bytes[2]
+        try:
+            C = self.Serial.read(1)
+            if(not (C is None)):
+                if(len(C) == 1):
+                    if(C[0] == self.synq_Byte1):
+                        C = self.Serial.read(1)
+                        if(not (C is None) and (C[0] == self.synq_Byte2)):
+                            info_bytes = self.Serial.read(3)
+                            if(not info_bytes is None):
+                                buffer_type = chr(info_bytes[1])*info_bytes[2]
 
-                            buffer_len = struct.calcsize(">"+buffer_type)
-                            buffer_bytes = self.Serial.read(buffer_len)
+                                buffer_len = struct.calcsize(">"+buffer_type)
+                                buffer_bytes = self.Serial.read(buffer_len)
 
-                            if(not buffer_bytes is None):
-                                buffer_values = struct.unpack(">"+buffer_type,buffer_bytes)
-                                return int(info_bytes[0]),list(buffer_values)
-
+                                if(not buffer_bytes is None):
+                                    buffer_values = struct.unpack(">"+buffer_type,buffer_bytes)
+                                    return int(info_bytes[0]),list(buffer_values)
+        except:
+            return None, None
         return None, None
     
     def send_duty(self,duty_vals:list):

@@ -23,8 +23,10 @@ dist = 0
 
 samp = np.asarray([[0,0,0]])
 
+#sleep(5)
+t_samp = 600
 time_ref = time.time()
-while (time.time() - time_ref < 25):
+while (time.time() - time_ref < t_samp):
     _,sample = serial_com.read_command()
     
     if(not sample is None):
@@ -32,22 +34,25 @@ while (time.time() - time_ref < 25):
         ang2 = math.radians(sample[1]/64)
         dist = sample[2]/4
 
-        x = math.sin(ang2)*dist
-        z = math.cos(ang2)*dist
+        if(dist > 0 and dist < 8000):
+            x = math.sin(ang2)*dist
+            z = math.cos(ang2)*dist
 
-        hipo = abs(x)
-        ang = math.atan2(0,x)+(ang1-math.pi/2)
+            hipo = abs(x)
+            ang = math.atan2(0,x)+(ang1-math.pi/2)
 
-        X = math.sin(ang)*hipo
-        Y = math.cos(ang)*hipo
+            X = math.sin(ang)*hipo
+            Y = math.cos(ang)*hipo
 
-        samp = np.append(samp,[[X,Y,z]],0)
+            samp = np.append(samp,[[X,Y,z]],0)
 
-        print(ang1,ang2,dist,X,Y,z)
+            if(len(samp)%1000 == 0):
+                #print(ang1,ang2,dist,X,Y,z)
+                print(time.time() - time_ref,len(samp),ang1)
 
 print(samp)
 print(len(samp))
-print(len(samp)/25)
+print(len(samp)/t_samp)
 
 pcd = o3d.geometry.PointCloud()
 pcd.points = o3d.utility.Vector3dVector(samp)
