@@ -84,7 +84,7 @@
         },
         "sv2": {
             "giro_inv": false,
-            "duty_base": 678,
+            "duty_base": 638,
             "ang_desfase": -90,
             "n_sv": 9
         },
@@ -146,7 +146,7 @@
         },
         "sv2": {
             "giro_inv": true,
-            "duty_base": 2262,
+            "duty_base": 2342,
             "ang_desfase": -90,
             "n_sv": 3
         },
