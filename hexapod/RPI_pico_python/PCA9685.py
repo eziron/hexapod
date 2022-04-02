@@ -152,7 +152,7 @@ class pca9685:
         
         for n in range(L_samp-1):
             for nn in range(n+1,L_samp,1):
-                A = ((samples[n][0]*samples[n][1])-(samples[nn][0]*samples[nn][1]))/(samples[n+1][1]-samples[n][1])
+                A = ((samples[n][0]*samples[n][1])-(samples[nn][0]*samples[nn][1]))/(samples[nn][1]-samples[n][1])
                 clk = 4096.0*(samples[n][0]+A)*samples[n][1]
                 if(A >= 0 and A <= 2):
                     samples_count += 1
