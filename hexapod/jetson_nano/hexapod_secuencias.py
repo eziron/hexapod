@@ -377,6 +377,51 @@ secuencia = [
             5.0, #[11] step time
             1.0  #[12] time sleep
         ],
+    ],
+    [#secuencia[6] baile lateral
+        [
+            [ 300.0 , 165.0 ,   0.0], #[0] pie 1
+            [ 350.0 ,   0.0 ,   0.0], #[1] pie 2
+            [ 300.0 ,-165.0 ,   0.0], #[2] pie 3
+            [-300.0 ,-165.0 ,   0.0], #[3] pie 4
+            [-350.0 ,   0.0 ,   0.0], #[4] pie 5
+            [-300.0 , 165.0 ,   0.0], #[5] pie 6
+            [   0.0 ,   0.0 ,   0.0], #[6] Rotaciones
+            [   0.0 ,   0.0 ,   0.0], #[7] punto de rotacion
+            [   0.0 ,   0.0 ,   0.0], #[8] desplazamiento simple
+            [False,False,False,False,False,False],#[9] desplazamientos y rotaciones
+            90.0, #[10] H 
+            1.0, #[11] step time
+            5.0  #[12] time sleep
+        ],[
+            [ 300.0 , 165.0 ,   0.0], #[0] pie 1
+            [ 350.0 ,   0.0 ,   0.0], #[1] pie 2
+            [ 300.0 ,-165.0 ,   0.0], #[2] pie 3
+            [-300.0 ,-165.0 ,   0.0], #[3] pie 4
+            [-350.0 ,   0.0 ,   0.0], #[4] pie 5
+            [-300.0 , 165.0 ,   0.0], #[5] pie 6
+            [   0.0 ,   0.0 ,   0.0], #[6] Rotaciones
+            [   0.0 ,   0.0 ,   0.0], #[7] punto de rotacion
+            [ 80.0 ,   0.0 ,   0.0], #[8] desplazamiento simple
+            [True,True,True,True,True,True],#[9] desplazamientos y rotaciones
+            90.0, #[10] H 
+            1.0, #[11] step time
+            0.0  #[12] time sleep
+        ],[
+            [ 300.0 , 165.0 ,   0.0], #[0] pie 1
+            [ 350.0 ,   0.0 ,   0.0], #[1] pie 2
+            [ 300.0 ,-165.0 ,   0.0], #[2] pie 3
+            [-300.0 ,-165.0 ,   0.0], #[3] pie 4
+            [-350.0 ,   0.0 ,   0.0], #[4] pie 5
+            [-300.0 , 165.0 ,   0.0], #[5] pie 6
+            [   0.0 ,   0.0 ,   0.0], #[6] Rotaciones
+            [   0.0 ,   0.0 ,   0.0], #[7] punto de rotacion
+            [-80.0 ,   0.0 ,   0.0], #[8] desplazamiento simple
+            [True,True,True,True,True,True],#[9] desplazamientos y rotaciones
+            90.0, #[10] H 
+            1.0, #[11] step time
+            0.0  #[12] time sleep
+        ],
     ]
 ]
 
@@ -465,7 +510,6 @@ def ejecutar_secuencia(n_seq:int,rep:int):
 
             sleep(x[12])
 
-
 def ejecutar_caminata(n_seqf,n_repf=5,speedf=300,hf=80,zf=50,arcof=70,cent_rotf = [0,0]):
     hexapod.reset_dt()
 
@@ -533,10 +577,7 @@ while estado:
     print("14) rotacion")
     print("15) salto")
     print("16) test de carga")
-    
-
-    print("9) caminata con giro")
-    print("10) giro descentralizado")
+    print("17) baile lateral")
     
 
     accion = int(input("ingrese el numero de accion: "))
@@ -673,6 +714,10 @@ while estado:
     #prueba de carga
     elif(accion == 16):
         ejecutar_secuencia(5,1)
+
+    #baile 2
+    elif(accion == 17):
+        ejecutar_secuencia(6,2)
 
     if(accion != 0):
         hexapod.set_param_time(0.1,h=h,rot=[0,0,0],p_rot=[0,0,0],desp=[0,0,0])
