@@ -1,9 +1,31 @@
-import numpy as np
 import open3d as o3d
+import os
 
-pcd = o3d.io.read_point_cloud("samples\lidar_sample-04042022-033245.ply")
+dir_samples = os.listdir("samples")
+if(len(dir_samples) == 1):
+    n = 0
+else:
+    for i in range(len(dir_samples)):
+        if(".ply" in dir_samples[i]):
+            print("["+str(i)+"] = ",dir_samples[i])
+
+    n = int(input("selecciona el archivo: "))
+
+
+pcd = o3d.io.read_point_cloud("samples\\"+dir_samples[n])
 print(len(pcd.points))
 o3d.visualization.draw_geometries([pcd])
+
+
+"""
+dir_samples = os.listdir("samples")
+print(dir_samples)
+pcd = []
+for n in dir_samples:
+    pcd.append(o3d.io.read_point_cloud("samples\\"+n))
+#print(len(pcd.points))
+o3d.visualization.draw_geometries(pcd)
+"""
 
 #pcd_low = pcd_low.voxel_down_sample(voxel_size=20)
 #pcd_med = pcd_med.voxel_down_sample(voxel_size=20)

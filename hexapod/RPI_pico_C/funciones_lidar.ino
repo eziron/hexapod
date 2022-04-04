@@ -9,6 +9,8 @@ void confirm(bool accept){
 
 void enable_timer_pot(bool state){
   if(state){
+    n_write_pot = 0;
+    n_read_pot = 0;
     add_repeating_timer_us(60, leer_pot, NULL, &timer_pot);
   }
   else{
@@ -46,8 +48,10 @@ bool leer_pot(struct repeating_timer *t){
     if(n_write_pot == n_read_pot){
       n_read_pot = constrain_circ(n_read_pot+1,0,8000);
     }
+
+    return true;
   }
-  return true;
+  return false;
 }
 
 bool buscar_por_tiempo(uint32_t time_ref){
