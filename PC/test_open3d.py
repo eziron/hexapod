@@ -1,10 +1,9 @@
 import numpy as np
 import open3d as o3d
 
-pcd_low = o3d.io.read_point_cloud("sync_low.ply")
-pcd_med = o3d.io.read_point_cloud("sync_med.ply")
-pcd_high = o3d.io.read_point_cloud("sync_high.ply")
-print(len(pcd_low.points),len(pcd_med.points),len(pcd_high.points))
+pcd = o3d.io.read_point_cloud("samples\lidar_sample-04042022-021137.ply")
+print(len(pcd.points))
+o3d.visualization.draw_geometries([pcd])
 
 #pcd_low = pcd_low.voxel_down_sample(voxel_size=20)
 #pcd_med = pcd_med.voxel_down_sample(voxel_size=20)
@@ -25,4 +24,4 @@ print(len(pcd_low.points),len(pcd_med.points),len(pcd_high.points))
 #mesh.compute_vertex_normals()
 #o3d.visualization.draw_geometries([pcd, mesh])
 #o3d.visualization.draw_geometries([pcd_low])
-o3d.visualization.draw_geometries([pcd_low,pcd_med,pcd_high])
+#o3d.visualization.draw_geometries([pcd_low,pcd_med,pcd_high])
