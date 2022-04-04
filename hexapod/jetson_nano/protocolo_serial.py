@@ -93,10 +93,10 @@ class pro_Serial():
         while(True):
             tipo,buffer = self.read_command()
             if(not (tipo is None or buffer is None)):
-                if(tipo == 1 and len(buffer) == 2 and buffer[0] == 5 and buffer[1] == 5):
+                if(tipo == 3 and len(buffer) == 2 and buffer[0] == 5 and buffer[1] == 5):
                     print("LIDAR: INICIADO")
                     return True
-                elif (tipo == 1 and len(buffer) == 2 and buffer[0] == 0 and buffer[1] == 0):
+                elif (tipo == 3 and len(buffer) == 2 and buffer[0] == 0 and buffer[1] == 0):
                     print("LIDAR: error al inicial")
                     return False
             else:
