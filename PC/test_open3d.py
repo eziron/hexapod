@@ -1,7 +1,7 @@
 import numpy as np
 import open3d as o3d
 
-pcd = o3d.io.read_point_cloud("samples\lidar_sample-04042022-032505.ply")
+pcd = o3d.io.read_point_cloud("samples\lidar_sample-04042022-033245.ply")
 print(len(pcd.points))
 o3d.visualization.draw_geometries([pcd])
 
