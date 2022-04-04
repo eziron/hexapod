@@ -1,6 +1,7 @@
 import struct
 from serial import Serial
 from time import time
+import math
 
 #Formato de los paquetes
 #byte[0] = primer byte de sincronisacion
@@ -84,4 +85,37 @@ class pro_Serial():
 
             return (time()-time_ref)
         
+        return None
+
+    def star_lidar(self,mode:int,speed1:int,speed2:int):
+        self.send_command(3,"B",[mode,speed1,speed2])
+
+        tipo,buffer = self.read_command()
+        if(not (tipo is None or buffer is None)):
+            if(tipo == 1 and len(buffer) == 2 and buffer[0] == 5 and buffer[1] == 5):
+                return True
+        
+        return False
+    
+    def read_lidar(self):
+        if(self.Serial.in_waiting):
+            tipo,sample = self.read_command()
+            if(not (tipo is None or sample is None)):
+                if(tipo == 127 and len(sample) == 5):
+                    dist = sample[0]/4
+                    ang1 = math.radians(sample[1]/64)
+                    ang2 = math.radians(sample[2]/64)
+                    
+
+                    if(dist > 0 and dist < 12000):
+                        x = math.sin(ang1)*dist
+                        z = math.cos(ang1)*dist
+
+                        hipo = abs(x)
+                        ang = math.atan2(0,x)+(ang2-math.pi/2)
+
+                        X = math.sin(ang)*hipo
+                        Y = math.cos(ang)*hipo 
+
+                        return [X,Y,z]
         return None
