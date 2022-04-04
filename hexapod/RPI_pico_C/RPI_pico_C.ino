@@ -125,8 +125,6 @@ void loop(){
                     else{
                         duty_accept = false;
                     }
-                    Serial.print(" / ");
-                    Serial.print(duty[i]);
                 }
                 confirm(duty_accept);
                 if(duty_accept){
