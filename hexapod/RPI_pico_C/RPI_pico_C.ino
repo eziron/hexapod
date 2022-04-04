@@ -143,57 +143,42 @@ void loop(){
 
         case 3: //LIDAR
             if(jetson_d_tyte == 'B' && jetson_d_len == 3){
-                switch (jetson_buffer[0]){
-                case 0:
-                    lidar.stop_scan();
-                    lidar_servo.write(90);
-                    star_scan = false;
-                    break;
-                case 1:
-                    if(star_scan){
-                        lidar.set_motor_speed(jetson_buffer[1]);
+                uint8_t lidar_speed = map(jetson_buffer[1],0,255,100,255);
+                if(star_scan){
+                    if(jetson_buffer[0] == 0){
+                        lidar.stop_scan();
+                        lidar_servo.write(90);
+                        star_scan = false;
                     }
                     else{
-                        star_scan = lidar.star_normal_scan(jetson_buffer[1]);
+                        lidar.set_motor_speed(lidar_speed);
                     }
-                    servo_time_ref = map(jetson_buffer[2],0,255,10000,400);
-                    break;
-
-                case 2:
-                    if(star_scan){
-                        lidar.set_motor_speed(jetson_buffer[1]);
-                    }
-                    else{
-                        star_scan = lidar.star_force_scan(jetson_buffer[1]);
-                    }
-                    servo_time_ref = map(jetson_buffer[2],0,255,10000,400);
-                    break;
-
-                case 3:
-                    if(star_scan){
-                        lidar.set_motor_speed(jetson_buffer[1]);
-                    }
-                    else{
-                        star_scan = lidar.star_legacy_scan(jetson_buffer[1]);
-                    }
-                    servo_time_ref = map(jetson_buffer[2],0,255,10000,400);
-                    break;
-
-                case 4:
-                    if(star_scan){
-                        lidar.set_motor_speed(jetson_buffer[1]);
-                    }
-                    else{
-                        star_scan = lidar.star_extended_scan(jetson_buffer[1]);
-                    }
-                    servo_time_ref = map(jetson_buffer[2],0,255,10000,400);
-                    break;
-
-                default:
-                    lidar.stop_scan();
-                    star_scan = false;
-                    break;
                 }
+                else{
+                    switch (jetson_buffer[0])
+                    {
+                    case 1:
+                        star_scan = lidar.star_normal_scan(lidar_speed);
+                        break;
+                    
+                    case 2:
+                        star_scan = lidar.star_legacy_scan(lidar_speed);
+                        break;
+
+                    case 3:
+                        star_scan = lidar.star_extended_scan(lidar_speed);
+                        break;
+                    
+                    case 255:
+                        star_scan = lidar.star_force_scan(lidar_speed);
+                        break;
+                    
+                    default:
+                        break;
+                    }
+                }
+
+                servo_time_ref = map(jetson_buffer[2],0,255,8000,1600);
                 confirm(star_scan);
                 enable_timer_pot(star_scan);
             }
