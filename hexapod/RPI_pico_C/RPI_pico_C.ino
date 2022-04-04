@@ -126,7 +126,7 @@ void loop(){
                         duty_accept = false;
                     }
                 }
-                confirm(duty_accept);
+                confirm(jetson_cmd,duty_accept);
                 if(duty_accept){
                     pwm.writeAllMicroseconds(duty_pca);
                     sv16.writeMicroseconds(duty[16]);
@@ -177,7 +177,7 @@ void loop(){
                 }
 
                 servo_time_ref = map(jetson_buffer[2],0,255,8000,1600);
-                confirm(star_scan);
+                confirm(jetson_cmd,star_scan);
                 enable_timer_pot(star_scan);
             }
             break;

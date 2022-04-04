@@ -1,9 +1,9 @@
-void confirm(bool accept){
+void confirm(uint8_t CMD,bool accept){
   if(accept){
-    jetson.send_command(1,2,accept_command);
+    jetson.send_command(CMD,2,accept_command);
   }
   else{
-    jetson.send_command(1,2,not_accept_command);
+    jetson.send_command(CMD,2,not_accept_command);
   }
 }
 
