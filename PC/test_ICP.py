@@ -15,7 +15,6 @@ if __name__ == "__main__":
 
     #print(source_raw.transformation)
     #o3d.visualization.draw_geometries([target_raw,source_raw])
-    #source_raw.transform(rotacion_xyz(45,0,0))
     #o3d.visualization.draw_geometries([target_raw,source_raw])
     #sync0
     #source_raw.translate([0,0,-800])

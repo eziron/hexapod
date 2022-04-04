@@ -107,7 +107,7 @@ class pro_Serial():
                 if(tipo == 127 and len(sample) == 5):
                     dist = sample[0]/4
                     ang1 = math.radians(sample[1]/64)
-                    ang2 = math.radians(sample[2]/64)
+                    ang2 = math.radians((sample[2]/64)-45)
                     
 
                     if(dist > 0 and dist < 8000):

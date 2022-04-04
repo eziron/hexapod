@@ -1,9 +1,43 @@
+from time import time
+from pynput import keyboard as kb
 from datetime import datetime
 import os
 import open3d as o3d
 import numpy as np
+import string
 
 samp_PATH = "samples\\"
+
+teclas = dict.fromkeys(list(string.ascii_lowercase),0)
+
+estado = True
+def on_press(key):
+    for n in list(teclas):
+        if(key == kb.KeyCode.from_char(n)):
+            teclas[n] = 1
+
+def on_release(key):
+    global estado
+    for n in list(teclas):
+        if(key == kb.KeyCode.from_char(n)):
+            teclas[n] = 0
+
+    if key == kb.Key.esc:
+        estado = False
+        return False
+
+def boton(A:bool,B:bool,val:float):
+    if((not A) and B):
+        return val
+    elif(A and (not B)):
+        return -val
+    else:
+        return 0.0
+
+listener = kb.Listener(
+    on_press=on_press,
+    on_release=on_release)
+listener.start()
 
 if __name__ == "__main__":
     dir_samples = os.listdir("samples")
@@ -34,18 +68,39 @@ if __name__ == "__main__":
     vis.add_geometry(target)
     
     threshold = 300
-    estado = True
+    time_ref = time()
     while(estado):
-        reg_p2l = o3d.pipelines.registration.registration_icp(
-            source, target, threshold, np.identity(4),
-            o3d.pipelines.registration.TransformationEstimationPointToPoint(),
-            o3d.pipelines.registration.ICPConvergenceCriteria(max_iteration=10))
+
+        if(time()-time_ref > 0.03):
+            time_ref = time()
+
+            if(teclas["q"]):
+                reg_p2l = o3d.pipelines.registration.registration_icp(
+                    source, target, threshold, np.identity(4),
+                    o3d.pipelines.registration.TransformationEstimationPointToPoint(),
+                    o3d.pipelines.registration.ICPConvergenceCriteria(max_iteration=1))
+                
+                source.transform(reg_p2l.transformation)
+            else:
+                source.translate([
+                    boton(teclas["w"],teclas["s"],1.0),
+                    boton(teclas["e"],teclas["d"],1.0),
+                    boton(teclas["r"],teclas["f"],1.0),
+                ])
+
+                source.rotate(
+                        o3d.geometry.get_rotation_matrix_from_axis_angle([
+                                boton(teclas["t"],teclas["g"],0.01),
+                                boton(teclas["y"],teclas["h"],0.01),
+                                boton(teclas["u"],teclas["j"],0.01),
+                            ],
+                        )
+                    )
         
-        source.transform(reg_p2l.transformation)
-        
-        vis.update_geometry(source)
-        vis.poll_events()
-        vis.update_renderer()
+            vis.update_geometry(source)
+
+            vis.poll_events()
+            vis.update_renderer()
 
 
     vis.destroy_window()
