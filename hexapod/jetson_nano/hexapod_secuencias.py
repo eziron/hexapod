@@ -5,6 +5,9 @@ from time import sleep, time
 from servo_carteciano import Hexapod
 from protocolo_serial import pro_Serial
 import math
+import numpy as np
+import open3d as o3d
+from datetime import datetime
 
 secuencia = [
     [#secuencia[0] Baile 1
@@ -437,6 +440,7 @@ caminata_giro_der = [-500,0]
 giro_des_frontal = [0,500]
 giro_des_trasero = [0,-500]
 
+samp_PATH = "/home/rodrigo/hexapod/PC/samples/"
 #json_PATH = '/home/rodrigo/hexapod/jetson_nano/ajustes_hexapod.json'
 json_PATH = "/home/rodrigo/hexapod/hexapod/jetson_nano/ajustes_hexapod.json"
 with open(json_PATH) as json_file:
@@ -531,6 +535,50 @@ def ejecutar_caminata(n_seqf,n_repf=5,speedf=300,hf=80,zf=50,arcof=70,cent_rotf 
             )
             bucle_movimiento()
 
+def get_lidar_sample(mode,sample_time,speed1,speed2):
+    serial_com.stop_lidar()
+    sleep(0.5)
+    if(Serial.in_waiting > 0):
+        C = Serial.read(Serial.in_waiting)
+    
+    if(mode > 0):
+        if(mode == 1):
+            max_rate = 2000
+        elif(mode == 2):
+            max_rate = 4000
+        else:
+            max_rate = 8000
+
+        samp_array = np.zeros((round(max_rate*sample_time),3),dtype=np.float64)
+        n_samp = 0
+        if(serial_com.star_lidar(mode,speed1,speed2)):
+            time_ref = time()
+            while (time() - time_ref < sample_time):
+                samp = serial_com.read_lidar()
+                if(not (samp is None)):
+                    samp_array[n_samp][0] = samp[0]
+                    samp_array[n_samp][1] = samp[1]
+                    samp_array[n_samp][2] = samp[2]
+                    n_samp+=1
+
+                    if(n_samp%1000 == 0):
+                        print(time() - time_ref,n_samp)
+            
+            print(samp_array[:n_samp])
+            print(n_samp)
+            print(n_samp/sample_time)
+
+            pcd = o3d.geometry.PointCloud()
+            pcd.points = o3d.utility.Vector3dVector(samp_array[:n_samp])
+
+            dt_string = datetime.now().strftime("lidar_sample-%d%m%Y-%H%M%S.ply")
+            o3d.io.write_point_cloud(samp_PATH+dt_string, pcd)
+
+            serial_com.stop_lidar()
+    else:
+        print("ERROR al inciar el lidar")
+
+
 while(serial_com.ping() is None):
     print("error al conectar con la RPI pico")
     Serial.close()
@@ -540,7 +588,7 @@ while(serial_com.ping() is None):
     sleep(1)
 
 hexapod.reset_dt()
-
+serial_com.stop_lidar()
 
 
 
@@ -719,7 +767,23 @@ while estado:
     elif(accion == 17):
         ejecutar_secuencia(6,2)
 
-    if(accion != 0):
+    elif(accion == 5):
+        hexapod.reset_dt()
+        hexapod.set_param_time(1,h=0,rot=[0,0,0],p_rot=[0,0,0],desp=[0,0,0])
+        for i in range(6):
+            hexapod.lineal_set_target_time(i,hexapod.Pierna_param[i][3],1)
+        bucle_movimiento()
+    
+    elif(accion == 55):
+        get_lidar_sample(1,15,50,200)
+    
+    elif(accion == 555):
+        get_lidar_sample(2,15,50,200)
+    
+    elif(accion == 5555):
+        get_lidar_sample(3,15,50,200)
+
+    if(accion != 0 and accion != 5):
         hexapod.set_param_time(0.1,h=h,rot=[0,0,0],p_rot=[0,0,0],desp=[0,0,0])
         for i in range(6):
             hexapod.lineal_set_target_time(i,hexapod.Pierna_param[i][3],0.1)
