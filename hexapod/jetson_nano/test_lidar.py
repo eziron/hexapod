@@ -45,7 +45,7 @@ t_samp = 10
 
 
 
-if(serial_com.star_lidar(3,255,200)):
+if(serial_com.star_lidar(3,0,0)):
     time_ref = time.time()
     while (time.time() - time_ref < t_samp):
         samp = serial_com.read_lidar()
@@ -70,4 +70,4 @@ if(serial_com.star_lidar(3,255,200)):
 else:
     print("ERROR al inciar el lidar")
 
-serial_com.star_lidar(0,255,127)
+serial_com.stop_lidar()

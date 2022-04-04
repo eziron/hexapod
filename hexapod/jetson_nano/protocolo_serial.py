@@ -97,6 +97,9 @@ class pro_Serial():
         
         return False
     
+    def stop_lidar(self):
+        self.send_command(3,"B",[0,0,0])
+
     def read_lidar(self):
         if(self.Serial.in_waiting):
             tipo,sample = self.read_command()
@@ -107,7 +110,7 @@ class pro_Serial():
                     ang2 = math.radians(sample[2]/64)
                     
 
-                    if(dist > 0 and dist < 12000):
+                    if(dist > 0 and dist < 8000):
                         x = math.sin(ang1)*dist
                         z = math.cos(ang1)*dist
 
