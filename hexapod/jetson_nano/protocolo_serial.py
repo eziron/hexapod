@@ -90,12 +90,18 @@ class pro_Serial():
     def star_lidar(self,mode:int,speed1:int,speed2:int):
         self.send_command(3,"B",[mode,speed1,speed2])
 
-        tipo,buffer = self.read_command()
-        if(not (tipo is None or buffer is None)):
-            if(tipo == 1 and len(buffer) == 2 and buffer[0] == 5 and buffer[1] == 5):
-                return True
-        
-        return False
+        while(True):
+            tipo,buffer = self.read_command()
+            if(not (tipo is None or buffer is None)):
+                if(tipo == 1 and len(buffer) == 2 and buffer[0] == 5 and buffer[1] == 5):
+                    print("LIDAR: INICIADO")
+                    return True
+                elif (tipo == 1 and len(buffer) == 2 and buffer[0] == 0 and buffer[1] == 0):
+                    print("LIDAR: error al inicial")
+                    return False
+            else:
+                print("LIDAR: time out")
+                return False
     
     def stop_lidar(self):
         self.send_command(3,"B",[0,0,0])
