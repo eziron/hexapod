@@ -24,17 +24,17 @@
 
     "x_izq":{
         "value":0,
-        "modo":"incremental",
-        "min":-10,
-        "max":10,
-        "PPS":10,
+        "modo":"normal",
+        "min":-1000,
+        "max":1000,
+        "PPS":0,
         "centro":0
     },
     "y_izq":{
         "value":0,
         "modo":"normal",
-        "min":-10,
-        "max":10,
+        "min":-1000,
+        "max":1000,
         "PPS":0,
         "centro":0
     },

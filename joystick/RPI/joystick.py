@@ -2,7 +2,8 @@ from array import array
 import math
 import struct
 import json
-from time import sleep
+import time
+import numpy as np
 
 class control_joystick:
     modos = json.loads("{}")
@@ -18,22 +19,25 @@ class control_joystick:
         "mantenido":1,
         "incremental":1,
         "circular":2,
+        "RAW":3
     }
+
+    time_ref = 0
 
     def __init__(self,spi,device="hexapod"):
 
         self.device = device
         self.spi = spi
 
-        file = open("modos.json","r")
+        file = open("/home/pi/Desktop/hexapod/joystick/RPI/modos.json","r")
         self.modos = json.loads(file.read())
         file.close()
 
-        file = open("device_config.json","r")
+        file = open("/home/pi/Desktop/hexapod/joystick/RPI/device_config.json","r")
         self.device_conf = json.loads(file.read())
         file.close()
 
-        file = open("arduino_config.json")
+        file = open("/home/pi/Desktop/hexapod/joystick/RPI/arduino_config.json")
         self.arduino_conf = json.loads(file.read())
         file.close()
 
@@ -49,6 +53,11 @@ class control_joystick:
         for x in index:
             self.device_value[device][x] = self.device_conf[device][x]["value"]
 
+        self.zero_buffer = list(np.zeros(74,int))
+        for n in range(len(self.zero_buffer)):
+            self.zero_buffer[n] = 0
+
+        self.time_ref = time.time()
 
     def write_arduino(self):
         tx_value = []
@@ -146,9 +155,14 @@ class control_joystick:
 
         tx_bytes = struct.pack(">"+"l"*len(tx_value),*tx_value)
         self.spi.writebytes(tx_bytes)
+        self.time_ref = time.time()
 
     def read_arduino(self):
+        while(time.time()-self.time_ref<0.0005):
+            time.sleep(0.000001)
+
         rx_byte = self.spi.readbytes(74)
+        self.time_ref = time.time()
         if(rx_byte[0] == 200 and rx_byte[1] == 127):
             rx_values = struct.unpack(">"+"l"*18,bytes(rx_byte[2:]))
 
@@ -171,9 +185,9 @@ class control_joystick:
             self.arduino_value["analog_A"]=rx_values[16]
             self.arduino_value["analog_B"]=rx_values[17]
 
-            return rx_values
+            return True
         
-        return None
+        return False
 
     def HSV_to_RGB(self,h, s=1, v=1):
         h = float(h)
