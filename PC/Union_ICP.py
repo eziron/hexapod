@@ -8,19 +8,44 @@ import string
 
 samp_PATH = "samples\\"
 
-teclas = dict.fromkeys(list(string.ascii_lowercase),0)
+teclas = dict.fromkeys(["<97>","<98>","<99>","<100>","<101>","<102>","<103>","<104>","<105>","Key.up","Key.down","Key.right","Key.left"],0)
+
+equiv = {
+    1:"<97>",
+    2:"<98>",
+    3:"<99>",
+    4:"<100>",
+    5:"<101>",
+    6:"<102>",
+    7:"<103>",
+    8:"<104>",
+    9:"<105>",
+    "up":"Key.up",
+    "down":"Key.down",
+    "right":"Key.right",
+    "left":"Key.left"
+}
+
+def tecla(key):
+    return teclas[equiv[key]]
 
 estado = True
+modo = True
 def on_press(key):
     for n in list(teclas):
-        if(key == kb.KeyCode.from_char(n)):
+        if(format(key) == n):
             teclas[n] = 1
 
 def on_release(key):
     global estado
+    global modo
     for n in list(teclas):
-        if(key == kb.KeyCode.from_char(n)):
+        if(format(key) == n):
             teclas[n] = 0
+
+    if format(key) == "<99>":
+        modo = not modo
+        #print("modo = ",modo)
 
     if key == kb.Key.esc:
         estado = False
@@ -56,8 +81,8 @@ if __name__ == "__main__":
     target_raw = o3d.io.read_point_cloud(samp_PATH+samp_dir1)
     source_raw = o3d.io.read_point_cloud(samp_PATH+samp_dir2)
 
-    source_raw.estimate_normals(search_param=o3d.geometry.KDTreeSearchParamHybrid(radius=500, max_nn=50))
-    target_raw.estimate_normals(search_param=o3d.geometry.KDTreeSearchParamHybrid(radius=500, max_nn=50))
+    source_raw.estimate_normals(search_param=o3d.geometry.KDTreeSearchParamHybrid(radius=1000, max_nn=50))
+    target_raw.estimate_normals(search_param=o3d.geometry.KDTreeSearchParamHybrid(radius=1000, max_nn=50))
 
     source = source_raw.voxel_down_sample(voxel_size=1)
     target = target_raw.voxel_down_sample(voxel_size=1)
@@ -70,11 +95,10 @@ if __name__ == "__main__":
     threshold = 300
     time_ref = time()
     while(estado):
-
-        if(time()-time_ref > 0.03):
+        if(time()-time_ref > 0.05):
             time_ref = time()
 
-            if(teclas["q"]):
+            if(tecla(1)):
                 reg_p2l = o3d.pipelines.registration.registration_icp(
                     source, target, threshold, np.identity(4),
                     o3d.pipelines.registration.TransformationEstimationPointToPoint(),
@@ -82,20 +106,21 @@ if __name__ == "__main__":
                 
                 source.transform(reg_p2l.transformation)
             else:
-                source.translate([
-                    boton(teclas["w"],teclas["s"],1.0),
-                    boton(teclas["e"],teclas["d"],1.0),
-                    boton(teclas["r"],teclas["f"],1.0),
-                ])
-
-                source.rotate(
-                        o3d.geometry.get_rotation_matrix_from_axis_angle([
-                                boton(teclas["t"],teclas["g"],0.01),
-                                boton(teclas["y"],teclas["h"],0.01),
-                                boton(teclas["u"],teclas["j"],0.01),
-                            ],
+                if(modo):
+                    source.translate([
+                        boton(tecla("up")  ,tecla("down") ,10.0),
+                        boton(tecla("left"),tecla("right"),10.0),
+                        boton(tecla(7)     ,tecla(4)      ,10.0),
+                    ])
+                else:
+                    source.rotate(
+                            o3d.geometry.get_rotation_matrix_from_axis_angle([
+                                    boton(tecla("up")  ,tecla("down") ,0.01),
+                                    boton(tecla(7)     ,tecla(4)      ,0.01),
+                                    boton(tecla("left"),tecla("right"),0.01),
+                                ],
+                            )
                         )
-                    )
         
             vis.update_geometry(source)
 

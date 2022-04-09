@@ -4,7 +4,7 @@
 #define debounce_time 20000
 #define sample_time 50000
 
-#define intervalo 80
+#define intervalo 120
 
 #define SPI0_INTERRUPT_NUMBER (IRQn_Type)24
 #define BUFFER_SIZE 512
@@ -135,10 +135,10 @@ int sticks[4];
 //sticks_conf[n][6] = periodo en us de imcrementacion de 1 punto
 //sticks_conf[n][7] = us ref
 int sticks_conf[4][8] = {
-  {2088, 0, 127, 0, 254, 20, 0, 0},
-  {2060, 0, 127, 0, 254, 20, 0, 0},
-  {2186, 0, 127, 0, 254, 20, 0, 0},
-  {1932, 0, 127, 0, 254, 20, 0, 0}
+  {2047, 0, 127, 0, 254, 20, 0, 0},
+  {2038, 0, 127, 0, 254, 20, 0, 0},
+  {1925, 0, 127, 0, 254, 20, 0, 0},
+  {1946, 0, 127, 0, 254, 20, 0, 0}
 };
 
 
@@ -156,10 +156,12 @@ void SPI0_Handler( void )
 }
 
 void setup() {
+
   //Serial.begin(115200);
   NVIC_ClearPendingIRQ(SPI0_INTERRUPT_NUMBER);
   NVIC_EnableIRQ(SPI0_INTERRUPT_NUMBER);
 
+  pinMode(SS,INPUT);
   SPI.begin(SS);
   REG_SPI0_CR = SPI_CR_SWRST;
 
@@ -199,6 +201,22 @@ void setup() {
   }
   analogReadResolution(12);
 
+  /*
+  double analog_acu[] = {0,0,0,0};
+  double n_samp = 1024;
+  for (int i = 0; i < n_samp; i++)
+  {
+    analog_acu[0] += analogRead(A11);
+    analog_acu[1] += analogRead(A10);
+    analog_acu[2] += analogRead(A9);
+    analog_acu[3] += analogRead(A8);
+  }
+
+  sticks_conf[0][0] = round(analog_acu[0]/n_samp);
+  sticks_conf[1][0] = round(analog_acu[1]/n_samp);
+  sticks_conf[2][0] = round(analog_acu[2]/n_samp);
+  sticks_conf[3][0] = round(analog_acu[3]/n_samp);
+  */
   attachInterrupt(digitalPinToInterrupt(SS), prepare_spi, CHANGE);
 
 }
@@ -467,6 +485,9 @@ void interpretar_sticks(int i) {
       }
       break;
 
+    case 3:
+      sticks[i] = analogos[i][1];
+      break;
 
     default:
       sticks[i] = 127;
@@ -541,13 +562,6 @@ long buff_rx_to_val(int i){
 }
 
 void write_values() {
-
-  valor_flecha[0] = flecha_valor(digitales[6][2], digitales[7][2], digitales[8][2], digitales[9][2]);
-  valor_flecha[1] = flecha_valor(digitales[10][2], digitales[11][2], digitales[12][2], digitales[13][2]);
-
-  analogos_simple[0][0] = map(analogos[4][1], 0, 4095, analogos_simple[0][1], analogos_simple[0][2]);
-  analogos_simple[1][0] = map(analogos[5][1], 0, 4095, analogos_simple[1][1], analogos_simple[1][2]);
-
   val_to_buff_tx(0,sticks[0]);
   val_to_buff_tx(4,sticks[1]);
   val_to_buff_tx(8,sticks[2]);
@@ -564,10 +578,14 @@ void write_values() {
   val_to_buff_tx(48,boton_simple[4][0]);
   val_to_buff_tx(52,boton_simple[5][0]);
 
+  valor_flecha[0] = flecha_valor(digitales[6][2], digitales[7][2], digitales[8][2], digitales[9][2]);
   val_to_buff_tx(56,valor_flecha[0]);
+  valor_flecha[1] = flecha_valor(digitales[10][2], digitales[11][2], digitales[12][2], digitales[13][2]);
   val_to_buff_tx(60,valor_flecha[1]);
 
+  analogos_simple[0][0] = map(analogos[4][1], 0, 4095, analogos_simple[0][1], analogos_simple[0][2]);
   val_to_buff_tx(64,analogos_simple[0][0]);
+  analogos_simple[1][0] = map(analogos[5][1], 0, 4095, analogos_simple[1][1], analogos_simple[1][2]);
   val_to_buff_tx(68,analogos_simple[1][0]);
 }
 
@@ -676,9 +694,9 @@ void prepare_spi(){
     }
   }
   else{
-    write_values();
     pos = 0;
-    d_tx = 127;
     REG_SPI0_TDR = 200;
+    d_tx = 127;
+    write_values();
   }
 }
