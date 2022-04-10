@@ -4,6 +4,13 @@ import spidev
 import os
 import socket
 from protocolo_udp import pro_UDP
+import math
+
+def rec_to_pol(X,Y):
+    ang = math.degrees(math.atan2(Y,X))
+    mod = math.sqrt((X^2)+(Y^2))
+    return ang, mod
+
 os.system("""echo raspberry | sudo renice -20 -p $(pgrep "python")""")
 
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -28,6 +35,8 @@ dt = time_ref
 while(time()-time_ref < t_sap):
     if(joystick.read_arduino()):
         val = joystick.arduino_value
+
+        vec = rec_to_pol(val["x_izq"],val["y_izq"])
         estado = hexapod.send_command(25,"h",list(val.values()))
         
         if(estado):

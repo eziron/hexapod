@@ -82,7 +82,7 @@
         "continuo": true,
         "min":70,
         "max":180,
-        "PPS":10
+        "PPS":1
     },
     "cruz_izq_v":{
         "value":0,

@@ -303,6 +303,10 @@ void loop() {
   interpretar_sticks(3);
 }
 
+int pps_a_us(int pps){
+  return (1000000/pps);
+}
+
 void interpretar_boton_flecha(int i, bool continuo) {
   if (continuo == boton_flecha[i][2]) {
     bool d1 = digitales[boton_flecha[i][8]][2];
@@ -623,28 +627,28 @@ void read_values(){
   boton_flecha[0][2]=buff_rx_to_val(104);
   boton_flecha[0][3]=buff_rx_to_val(108);
   boton_flecha[0][4]=buff_rx_to_val(112);
-  boton_flecha[0][5]=buff_rx_to_val(116);
+  boton_flecha[0][5]=pps_a_us(buff_rx_to_val(116));
 
   boton_flecha[1][0]=buff_rx_to_val(120);
   boton_flecha[1][1]=buff_rx_to_val(124);
   boton_flecha[1][2]=buff_rx_to_val(128);
   boton_flecha[1][3]=buff_rx_to_val(132);
   boton_flecha[1][4]=buff_rx_to_val(136);
-  boton_flecha[1][5]=buff_rx_to_val(140);
+  boton_flecha[1][5]=pps_a_us(buff_rx_to_val(140));
 
   boton_flecha[2][0]=buff_rx_to_val(144);
   boton_flecha[2][1]=buff_rx_to_val(148);
   boton_flecha[2][2]=buff_rx_to_val(152);
   boton_flecha[2][3]=buff_rx_to_val(156);
   boton_flecha[2][4]=buff_rx_to_val(160);
-  boton_flecha[2][5]=buff_rx_to_val(164);
+  boton_flecha[2][5]=pps_a_us(buff_rx_to_val(164));
 
   boton_flecha[3][0]=buff_rx_to_val(168);
   boton_flecha[3][1]=buff_rx_to_val(172);
   boton_flecha[3][2]=buff_rx_to_val(176);
   boton_flecha[3][3]=buff_rx_to_val(180);
   boton_flecha[3][4]=buff_rx_to_val(184);
-  boton_flecha[3][5]=buff_rx_to_val(188);
+  boton_flecha[3][5]=pps_a_us(buff_rx_to_val(188));
 
   boton_simple[0][0]=buff_rx_to_val(192);
   boton_simple[0][1]=buff_rx_to_val(196);
