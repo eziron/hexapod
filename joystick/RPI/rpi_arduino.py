@@ -1,9 +1,13 @@
-from joystick import control_joystick
+import joystick as jk
 from time import sleep, time
 import spidev
 import os
-
+import socket
+from protocolo_udp import pro_UDP
 os.system("""echo raspberry | sudo renice -20 -p $(pgrep "python")""")
+
+s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+hexapod = pro_UDP(s,"hexapod.local")
 
 spi_bus = 1
 spi_device = 2
@@ -14,24 +18,23 @@ spi.mode = 0b00
 spi.max_speed_hz = 800000
 #spi.max_speed_hz = 50000
 
-joystick = control_joystick(spi)
+joystick = jk.control_joystick(spi)
 joystick.write_arduino()
 count = 0
 loss_count = 0
-t_sap = 5*60
+t_sap = 5
 time_ref = time()
 dt = time_ref
 while(time()-time_ref < t_sap):
     if(joystick.read_arduino()):
         val = joystick.arduino_value
-        if(time()-dt > 0.02):
-            print(round((time()-dt)*1000000),count,val["x_izq"],val["y_izq"],val["x_der"],val["y_der"])
-
-        if(count % 1000 == 0 and count > 0):
-            print(count,(time()-time_ref)*1000/count)
-
-        dt = time()
-        count += 1
+        estado = hexapod.send_command(25,"h",list(val.values()))
+        
+        if(estado):
+            cmd,buff = hexapod.read_command()
+            if(not cmd is None):
+                count += 1
+                print(count,estado,list(val.values()))
     else:
         loss_count += 1
         print("------  LOSS ------")

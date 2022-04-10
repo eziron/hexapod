@@ -1,5 +1,6 @@
 import struct
 import socket
+import time
 
 #Formato de los paquetes
 #byte[0] = primer byte de sincronisacion
@@ -45,24 +46,26 @@ class pro_UDP():
             return False
 
         
-    def read_command(self):
-        try:
-            C = self.s.recv(550)
-            if(len(C) > 5):
-                n= 0
-                while(C[n] != self.synq_Byte1 and n<len(C)):
-                    n += 1
+    def read_command(self,time_out = 0.02):
+        time_ref = time.time()
+        while (time.time()-time_ref < time_out):
+            try:
+                C = self.s.recv(4096)
+                if(len(C) > 5):
+                    n= 0
+                    while(C[n] != self.synq_Byte1 and n<len(C)):
+                        n += 1
 
-                if(C[n] == self.synq_Byte1):
-                    if(C[n+1] == self.synq_Byte2):
-                        buffer_type = chr(C[n+3])*C[n+4]
+                    if(C[n] == self.synq_Byte1):
+                        if(C[n+1] == self.synq_Byte2):
+                            buffer_type = chr(C[n+3])*C[n+4]
 
-                        buffer_len = struct.calcsize(">"+buffer_type)
+                            buffer_len = struct.calcsize(">"+buffer_type)
 
-                        if(len(C) == n+buffer_len+5):
-                            buffer_values = struct.unpack(">"+buffer_type,C[n+5:])
-                            return int(C[n+2]),list(buffer_values)
-        except:
-            return None, None
-            
+                            if(len(C) == n+buffer_len+5):
+                                buffer_values = struct.unpack(">"+buffer_type,C[n+5:])
+                                return int(C[n+2]),list(buffer_values)
+            except:
+                pass
+
         return None, None

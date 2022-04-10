@@ -11,7 +11,7 @@ class control_joystick:
     device_value = json.loads("{}")
 
     arduino_conf = json.loads("{}")
-    arduino_value = json.loads("{}")
+    arduino_value = dict(json.loads("{}"))
     device = "hexapod"
 
     modo_values = {
