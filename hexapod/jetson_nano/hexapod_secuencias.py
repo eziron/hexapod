@@ -430,7 +430,7 @@ secuencia = [
 
 h = 90
 z = 50
-arco = 70
+arco = 50
 n_rep = 2
 low_speed = 300
 high_speed = 800
@@ -573,18 +573,19 @@ def get_lidar_sample(mode,sample_time,speed1,speed2):
 
             dt_string = datetime.now().strftime("lidar_sample-%d%m%Y-%H%M%S.ply")
             o3d.io.write_point_cloud(samp_PATH+dt_string, pcd)
+        else:
+            print("ERROR al inciar el lidar")
+    
 
-            serial_com.stop_lidar()
-    else:
-        print("ERROR al inciar el lidar")
+        serial_com.stop_lidar()
 
 
 while(serial_com.ping() is None):
     print("error al conectar con la RPI pico")
-    Serial.close()
-    sleep(1)
-    Serial = serial.Serial("/dev/ttyTHS1",baud,timeout=0.05)
-    serial_com = pro_Serial(Serial)
+    #Serial.close()
+    #sleep(1)
+    #Serial = serial.Serial("/dev/ttyTHS1",baud,timeout=0.05)
+    #serial_com = pro_Serial(Serial)
     sleep(1)
 
 hexapod.reset_dt()

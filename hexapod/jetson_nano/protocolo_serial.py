@@ -94,17 +94,30 @@ class pro_Serial():
             tipo,buffer = self.read_command()
             if(not (tipo is None or buffer is None)):
                 if(tipo == 3 and len(buffer) == 2 and buffer[0] == 5 and buffer[1] == 5):
-                    print("LIDAR: INICIADO")
+                    print("LIDAR STAR: INICIADO")
                     return True
                 elif (tipo == 3 and len(buffer) == 2 and buffer[0] == 0 and buffer[1] == 0):
-                    print("LIDAR: error al inicial")
+                    print("LIDAR STAR: error al inicial")
                     return False
             else:
-                print("LIDAR: time out")
+                print("LIDAR STAR: time out")
                 return False
     
     def stop_lidar(self):
         self.send_command(3,"B",[0,0,0])
+
+        while(True):
+            tipo,buffer = self.read_command()
+            if(not (tipo is None or buffer is None)):
+                if(tipo == 3 and len(buffer) == 2 and buffer[0] == 5 and buffer[1] == 5):
+                    print("LIDAR STOP: error al detener")
+                    return None
+                elif (tipo == 3 and len(buffer) == 2 and buffer[0] == 0 and buffer[1] == 0):
+                    print("LIDAR STOP: Detenido")
+                    return None
+            else:
+                print("LIDAR STOP: time out")
+                return None
 
     def read_lidar(self):
         if(self.Serial.in_waiting):
