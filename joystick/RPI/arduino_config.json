@@ -25,16 +25,16 @@
     "x_izq":{
         "value":0,
         "modo":"normal",
-        "min":-2000,
-        "max":2000,
+        "min":-800,
+        "max":800,
         "PPS":0,
         "centro":0
     },
     "y_izq":{
         "value":0,
         "modo":"normal",
-        "min":-2000,
-        "max":2000,
+        "min":-800,
+        "max":800,
         "PPS":0,
         "centro":0
     },
@@ -82,7 +82,7 @@
         "continuo": true,
         "min":70,
         "max":180,
-        "PPS":1
+        "PPS":10
     },
     "cruz_izq_v":{
         "value":0,
@@ -90,7 +90,7 @@
         "continuo": true,
         "min":0,
         "max":255,
-        "PPS":1
+        "PPS":10
     },
 
 

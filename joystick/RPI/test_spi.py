@@ -17,6 +17,10 @@ def Aconstrain(val,min_val,max_val):
     else:
         return val 
 
+A = (195/64)
+B = -(16575/32)
+C = (1440875/64)
+
 spi_bus = 1
 spi_device = 2
 
@@ -34,10 +38,26 @@ time_ref = time()
 dt = time_ref
 while(time()-time_ref < t_sap):
     if(joystick.read_arduino()):
-        val = joystick.arduino_value
-        ang,mod = rec_to_pol(val["x_izq"],val["y_izq"])
-        mod = Aconstrain(mod,0,2000)
-        print(count,ang,mod,list(val.values()))
+        val_dic = joystick.arduino_value
+        val = list(val_dic.values())
+        ang,mod = rec_to_pol(val_dic["x_izq"],val_dic["y_izq"])
+        mod = Aconstrain(mod,0,800)
+
+        ang_abs = abs(ang)
+        if(ang_abs > 90):
+            ang_abs = 180-ang_abs
+
+        if(ang_abs <= 5):
+            rad = 100000
+        elif(ang_abs >= 85):
+            rad = 500
+        else:
+            rad = A*(ang_abs**2)+B*ang_abs+C
+
+        if(ang < 0):
+            rad = -rad
+
+        print(count,ang,mod,rad,val)
         count += 1
         sleep(0.08)
     else:
