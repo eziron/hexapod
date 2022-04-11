@@ -50,20 +50,20 @@
         "value":0
     },
     "cruz_der_h":{
-        "value":0,
-        "modo":"normal",
+        "value":30,
+        "modo":"incremental",
         "continuo": true,
-        "min":0,
-        "max":254,
-        "PPS":1
+        "min":10,
+        "max":100,
+        "PPS":20
     },
     "cruz_der_v":{
-        "value":0,
-        "modo":"normal",
+        "value":70,
+        "modo":"incremental",
         "continuo": true,
-        "min":0,
-        "max":255,
-        "PPS":1
+        "min":10,
+        "max":100,
+        "PPS":20
     },
     "but_cruz_der":{
         "value":0,
@@ -80,17 +80,17 @@
         "value":70,
         "modo":"incremental",
         "continuo": true,
-        "min":70,
+        "min":50,
         "max":180,
         "PPS":10
     },
     "cruz_izq_v":{
-        "value":0,
+        "value":70,
         "modo":"incremental",
         "continuo": true,
-        "min":0,
-        "max":255,
-        "PPS":10
+        "min":50,
+        "max":150,
+        "PPS":20
     },
 
 

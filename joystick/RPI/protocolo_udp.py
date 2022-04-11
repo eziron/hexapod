@@ -40,8 +40,11 @@ class pro_UDP():
                 len_msg,#B
                 *buffer
                 )
-            self.s.sendto(msg_tx,(self.ip,self.port))
-            return True
+            R = self.s.sendto(msg_tx,(self.ip,self.port))
+            if(R == len(msg_tx)):
+                return True
+            else:
+                return False
         except:
             return False
 
