@@ -21,11 +21,7 @@ def Aconstrain(val,min_val,max_val):
     else:
         return val 
 
-s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-hexapod = pro_UDP(s,"hexapod.local")
-print(s.getsockname())
-
-
+hexapod = pro_UDP()
 
 spi_bus = 1
 spi_device = 2
@@ -39,60 +35,53 @@ joystick = jk.control_joystick(spi)
 joystick.write_arduino()
 count = 0
 loss_count = 0
-t_sap = 300
-time_ref = time()
-dt = time_ref
-while(time()-time_ref < t_sap):
-    if(time()-dt > 0.05):
-        dt = time()
 
-        if(joystick.read_arduino()):
-            val_dic = joystick.arduino_value
-            val = list(val_dic.values())
-            ang,mod = rec_to_pol(val_dic["x_izq"],val_dic["y_izq"])
-            mod = Aconstrain(mod,0,800)
+estado = True
+with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+    s.connect(("hexapod.local", 8888))
+    
+    time_ref = time()
+    dt = time_ref
+    while(estado):
+        if(time()-dt > 0.05):
+            dt = time()
 
-            
+            if(joystick.read_arduino()):
+                val_dic = joystick.arduino_value
+                val = list(val_dic.values())
+                ang,mod = rec_to_pol(val_dic["x_izq"],val_dic["y_izq"])
+                mod = Aconstrain(mod,0,800)
 
-            buff = [
-                round(mod),              #velocidad lineal de la caminata
-                round(ang*64),          #angulo de giro del hexapod
-                val_dic["but_analog_izq"],   #modo de movimientos, caminata/giro
-                val_dic["cruz_der_h"],       #Z
-                val_dic["cruz_der_v"],       #arco
-                val_dic["cruz_izq_h"],       #H  
-                val_dic["y_der"],            #RX
-                0,                           #RY
-                val_dic["x_der"],            #RZ
-            ]
+                buff = [
+                    round(mod),                  #[0] velocidad lineal de la caminata
+                    round(ang*64),               #[1] angulo de giro del hexapod
+                    val_dic["but_analog_izq"],   #[2] modo de movimientos, caminata/giro
+                    val_dic["cruz_der_h"],       #[3] Z
+                    val_dic["cruz_der_v"],       #[4] arco
+                    val_dic["cruz_izq_h"],       #[5] H  
+                    val_dic["y_der"],            #[6] RX
+                    0,                           #[7] RY
+                    val_dic["x_der"],            #[8] RZ
+                ]
 
-            print("SEND")
-            estado = hexapod.send_command(25,"h",buff)
-            if(estado):
-                cmd,buff_rex = hexapod.read_command()
-                if(not cmd is None):
-                    count += 1
-            else:
-                print("----------------SEND ERROR----------------")
+                estado_resp = hexapod.send_command(s,25,"h",buff)
+                if(estado_resp):
+                    cmd,buff_rex = hexapod.read_command(s)
+                    if(not cmd is None):
+                        count += 1
+                        loss_count = 0
+                    else:
+                        loss_count += 1
+                else:
+                    loss_count += 1
 
-            
-            print(count,buff)
-            count += 1
+                if(loss_count > 50):
+                    estado = False
                 
-            
-        else:
-            loss_count += 1
-            print("------  LOSS ------")
-    else:
-        sleep(0.001)
+                print(count,buff)
     
 #/usr/bin/python /home/pi/Desktop/hexapod/joystick/RPI/UDP_joystick.py
 
-print(count)
-print(count/t_sap)
-print((t_sap*1000)/count)
-print(loss_count)
-print(loss_count/t_sap)
 
 
     

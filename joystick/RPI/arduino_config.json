@@ -77,20 +77,20 @@
         "value":0
     },
     "cruz_izq_h":{
-        "value":70,
+        "value":0,
         "modo":"incremental",
         "continuo": true,
-        "min":50,
+        "min":0,
         "max":180,
-        "PPS":10
+        "PPS":40
     },
     "cruz_izq_v":{
-        "value":70,
+        "value":0,
         "modo":"incremental",
         "continuo": true,
-        "min":50,
-        "max":150,
-        "PPS":20
+        "min":0,
+        "max":180,
+        "PPS":40
     },
 
 

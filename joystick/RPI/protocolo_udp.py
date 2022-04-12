@@ -11,16 +11,11 @@ import time
 #byte[5:] = datos
 
 class pro_UDP():
-    def __init__(self,s:socket.socket,ip:str,port:int=8888,synq_Byte1 = 254,synq_Byte2 = 252):
-        self.s = s
+    def __init__(self,synq_Byte1 = 254,synq_Byte2 = 252):
         self.synq_Byte1 = synq_Byte1
         self.synq_Byte2 = synq_Byte2
-        self.ip = ip
-        self.port = port
-        self.s.bind(("0.0.0.0",self.port))
-        self.s.setblocking(0)
 
-    def send_command(self,tipo_command:int,tipo_dato:str,buffer) -> bool:
+    def send_command(self,conn:socket.socket,tipo_command:int,tipo_dato:str,buffer) -> bool:
         try:
             if(isinstance(buffer,list)):
                 len_msg = len(buffer)
@@ -40,20 +35,24 @@ class pro_UDP():
                 len_msg,#B
                 *buffer
                 )
-            R = self.s.sendto(msg_tx,(self.ip,self.port))
-            if(R == len(msg_tx)):
-                return True
-            else:
-                return False
+            #R = self.s.sendto(msg_tx,(self.ip,self.port))
+            #if(R == len(msg_tx)):
+            #    return True
+            #else:
+            #    return False
+
+            conn.sendall(msg_tx)
+            return True
         except:
             return False
 
         
-    def read_command(self,time_out = 0.02):
+    def read_command(self,conn:socket.socket,time_out = 0.02):
         time_ref = time.time()
         while (time.time()-time_ref < time_out):
             try:
-                C = self.s.recv(4096)
+                #C = self.s.recv(4096)
+                C = conn.recv(550)
                 if(len(C) > 5):
                     n= 0
                     while(C[n] != self.synq_Byte1 and n<len(C)):
