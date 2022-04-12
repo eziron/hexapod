@@ -475,12 +475,14 @@ class Hexapod():
 
         time = self.hipotenusa_R3(dc[0],dc[1],dc[2])/speed
 
-        return [
-                    dc[0]/time,
-                    dc[1]/time,
-                    dc[2]/time
-                ]
-
+        if(round(time,3) > 0):
+            return [
+                        dc[0]/time,
+                        dc[1]/time,
+                        dc[2]/time
+                    ]
+        else:
+            return [0.0,0.0,0.0]
     #fija una cordenada objetivo en una pierna
     def lineal_set_target_time(self,index,cord,time,rot_dep=True):
         self.estado_rot_desp[index] = rot_dep
@@ -690,7 +692,12 @@ class Hexapod():
         self.delta_time[0] = time_ref - self.delta_time[1]
         self.delta_time[1] = time_ref
 
+        if(self.delta_time[0] > 0.5):
+            self.delta_time[0] = 0.0
+
+
         result_por_pierna = [False,False,False,False,False,False]
+        result_piernas = True
         result_H = False
         rasult_rot = [True,False]
         rasult_p_rot = [True,False]
@@ -699,6 +706,7 @@ class Hexapod():
         for i in range(6):
             result_por_pierna[i] = self.condicion_objetivo(i)
             result_general = result_general and result_por_pierna[i]
+            result_piernas = result_piernas and result_por_pierna[i]
         [
             self.H[0],
             self.H[1],
@@ -753,7 +761,7 @@ class Hexapod():
 
         result_general = result_general and rasult_rot[0] and rasult_p_rot[0] and rasult_desp[0]
         self.actualizar_rot_desp()
-        return(result_general,result_por_pierna,result_H,rasult_rot[0],rasult_p_rot[0],rasult_desp[0])
+        return(result_general,result_piernas,result_H,rasult_rot[0],rasult_p_rot[0],rasult_desp[0])
 
     def bucle_movimiento(self):
         estado = False

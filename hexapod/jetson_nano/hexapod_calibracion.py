@@ -1,3 +1,4 @@
+from email.policy import default
 import os
 from time import sleep
 import serial
@@ -14,12 +15,11 @@ baud = conf_hexapod["general"]["baudrate"]
 while True:
     try:
         Serial = serial.Serial("/dev/ttyTHS1",baud,timeout=0.05)
-        os.system("""sudo renice -20 -p $(pgrep "python3")""")
+        os.system("""echo 102938 | sudo renice -20 -p $(pgrep "python3")""")
         break
     except:
         print("Error al inisiar el serial")
         os.system("echo 102938 | sudo -S chmod 666 /dev/ttyTHS1")
-        Serial = serial.Serial("/dev/ttyTHS1",baud,timeout=0.05)
 
 serial_com = pro_Serial(Serial)
 
@@ -27,10 +27,6 @@ print("iniciado")
 
 while(serial_com.ping() is None):
     print("error al conectar con la RPI pico")
-    Serial.close()
-    sleep(1)
-    Serial = serial.Serial("/dev/ttyTHS1",baud,timeout=0.05)
-    serial_com = pro_Serial(Serial)
     sleep(1)
 
 def constrain(val, min_val, max_val):
@@ -49,6 +45,12 @@ def constrain(val, min_val, max_val):
 
 #para sv0 N   - 1500 = 0gr
 #para sv0 INV - 1500  = 0gr
+
+default_duty = [
+    [1500,1500],
+    [1944,1056],
+    [ 678,2322]
+]
 duty = [
         2322, #[0]  - N    P6 sv2
         1944, #[1]  - inv  P6 sv1
@@ -94,10 +96,18 @@ while(estado):
             while(estado2):
                 #duty_val = int(input("ingrese duty [500-2500]: "))
                 duty_str = input("ingrese duty [500-2500]: ")
-                duty_val = int(duty_str)
+                try:
+                    duty_val = int(duty_str)
+                except:
+                    duty_val = duty[n_duty]
+
                 if("+" in duty_str or "-" in duty_str):
                     duty[n_duty] = constrain(duty[n_duty] + duty_val,500,2500)
                     print("nuevo duty = ",duty[n_duty])
+                elif("r" in duty_str):
+                    inv = conf_hexapod["P"+str(n_p)]["sv"+str(n_sv)]["giro_inv"]
+                    duty[n_duty] = default_duty[n_sv][inv]
+
                 elif(duty_val >= 500 and duty_val <= 2500):
                     duty[n_duty] = duty_val
                 elif(duty_val == 9):

@@ -10,16 +10,11 @@ import socket
 #byte[5:] = datos
 
 class pro_UDP():
-    def __init__(self,s:socket.socket,ip:str,port:int=8888,synq_Byte1 = 254,synq_Byte2 = 252):
-        self.s = s
+    def __init__(self,synq_Byte1 = 254,synq_Byte2 = 252):
         self.synq_Byte1 = synq_Byte1
         self.synq_Byte2 = synq_Byte2
-        self.ip = ip
-        self.port = port
-        self.s.bind(("0.0.0.0",self.port))
-        self.s.setblocking(0)
 
-    def send_command(self,tipo_command:int,tipo_dato:str,buffer) -> bool:
+    def send_command(self,conn:socket.socket,tipo_command:int,tipo_dato:str,buffer) -> bool:
         try:
             if(isinstance(buffer,list)):
                 len_msg = len(buffer)
@@ -39,15 +34,20 @@ class pro_UDP():
                 len_msg,#B
                 *buffer
                 )
-            self.s.sendto(msg_tx,(self.ip,self.port))
+            #self.s.sendto(msg_tx,(self.ip,self.port))
+            conn.sendall(msg_tx)
             return True
         except:
             return False
 
         
-    def read_command(self):
+    def read_command(self,conn:socket.socket):
         try:
-            C = self.s.recv(550)
+            #C = self.s.recv(550)
+            C = conn.recv(550)
+            if(C is None):
+                return None, None
+
             if(len(C) > 5):
                 n= 0
                 while(C[n] != self.synq_Byte1 and n<len(C)):

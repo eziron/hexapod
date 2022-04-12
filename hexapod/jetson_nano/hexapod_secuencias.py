@@ -451,12 +451,11 @@ baud = conf_hexapod["general"]["baudrate"]
 while True:
     try:
         Serial = serial.Serial("/dev/ttyTHS1",baud,timeout=0.05)
-        os.system("""sudo renice -20 -p $(pgrep "python3")""")
+        os.system("""echo 102938 | sudo renice -20 -p $(pgrep "python3")""")
         break
     except:
         print("Error al inisiar el serial")
         os.system("echo 102938 | sudo -S chmod 666 /dev/ttyTHS1")
-        Serial = serial.Serial("/dev/ttyTHS1",baud,timeout=0.05)
 
     
 
