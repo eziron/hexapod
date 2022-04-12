@@ -78,7 +78,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                 if(loss_count > 50):
                     estado = False
                 
-                print(count,buff)
+                print(count,"speed:",buff[0],"/ Z:",buff[3],"/ arco:",buff[4],"/ H:",buff[5],"/ RX:",round(buff[6]/64,1),"/ RZ:",round(buff[8]/64,1))
     
 #/usr/bin/python /home/pi/Desktop/hexapod/joystick/RPI/UDP_joystick.py
 
