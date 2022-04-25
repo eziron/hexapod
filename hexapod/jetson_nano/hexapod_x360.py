@@ -1,5 +1,5 @@
 from xbox360controller import Xbox360Controller
-from math import atan2, sqrt
+from math import atan2, sqrt,degrees
 from time import time, sleep
 from servo_carteciano import Hexapod
 from protocolo_serial import pro_Serial
@@ -49,7 +49,7 @@ axis_dic = {
 
 def rec_a_pol(x,y,max_mod):
     mod = min(sqrt((x**2)+(y**2)),max_mod)
-    ang = atan2(y,x)
+    ang = degrees(atan2(y,x))
 
     return ang,mod
 
@@ -74,30 +74,37 @@ def on_button_released(button):
     print('Button {0} was released'.format(button.name))
 
 def on_star_pressed(button):
+    global star
     star = not star
 
 def on_axis_L_moved(axis):
+    global axis_dic
     axis_dic["Lx"] = round(dead_val_axis(axis.x,30)*800)
-    axis_dic["Ly"] = round(dead_val_axis(axis.y,30)*800)
+    axis_dic["Ly"] = -round(dead_val_axis(axis.y,30)*800)
 
     ang, mod = rec_a_pol(axis_dic["Lx"],axis_dic["Ly"],800)
 
     axis_dic["Lm"] = mod
     axis_dic["La"] = ang
+    print(axis.name,axis_dic["Lx"],axis_dic["Ly"],axis_dic["Lm"],axis_dic["La"])
 
 def on_axis_R_moved(axis):
+    global axis_dic
     axis_dic["Rx"] = round(dead_val_axis(axis.x,30)*10,1)
-    axis_dic["Ry"] = round(dead_val_axis(axis.y,30)*10,1)
+    axis_dic["Ry"] = -round(dead_val_axis(axis.y,30)*10,1)
 
     ang, mod = rec_a_pol(axis_dic["Rx"],axis_dic["Ry"],10)
 
     axis_dic["Rm"] = mod
     axis_dic["Ra"] = ang
+    print(axis.name,axis_dic["Rx"],axis_dic["Ry"],axis_dic["Rm"],axis_dic["Ra"])
 
 def on_Rt_moved(axis):
+    global axis_dic
     axis_dic["Rt"] = round(dead_val_axis(axis.value,30)*50)
 
 def on_Lt_moved(axis):
+    global axis_dic
     axis_dic["Lt"] = round(dead_val_axis(axis.value,30)*50)
 
 def a_map(x:float, in_min:float, in_max:float, out_min:float, out_max:float):
@@ -128,17 +135,19 @@ while(serial_com.ping() is None):
 serial_com.stop_lidar()
 serial_com.send_duty(hexapod.sv_duty())
 
-
+estado_bucle = True
 with Xbox360Controller(0, axis_threshold=0) as controller:
     controller.axis_l.when_moved = on_axis_L_moved
     controller.axis_r.when_moved = on_axis_R_moved
     controller.trigger_l.when_moved = on_Lt_moved
     controller.trigger_r.when_moved = on_Rt_moved
-    while(True):
+    while(estado_bucle):
 
         try:
             estado_g,estado_p,_,_,_,_ =hexapod.actualizar_cord()
             serial_com.send_duty(hexapod.sv_duty())
+        except KeyboardInterrupt:
+            estado_bucle = False
         except:
             pass
 
