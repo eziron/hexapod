@@ -89,7 +89,7 @@ void setup(){
     Wire1.setSCL(WIRE1_SCL_PIN);
     Wire1.setClock(WIRE1_SDA_CLK);
 
-    pwm.begin(PWM_FREQ,24139000);
+    pwm.begin(PWM_FREQ,24943000);
     sv16.attach(SV16_PIN);
     sv17.attach(SV17_PIN);
 

@@ -23,6 +23,7 @@ else:
 
 pcd = o3d.io.read_point_cloud("samples\\"+dir_samples[n])
 print(len(pcd.points))
+o3d.visualization.draw_geometries([pcd])
 
 
 """
