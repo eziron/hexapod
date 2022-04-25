@@ -146,8 +146,8 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                     for i in range(6):
                         hexapod.lineal_set_target_time(i,hexapod.Pierna_param[i][3],0.1)
                     
-                hexapod.set_param_speed(100,20,h)
-                hexapod.set_param_time(0.1,None,[ang_RX,ang_RY,ang_RZ])
+                hexapod.set_param_speed(40,20,h)
+                hexapod.set_param_time(0.2,None,[ang_RX,ang_RY,ang_RZ])
 
                 if(time()-loss_ref > 5):
                     estado = False

@@ -883,6 +883,6 @@ class Hexapod():
                         angulos[0][n],
                         ang_speed,
                         lineal_speed,
-                        False,
+                        True,
                         True
                     )

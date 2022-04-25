@@ -430,7 +430,7 @@ secuencia = [
 
 h = 90
 z = 50
-arco = 50
+arco = 70
 n_rep = 2
 low_speed = 300
 high_speed = 800
