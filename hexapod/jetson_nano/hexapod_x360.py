@@ -13,7 +13,7 @@ C = (1440875/64)
 
 n_seq = -1
 n_step = -1
-h = 0
+h = 70
 z = 50
 arco = 50
 speed = 300
@@ -137,6 +137,7 @@ serial_com.send_duty(hexapod.sv_duty())
 
 estado_bucle = True
 with Xbox360Controller(0, axis_threshold=0) as controller:
+    controller.button_start.when_pressed = on_star_pressed
     controller.axis_l.when_moved = on_axis_L_moved
     controller.axis_r.when_moved = on_axis_R_moved
     controller.trigger_l.when_moved = on_Lt_moved
@@ -152,37 +153,44 @@ with Xbox360Controller(0, axis_threshold=0) as controller:
             pass
 
         if(star):
-            if(axis_dic["Lm"] > 10):
+            if(axis_dic["Lm"] > 0):
                 ang_val = axis_dic["La"]
                 ang_abs = abs(ang_val)
 
                 if(ang_abs > 45 and ang_abs < 135):
                     if(modo_mov == -1):
-                        modo_mov = 0
+                        modo_mov = 1
                         
                 else:
                     if(modo_mov == -1):
-                        modo_mov = 1
+                        modo_mov = 0
 
                 if(modo_mov == 0):
                     caminata_p_rot[0] = 0
                     caminata_p_rot[1] = 0
 
-                    if(axis_dic["La"] < 0):
+                    if(ang_abs < 90):
                         n_seq = 3
                     else:
                         n_seq = 2
+
                 elif(modo_mov == 1):
                     caminata_p_rot[0] = 1000000
                     caminata_p_rot[1] = 0
 
-                    if(ang_abs > 90):
+                    if(ang_val > 0):
                         n_seq = 0
                     else:
                         n_seq = 1
                 #print(ang_abs,n_seq,caminata_p_rot)
-
-                cam_speed = axis_dic["Lm"]
+            
+                cam_speed = axis_dic["Lm"]+30
+            else:
+                n_seq = -1
+                modo_mov = -1
+                cam_speed = 0
+                caminata_p_rot[0] = 0
+                caminata_p_rot[1] = 0
 
             ang_RX =     axis_dic["Rx"]
             ang_RZ =     axis_dic["Ry"]

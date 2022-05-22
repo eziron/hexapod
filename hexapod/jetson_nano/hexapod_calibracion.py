@@ -1,8 +1,6 @@
-from email.policy import default
 import os
 from time import sleep
 import serial
-import struct
 from protocolo_serial import pro_Serial
 import json
 

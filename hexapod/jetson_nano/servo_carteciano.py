@@ -1,8 +1,6 @@
 import math
 from time import sleep, time
 
-from pandas import array
-
 class Hexapod():
     H = [20.0 ,20.0 ,0.0 ]
 
