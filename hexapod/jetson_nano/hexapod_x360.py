@@ -11,6 +11,13 @@ A = (195/64)
 B = -(16575/32)
 C = (1440875/64)
 
+limites = [
+        [45,135], #desde el centro
+        [55,125], #desde rotacion 
+        [35,145]  #desde caminata
+    ]
+
+pass_n_seq = -1
 n_seq = -1
 n_step = -1
 h = 70
@@ -119,18 +126,19 @@ baud = conf_hexapod["general"]["baudrate"]
 while True:
     try:
         Serial = serial.Serial("/dev/ttyTHS1",baud,timeout=0.05)
-        os.system("""echo 102938 | sudo renice -20 -p $(pgrep "python3")""")
         break
     except:
         print("Error al inisiar el serial")
         os.system("echo 102938 | sudo -S chmod 666 /dev/ttyTHS1")
+
+os.system("""echo 102938 | sudo renice -20 -p $(pgrep "python3")""")
 
 serial_com = pro_Serial(Serial)
 hexapod = Hexapod(conf_hexapod)
 
 while(serial_com.ping() is None):
     print("error al conectar con la RPI pico")
-    sleep(0.2)
+    sleep(0.1)
 
 serial_com.stop_lidar()
 serial_com.send_duty(hexapod.sv_duty())
@@ -142,6 +150,7 @@ with Xbox360Controller(0, axis_threshold=0) as controller:
     controller.axis_r.when_moved = on_axis_R_moved
     controller.trigger_l.when_moved = on_Lt_moved
     controller.trigger_r.when_moved = on_Rt_moved
+    
     while(estado_bucle):
 
         try:
@@ -150,22 +159,28 @@ with Xbox360Controller(0, axis_threshold=0) as controller:
         except KeyboardInterrupt:
             estado_bucle = False
         except:
+            estado_g = False
+            estado_p = False
             pass
 
         if(star):
             if(axis_dic["Lm"] > 0):
+                cam_speed = axis_dic["Lm"]+30
                 ang_val = axis_dic["La"]
                 ang_abs = abs(ang_val)
 
-                if(ang_abs > 45 and ang_abs < 135):
-                    if(modo_mov == -1):
-                        modo_mov = 1
-                        
-                else:
-                    if(modo_mov == -1):
-                        modo_mov = 0
+                if(ang_abs > limites[modo_mov][0] and ang_abs < limites[modo_mov][1]):
+                    modo_mov = 2
+                    caminata_p_rot[0] = 1000000
+                    caminata_p_rot[1] = 0
 
-                if(modo_mov == 0):
+                    if(ang_val > 0):
+                        n_seq = 0
+                    else:
+                        n_seq = 1
+
+                else:
+                    modo_mov = 1
                     caminata_p_rot[0] = 0
                     caminata_p_rot[1] = 0
 
@@ -174,20 +189,10 @@ with Xbox360Controller(0, axis_threshold=0) as controller:
                     else:
                         n_seq = 2
 
-                elif(modo_mov == 1):
-                    caminata_p_rot[0] = 1000000
-                    caminata_p_rot[1] = 0
-
-                    if(ang_val > 0):
-                        n_seq = 0
-                    else:
-                        n_seq = 1
                 #print(ang_abs,n_seq,caminata_p_rot)
-            
-                cam_speed = axis_dic["Lm"]+30
             else:
                 n_seq = -1
-                modo_mov = -1
+                modo_mov = 0
                 cam_speed = 0
                 caminata_p_rot[0] = 0
                 caminata_p_rot[1] = 0
@@ -195,7 +200,7 @@ with Xbox360Controller(0, axis_threshold=0) as controller:
             ang_RX =     axis_dic["Rx"]
             ang_RZ =     axis_dic["Ry"]
 
-            if(n_seq >= 0):
+            if(n_seq >= 0 and n_seq == pass_n_seq):
                 if(estado_p):
                     hexapod.polar_set_step_caminata(
                             n_sec=n_seq,
@@ -213,6 +218,8 @@ with Xbox360Controller(0, axis_threshold=0) as controller:
                     if(n_step >= 6):
                         n_step = 0
             else:
+                pass_n_seq = n_seq
+                n_step = 0
                 for i in range(6):
                     hexapod.lineal_set_target_time(i,hexapod.Pierna_param[i][3],0.1)
                 
