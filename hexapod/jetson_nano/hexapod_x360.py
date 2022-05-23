@@ -97,10 +97,10 @@ def on_axis_L_moved(axis):
 
 def on_axis_R_moved(axis):
     global axis_dic
-    axis_dic["Rx"] = round(dead_val_axis(axis.x,30)*10,1)
-    axis_dic["Ry"] = -round(dead_val_axis(axis.y,30)*10,1)
+    axis_dic["Rx"] = round(dead_val_axis(axis.x,30),5)
+    axis_dic["Ry"] = -round(dead_val_axis(axis.y,30),5)
 
-    ang, mod = rec_a_pol(axis_dic["Rx"],axis_dic["Ry"],10)
+    ang, mod = rec_a_pol(axis_dic["Rx"],axis_dic["Ry"],1)
 
     axis_dic["Rm"] = mod
     axis_dic["Ra"] = ang
@@ -197,8 +197,8 @@ with Xbox360Controller(0, axis_threshold=0) as controller:
                 caminata_p_rot[0] = 0
                 caminata_p_rot[1] = 0
 
-            ang_RX =     axis_dic["Rx"]
-            ang_RZ =     axis_dic["Ry"]
+            ang_RX =     -axis_dic["Ry"]*8
+            ang_RZ =     -axis_dic["Rx"]*22
 
             if(n_seq >= 0 and n_seq == pass_n_seq):
                 if(estado_p):
