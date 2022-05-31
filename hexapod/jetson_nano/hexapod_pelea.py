@@ -312,71 +312,116 @@ secuencia = [
                 [   0.0,   0.0,   0.0], #[8] desplazamiento simple
                 [False,True,True,True,True,False],#[9] desplazamientos y rotaciones
                 80.0, #[10] H 
-                0.3,   #[11] step time
-                1.0
+                0.1,   #[11] step time
+                0.0
             ],
             [
-                [  80.0, 300.0,  70.0], #[0] pie 1
-                [  None,  50.0,  None], #[1] pie 2
+                [  None,  None,  None], #[0] pie 1
+                [  None,  None,  10.0], #[1] pie 2
                 [  None,  None,  None], #[2] pie 3
                 [  None,  None,  None], #[3] pie 4
-                [  None,  50.0,  None], #[4] pie 5
-                [ -80.0, 300.0,  70.0], #[5] pie 6
+                [  None,  None,  10.0], #[4] pie 5
+                [  None,  None,  None], #[5] pie 6
                 [   0.0,   0.0,   0.0], #[6] Rotaciones
                 [   0.0,   0.0,   0.0], #[7] punto de rotacion
                 [   0.0,   0.0,   0.0], #[8] desplazamiento simple
                 [False,True,True,True,True,False],#[9] desplazamientos y rotaciones
                 80.0, #[10] H 
-                0.3,   #[11] step time
-                1.0
+                0.1,   #[11] step time
+                0.1
             ],
             [
-                [  80.0, 300.0,  70.0], #[0] pie 1
-                [  None,  50.0,  None], #[1] pie 2
+                [  None,  None,  None], #[0] pie 1
+                [  None, 120.0,  10.0], #[1] pie 2
                 [  None,  None,  None], #[2] pie 3
                 [  None,  None,  None], #[3] pie 4
-                [  None,  50.0,  None], #[4] pie 5
-                [ -80.0, 300.0,  70.0], #[5] pie 6
+                [  None, 120.0,  10.0], #[4] pie 5
+                [  None,  None,  None], #[5] pie 6
                 [   0.0,   0.0,   0.0], #[6] Rotaciones
                 [   0.0,   0.0,   0.0], #[7] punto de rotacion
-                [   0.0, 50.0,   0.0], #[8] desplazamiento simple
+                [   0.0,   0.0,   0.0], #[8] desplazamiento simple
                 [False,True,True,True,True,False],#[9] desplazamientos y rotaciones
                 80.0, #[10] H 
-                0.5,   #[11] step time
-                1.2
+                0.1,   #[11] step time
+                0.1
             ],
             [
-                [  80.0, 300.0,  70.0], #[0] pie 1
-                [  None,  50.0,  None], #[1] pie 2
-                [  None,  None,  None], #[2] pie 3
-                [  None,  None,  None], #[3] pie 4
-                [  None,  50.0,  None], #[4] pie 5
-                [ -80.0, 300.0,  70.0], #[5] pie 6
+                [  None,  None,  None], #[0] pie 1
+                [  None, 120.0,  None], #[1] pie 2
+                [  None,  None,  10.0], #[2] pie 3
+                [  None,  None,  10.0], #[3] pie 4
+                [  None, 120.0,  None], #[4] pie 5
+                [  None,  None,  None], #[5] pie 6
                 [   0.0,   0.0,   0.0], #[6] Rotaciones
                 [   0.0,   0.0,   0.0], #[7] punto de rotacion
-                [   0.0, 50.0,   0.0], #[8] desplazamiento simple
+                [   0.0,   0.0,   0.0], #[8] desplazamiento simple
                 [False,True,True,True,True,False],#[9] desplazamientos y rotaciones
                 80.0, #[10] H 
-                0.5,   #[11] step time
-                1.2
+                0.1,   #[11] step time
+                0.1
             ],
             [
-                [  None,  None,  70.0], #[0] pie 1
+                [  None,  None,  None], #[0] pie 1
+                [  None, 120.0,  None], #[1] pie 2
+                [  None,-150.0,  10.0], #[2] pie 3
+                [  None,-150.0,  10.0], #[3] pie 4
+                [  None, 120.0,  None], #[4] pie 5
+                [  None,  None,  None], #[5] pie 6
+                [   0.0,   0.0,   0.0], #[6] Rotaciones
+                [   0.0,   0.0,   0.0], #[7] punto de rotacion
+                [   0.0,   0.0,   0.0], #[8] desplazamiento simple
+                [False,True,True,True,True,False],#[9] desplazamientos y rotaciones
+                80.0, #[10] H 
+                0.1,   #[11] step time
+                0.1
+            ],
+            [
+                [  10.0, None,  70.0], #[0] pie 1
+                [  None, 120.0,  None], #[1] pie 2
+                [  None,-150.0,  None], #[2] pie 3
+                [  None,-150.0,  None], #[3] pie 4
+                [  None, 120.0,  None], #[4] pie 5
+                [ -10.0, None,  70.0], #[5] pie 6
+                [   0.0,   0.0,   0.0], #[6] Rotaciones
+                [   0.0,   0.0,   0.0], #[7] punto de rotacion
+                [   0.0,   0.0,   0.0], #[8] desplazamiento simple
+                [False,True,True,True,True,False],#[9] desplazamientos y rotaciones
+                80.0, #[10] H 
+                0.1,   #[11] step time
+                0.2
+            ],
+            [
+                [  10.0, None,  70.0], #[0] pie 1
+                [  None, 120.0,  None], #[1] pie 2
+                [  None,-150.0,  None], #[2] pie 3
+                [  None,-150.0,  None], #[3] pie 4
+                [  None, 120.0,  None], #[4] pie 5
+                [ -10.0, None,  70.0], #[5] pie 6
+                [   0.0,   0.0,   0.0], #[6] Rotaciones
+                [   0.0,   0.0,   0.0], #[7] punto de rotacion
+                [   0.0,-250.0,   0.0], #[8] desplazamiento simple
+                [False,True,True,True,True,False],#[9] desplazamientos y rotaciones
+                80.0, #[10] H 
+                0.4,   #[11] step time
+                0.2
+            ],
+            [
+                [  None,  None,  None], #[0] pie 1
                 [  None,  None,  None], #[1] pie 2
                 [  None,  None,  None], #[2] pie 3
                 [  None,  None,  None], #[3] pie 4
                 [  None,  None,  None], #[4] pie 5
-                [  None,  None,  70.0], #[5] pie 6
+                [  None,  None,  None], #[5] pie 6
                 [   0.0,   0.0,   0.0], #[6] Rotaciones
                 [   0.0,   0.0,   0.0], #[7] punto de rotacion
                 [   0.0,   0.0,   0.0], #[8] desplazamiento simple
-                [False,True,True,True,True,False],#[9] desplazamientos y rotaciones
+                [False,False,False,False,False,False],#[9] desplazamientos y rotaciones
                 80.0, #[10] H 
-                0.3,   #[11] step time
-                1.0
+                0.1,   #[11] step time
+                0.0
             ],
         ],
-    ]
+    ],
 ]
 
 h = 80
@@ -432,6 +477,7 @@ def bucle_movimiento():
     while(not estado):
         estado,_,_,_,_,_ =hexapod.actualizar_cord()
         serial_com.send_duty(hexapod.sv_duty())
+        
 
 def ejecutar_secuencia(n_seq:int,rep:int):
     hexapod.reset_dt()
@@ -516,6 +562,9 @@ while estado:
         
         if(accion == 6):
             ejecutar_secuencia(4,1)
+
+        if(accion == 7):
+            ejecutar_secuencia(5,1)
 
         elif(accion == 5):
             hexapod.reset_dt()
