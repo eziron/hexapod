@@ -117,7 +117,7 @@ void loop(){
                 jetson.decode_uint16(jetson_buffer,jetson_d_len,duty);
                 duty_accept = true;
                 for(int i = 0;i<18;i++){
-                    if(duty[i] > 500 && duty[i] < 2500){
+                    if(duty[i] >= 500 && duty[i] <= 2500){
                         if(i < 16){
                             duty_pca[i] = duty[i];
                         }
