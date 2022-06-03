@@ -90,8 +90,8 @@ void setup(){
     Wire1.setClock(WIRE1_SDA_CLK);
 
     pwm.begin(PWM_FREQ,24943000);
-    sv16.attach(SV16_PIN);
-    sv17.attach(SV17_PIN);
+    sv16.attach(SV16_PIN,500,2500);
+    sv17.attach(SV17_PIN,500,2500);
 
     pinMode(led_pin,OUTPUT);
     analogReadResolution(12);
