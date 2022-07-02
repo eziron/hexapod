@@ -1,6 +1,6 @@
 import struct
 from serial import Serial
-from time import time
+from time import sleep, time
 import math
 
 #Formato de los paquetes
@@ -65,6 +65,8 @@ class pro_Serial():
     
     def send_duty(self,duty_vals:list):
         if(len(duty_vals) == 18):
+            #sleep(0.02)
+            #return True
             self.send_command(1,"H",duty_vals)
 
             tipo,buffer = self.read_command()
