@@ -73,7 +73,7 @@
     "P3": {
         "sv0": {
             "giro_inv": false,
-            "duty_base": 1590,
+            "duty_base": 1500,
             "ang_desfase": 45,
             "n_sv": 8
         },
@@ -104,7 +104,7 @@
     "P4": {
         "sv0": {
             "giro_inv": true,
-            "duty_base": 1430,
+            "duty_base": 1580,
             "ang_desfase": 45,
             "n_sv": 7
         },

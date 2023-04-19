@@ -525,7 +525,7 @@ pass_n_seq = -1
 n_seq = -1
 n_step = -1
 max_step = 6
-h = 120
+h = 100
 z = 60
 arco = 50
 speed = 300
@@ -668,22 +668,22 @@ with open(json_PATH) as json_file:
 
 baud = conf_hexapod["general"]["baudrate"]
 
-#while True:
-#    try:
-Serial = serial.Serial("/dev/ttyTHS1",baud,timeout=0.05)
+while True:
+    try:
+        Serial = serial.Serial("/dev/ttyTHS1",baud,timeout=0.05)
 
-serial_com = pro_Serial(Serial)
-hexapod = Hexapod(conf_hexapod)
+        serial_com = pro_Serial(Serial)
+        hexapod = Hexapod(conf_hexapod)
 
-while(serial_com.ping() is None):
-    print("error al conectar con la RPI pico")
-    sleep(0.1)
+        while(serial_com.ping() is None):
+            print("error al conectar con la RPI pico")
+            sleep(0.1)
 
-serial_com.stop_lidar()
-serial_com.send_duty(hexapod.sv_duty())
-#        break
-#    except:
-#        print("Error al inisiar el serial")
+        serial_com.stop_lidar()
+        serial_com.send_duty(hexapod.sv_duty())
+        break
+    except:
+        print("Error al inisiar el serial")
         #os.system("echo 102938 | sudo -S chmod 666 /dev/ttyTHS1")
 
 #os.system("""echo 102938 | sudo renice -20 -p $(pgrep "python3")""")
@@ -701,148 +701,115 @@ control_timer = time()
 estado_bucle = True
 estado_bucle0 = True
 while(estado_bucle):
-    try:
-        with Xbox360Controller(0, axis_threshold=0) as controller:
-            controller.button_start.when_pressed = on_star_pressed
-            controller.button_select.when_pressed = on_back_pressed
-            controller.axis_l.when_moved = on_axis_L_moved
-            controller.axis_r.when_moved = on_axis_R_moved
-            controller.trigger_l.when_moved = on_Lt_moved
-            controller.trigger_r.when_moved = on_Rt_moved
+    try:         
+        print("A")
+        while(True):
+            try:
+                estado_g,estado_p,_,_,_,_ =hexapod.actualizar_cord()
+                serial_com.send_duty(hexapod.sv_duty())
+            except KeyboardInterrupt:
+                estado_bucle = False
+            except:
+                estado_g = False
+                estado_p = False
 
-            controller.button_a.when_pressed = on_button_pressed
-            controller.button_b.when_pressed = on_button_pressed
-            controller.button_y.when_pressed = on_button_pressed
-            controller.button_x.when_pressed = on_button_pressed
-            controller.button_thumb_l.when_pressed = on_button_pressed
-            controller.button_thumb_r.when_pressed = on_button_pressed
-            controller.button_trigger_l.when_pressed = on_button_pressed
-            controller.button_trigger_r.when_pressed = on_button_pressed
+            if(star):
+                if(but_dic["button_a"]):
+                    n_seq = -2
+                elif(but_dic["button_b"]):
+                    n_seq = -3
+                elif(belico and but_dic["button_y"]):
+                    n_seq = -6
+                elif(belico and but_dic["button_x"]):
+                    n_seq = -7
+                elif(belico and but_dic["button_trigger_l"]):
+                    n_seq = -5
+                elif(belico and but_dic["button_trigger_r"]):
+                    n_seq = -4
+                elif(axis_dic["Lm"] > 0):
+                    cam_speed = axis_dic["Lm"]+30
+                    ang_val = axis_dic["La"]
+                    ang_abs = abs(ang_val)
 
-            controller.button_a.when_released = on_button_released
-            controller.button_b.when_released = on_button_released
-            controller.button_y.when_released = on_button_released
-            controller.button_x.when_released = on_button_released
-            controller.button_thumb_l.when_released = on_button_released
-            controller.button_thumb_r.when_released = on_button_released
-            controller.button_trigger_l.when_released = on_button_released
-            controller.button_trigger_r.when_released = on_button_released
-            
-            print("A")
-            while(True):
-                
-                #print(n_seq,n_step,but_dic)
-                if(time() - control_timer > 20):
-                    control_timer = time()
-                    if(len(Xbox360Controller.get_available()) == 0):
-                        break
+                    if(ang_abs > limites[modo_mov][0] and ang_abs < limites[modo_mov][1]):
+                        modo_mov = 2
+                        caminata_p_rot[0] = 1000000
+                        caminata_p_rot[1] = 0
 
-                try:
-                    estado_g,estado_p,_,_,_,_ =hexapod.actualizar_cord()
-                    serial_com.send_duty(hexapod.sv_duty())
-                except KeyboardInterrupt:
-                    estado_bucle = False
-                except:
-                    estado_g = False
-                    estado_p = False
-
-                if(star):
-                    if(but_dic["button_a"]):
-                        n_seq = -2
-                    elif(but_dic["button_b"]):
-                        n_seq = -3
-                    elif(belico and but_dic["button_y"]):
-                        n_seq = -6
-                    elif(belico and but_dic["button_x"]):
-                        n_seq = -7
-                    elif(belico and but_dic["button_trigger_l"]):
-                        n_seq = -5
-                    elif(belico and but_dic["button_trigger_r"]):
-                        n_seq = -4
-                    elif(axis_dic["Lm"] > 0):
-                        cam_speed = axis_dic["Lm"]+30
-                        ang_val = axis_dic["La"]
-                        ang_abs = abs(ang_val)
-
-                        if(ang_abs > limites[modo_mov][0] and ang_abs < limites[modo_mov][1]):
-                            modo_mov = 2
-                            caminata_p_rot[0] = 1000000
-                            caminata_p_rot[1] = 0
-
-                            if(ang_val > 0):
-                                n_seq = 0
-                            else:
-                                n_seq = 1
-
+                        if(ang_val > 0):
+                            n_seq = 0
                         else:
-                            modo_mov = 1
-                            caminata_p_rot[0] = 0
-                            caminata_p_rot[1] = 0
+                            n_seq = 1
 
-                            if(ang_abs < 90):
-                                n_seq = 3
-                            else:
-                                n_seq = 2
-
-                        #print(ang_abs,n_seq,caminata_p_rot)
                     else:
-                        n_seq = -1
-                        modo_mov = 0
-                        cam_speed = 0
+                        modo_mov = 1
                         caminata_p_rot[0] = 0
                         caminata_p_rot[1] = 0
 
-                    ang_RX =     -axis_dic["Ry"]*8
-                    ang_RZ =     -axis_dic["Rx"]*22
+                        if(ang_abs < 90):
+                            n_seq = 3
+                        else:
+                            n_seq = 2
 
-                    if(n_seq != -1 and n_seq == pass_n_seq):
-                        if(estado_g):
-                            if(n_seq >= 0):
-                                max_step = 6
-                                hexapod.polar_set_step_caminata(
-                                        n_sec=n_seq,
-                                        n_step=n_step,
-                                        dis_arco=arco,
-                                        z=z,
-                                        lineal_speed=cam_speed,
-                                        cord_r=caminata_p_rot,
-                                        doble_cent_r=False,
-                                        r_por_pie=True,
-                                        estado=estado_p
-                                    )
-                            elif(n_seq == -2):
-                                set_step_secuencia(0)
-                            elif(n_seq == -3):
-                                set_step_secuencia(1)
-                            elif(n_seq == -4):
-                                set_step_secuencia(2)
-                            elif(n_seq == -5):
-                                set_step_secuencia(3)
-                            elif(n_seq == -6):
-                                set_step_secuencia(4)
-                            elif(n_seq == -7):
-                                set_step_secuencia(5)
-
-                            n_step += 1
-                            if(n_step >= max_step):
-                                n_step = 0
-                    else:
-                        pass_n_seq = n_seq
-                        n_step = 0
-                        for i in range(6):
-                            hexapod.lineal_set_target_time(i,hexapod.Pierna_param[i][3],0.1)
-                    
-                    if(n_seq >= -1):
-                        hexapod.set_param_speed(100,20,h)
-                        hexapod.set_param_time(0.1,None,[ang_RX,ang_RY,ang_RZ],[0.0,0.0,0.0],[0.0,0.0,0.0])
-
-
-
+                    #print(ang_abs,n_seq,caminata_p_rot)
                 else:
-                    for i in range(6):
-                        hexapod.lineal_set_target_time(i,hexapod.Pierna_param[i][3],1)
+                    n_seq = -1
+                    modo_mov = 0
+                    cam_speed = 0
+                    caminata_p_rot[0] = 0
+                    caminata_p_rot[1] = 0
 
-                    hexapod.set_param_time(1,0,[0,0,0],[0,0,0],[0,0,0])
+                ang_RX =     -axis_dic["Ry"]*8
+                ang_RZ =     -axis_dic["Rx"]*22
+
+                if(n_seq != -1 and n_seq == pass_n_seq):
+                    if(estado_g):
+                        if(n_seq >= 0):
+                            max_step = 6
+                            hexapod.polar_set_step_caminata(
+                                    n_sec=n_seq,
+                                    n_step=n_step,
+                                    dis_arco=arco,
+                                    z=z,
+                                    lineal_speed=cam_speed,
+                                    cord_r=caminata_p_rot,
+                                    doble_cent_r=False,
+                                    r_por_pie=True,
+                                    estado=estado_p
+                                )
+                        elif(n_seq == -2):
+                            set_step_secuencia(0)
+                        elif(n_seq == -3):
+                            set_step_secuencia(1)
+                        elif(n_seq == -4):
+                            set_step_secuencia(2)
+                        elif(n_seq == -5):
+                            set_step_secuencia(3)
+                        elif(n_seq == -6):
+                            set_step_secuencia(4)
+                        elif(n_seq == -7):
+                            set_step_secuencia(5)
+
+                        n_step += 1
+                        if(n_step >= max_step):
+                            n_step = 0
+                else:
+                    pass_n_seq = n_seq
+                    n_step = 0
+                    for i in range(6):
+                        hexapod.lineal_set_target_time(i,hexapod.Pierna_param[i][3],0.1)
+                
+                if(n_seq >= -1):
+                    hexapod.set_param_speed(100,20,h)
+                    hexapod.set_param_time(0.1,None,[ang_RX,ang_RY,ang_RZ],[0.0,0.0,0.0],[0.0,0.0,0.0])
+
+
+
+            else:
+                for i in range(6):
+                    hexapod.lineal_set_target_time(i,hexapod.Pierna_param[i][3],1)
+
+                hexapod.set_param_time(1,0,[0,0,0],[0,0,0],[0,0,0])
     except KeyboardInterrupt:
         estado_bucle = False
     except:

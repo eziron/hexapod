@@ -1,5 +1,5 @@
 import socket
-from protocolo_udp import pro_UDP
+from hexapod.jetson_nano.experimental.protocolo_udp import pro_UDP
 from time import time, sleep
 from servo_carteciano import Hexapod
 from protocolo_serial import pro_Serial
