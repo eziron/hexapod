@@ -75,6 +75,16 @@ class SBUSReceiver():
 	def scal(self,x, in_min, in_max, out_min, out_max):
 		return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min
 	
+	def boton_norm(self,val:int,lim_min=582,lim_max=1401):
+		if(val > lim_min and val < lim_max):
+			return 0
+		elif(val > lim_max):
+			return 1
+		elif(val < lim_min):
+			return -1
+		else:
+			return 0
+
 	def decode_frame(self):
 
 		# each values are in beetween two or tree differentes bytes . so look the mess to catch it !
@@ -158,5 +168,45 @@ if __name__ == '__main__':
 
 	while True:
 		if(sbus.update()):
-			print (sbus.get_failsafe_status(), sbus.sbusChannelsNorm, str(sbus.ser.inWaiting()).zfill(4) , (time.time()-sbus.lastFrameTime))
+			print (sbus.get_failsafe_status(), sbus.sbusChannels, str(sbus.ser.inWaiting()).zfill(4) , (time.time()-sbus.lastFrameTime))
 
+			
+
+
+#sbus.boton_norm(sbus.sbusChannels[4]) boton ON/OFF (izq)
+
+#sbus.boton_norm(sbus.sbusChannels[5]) boton 3 estados izq
+#sbus.boton_norm(sbus.sbusChannels[6]) boton 3 estados med
+#sbus.norm(sbus.sbusChannels[7],172,1811,500,2000) potenciometro
+#sbus.boton_norm(sbus.sbusChannels[8]) boton 3 estados der
+
+#sbus.norm(sbus.sbusChannels[0],172,1811,-3.14,3.14) stick Y iza
+#sbus.norm(sbus.sbusChannels[3],172,1811,-3.14,3.14) stick X iza
+
+#sbus.norm(sbus.sbusChannels[2],172,1811,-3.14,3.14) stick Y der
+#sbus.norm(sbus.sbusChannels[1],172,1811,-3.14,3.14) stick X der
+
+"""
+Variables Hexapod
+ON/OFF
+Movimiento X,Y
+Rotacion X,Y,Z
+cuerpo H, DX,DY
+Pie Z, arco
+
+ON,X,Y,RX,RY,XZ,H,DX,DY,Z,arco,speed
+
+Variable, formato, escala,descripcion
+0 : ON: b , 1:1 , ON/OFF del robot
+1 : X : h , 1:1 , Direccional en X
+2 : Y : h , 1:1 , Direccional en Y
+3 : RX: h , 1:1000 , Rotacion X en rad
+4 : RY: h , 1:1000 , Rotacion Y en rad
+5 : XZ: h , 1:1000 , Rotacion Z en rad
+6 : DX: h , 1:10 , Desplazamiento X, en mm
+7 : DY: h , 1:10 , Desplazamiento Y, en mm
+8 : H : H , 1:10 , altura del cuerpo en mm
+9 : Z : H , 1:10 , Altura del pie, en mm
+10: arco:  H , 1:10 , desplazamiento del pie, en mm
+
+"""
