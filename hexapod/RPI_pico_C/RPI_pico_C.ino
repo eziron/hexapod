@@ -32,6 +32,7 @@
 #define SV17_PIN 21
 
 #define led_pin 25
+#define PCA_EN_pin 4
 
 PCA9685 pwm = PCA9685(127,Wire1);
 
@@ -94,7 +95,9 @@ void setup(){
     sv17.attach(SV17_PIN,500,2500);
 
     pinMode(led_pin,OUTPUT);
+    pinMode(PCA_EN_pin,OUTPUT);
     analogReadResolution(12);
+    digitalWrite(PCA_EN_pin,HIGH);
     lidar_servo.attach(LIDAR_SV_PIN,500,2500);
     lidar_servo.write(90);
 }

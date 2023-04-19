@@ -1,4 +1,4 @@
-from xbox360controller import Xbox360Controller
+from sbus_receiver_pi import SBUSReceiver
 from math import atan2, sqrt,degrees
 from time import time, sleep
 from servo_carteciano import Hexapod
