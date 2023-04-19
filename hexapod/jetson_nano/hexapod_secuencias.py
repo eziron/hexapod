@@ -6,8 +6,10 @@ from servo_carteciano import Hexapod
 from protocolo_serial import pro_Serial
 import math
 import numpy as np
-import open3d as o3d
+#import open3d as o3d
 from datetime import datetime
+
+#pip install pyserial
 
 secuencia = [
     [#secuencia[0] Baile 1
@@ -779,9 +781,11 @@ caminata_giro_der = [-500,0]
 giro_des_frontal = [0,500]
 giro_des_trasero = [0,-500]
 
-samp_PATH = "/home/rodrigo/hexapod/PC/samples/"
+#samp_PATH = "/home/rodrigo/hexapod/PC/samples/"
+samp_PATH = "/home/pi/hexapod/PC/samples/"
 #json_PATH = '/home/rodrigo/hexapod/jetson_nano/ajustes_hexapod.json'
-json_PATH = "/home/rodrigo/hexapod/hexapod/jetson_nano/ajustes_hexapod.json"
+#json_PATH = "/home/rodrigo/hexapod/hexapod/jetson_nano/ajustes_hexapod.json"
+json_PATH = "/home/pi/hexapod/hexapod/jetson_nano/ajustes_hexapod.json"
 with open(json_PATH) as json_file:
     conf_hexapod = json.load(json_file)
 
@@ -789,12 +793,17 @@ baud = conf_hexapod["general"]["baudrate"]
 
 while True:
     try:
-        Serial = serial.Serial("/dev/ttyTHS1",baud,timeout=0.05)
+        print("Iniciando Serial")
+        #Serial = serial.Serial("/dev/ttyTHS1",baud,timeout=0.05)
+        Serial = serial.Serial("/dev/ttyS0",baud,timeout=0.05)
         os.system("""echo 102938 | sudo renice -20 -p $(pgrep "python3")""")
+
+        print("Serial Iniciado")
         break
     except:
         print("Error al inisiar el serial")
-        os.system("echo 102938 | sudo -S chmod 666 /dev/ttyTHS1")
+        #os.system("echo 102938 | sudo -S chmod 666 /dev/ttyTHS1")
+        os.system("echo 102938 | sudo -S chmod 666 /dev/ttyS0")
 
     
 
@@ -879,7 +888,7 @@ def ejecutar_caminata(n_seqf,n_repf=5,speedf=300,hf=80,zf=50,arcof=70,cent_rotf 
                 estado=True
             )
             bucle_movimiento()
-
+"""
 def get_lidar_sample(mode,sample_time,speed1,speed2):
     serial_com.stop_lidar()
     sleep(0.5)
@@ -923,8 +932,9 @@ def get_lidar_sample(mode,sample_time,speed1,speed2):
     
 
         serial_com.stop_lidar()
+"""
 
-
+print("Prueba de PING")
 while(serial_com.ping() is None):
     print("error al conectar con la RPI pico")
     #Serial.close()
@@ -932,7 +942,7 @@ while(serial_com.ping() is None):
     #Serial = serial.Serial("/dev/ttyTHS1",baud,timeout=0.05)
     #serial_com = pro_Serial(Serial)
     sleep(1)
-
+print("Prueba pasada")
 hexapod.reset_dt()
 serial_com.stop_lidar()
 
@@ -1136,7 +1146,7 @@ while estado:
         for i in range(6):
             hexapod.lineal_set_target_time(i,hexapod.Pierna_param[i][3],1)
         bucle_movimiento()
-    
+    """
     elif(accion == 55):
         get_lidar_sample(1,15,50,200)
     
@@ -1145,7 +1155,7 @@ while estado:
     
     elif(accion == 5555):
         get_lidar_sample(3,15,50,200)
-
+"""
     if(accion != 0 and accion != 5):
         hexapod.set_param_time(0.1,h=h,rot=[0,0,0],p_rot=[0,0,0],desp=[0,0,0])
         for i in range(6):
