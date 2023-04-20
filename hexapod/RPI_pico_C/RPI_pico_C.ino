@@ -1,15 +1,14 @@
 #include <Wire.h>
+#include <INA3221.h>
+#include <Adafruit_PWMServoDriver.h>
+
 #include <Servo.h>
+#include <RPlidar.h>
+#include <protocolo_serial.h>
 
 #include <stdio.h>
 #include "pico/stdlib.h"
 #include "hardware/uart.h"
-
-#include <Adafruit_PWMServoDriver.h>
-#include <RPlidar.h>
-#include <protocolo_serial.h>
-
-//"C:\\Users\\Eziron\\AppData\\Local\\Arduino15\\packages\\rp2040\\hardware\\rp2040\\1.13.1\\pico-sdk\\src",
 
 //puerto entre la jetson nano y la RPI
 #define BAUD_RATE0 1500000
@@ -26,6 +25,9 @@
 #define WIRE1_SDA_PIN 2
 #define WIRE1_SCL_PIN 3
 #define WIRE1_SDA_CLK 1400000
+#define PCA_CLK 24943000
+
+#define INA_res 15
 
 #define PWM_FREQ 333
 #define SV16_PIN 22
@@ -35,6 +37,8 @@
 #define PCA_EN_pin 4
 
 PCA9685 pwm = PCA9685(127,Wire1);
+INA3221 ina_0(INA3221_ADDR40_GND);
+INA3221 ina_1(INA3221_ADDR41_VCC);
 
 ProtocoloSerial jetson; //Serial1 = UART0
 RPlidar lidar;       //Serial2 = UART1
@@ -74,6 +78,9 @@ uint16_t duty[] = {869, 1560, 1027, 719, 1580, 1215, 939, 1540, 1570, 2031, 1785
 uint16_t duty_pca[16];
 bool duty_accept = true;
 
+int16_t INA_vals[12];
+unsigned long INA_timer = 0;
+
 void setup(){
     Serial.begin(2000000);
     uart_init(uart0, BAUD_RATE0);
@@ -90,9 +97,23 @@ void setup(){
     Wire1.setSCL(WIRE1_SCL_PIN);
     Wire1.setClock(WIRE1_SDA_CLK);
 
-    pwm.begin(PWM_FREQ,24943000);
+    pwm.begin(PWM_FREQ,PCA_CLK);
     sv16.attach(SV16_PIN,500,2500);
     sv17.attach(SV17_PIN,500,2500);
+
+    ina_0.begin(&Wire1);
+    ina_0.reset();
+    ina_0.setShuntRes(INA_res, INA_res, INA_res);
+    ina_0.setAveragingMode(INA3221_REG_CONF_AVG_4);
+    ina_0.setBusConversionTime(INA3221_REG_CONF_CT_588US);
+    ina_0.setShuntConversionTime(INA3221_REG_CONF_CT_588US);
+
+    ina_1.begin(&Wire1);
+    ina_1.reset();
+    ina_1.setShuntRes(INA_res, INA_res, INA_res);
+    ina_1.setAveragingMode(INA3221_REG_CONF_AVG_4);
+    ina_1.setBusConversionTime(INA3221_REG_CONF_CT_588US);
+    ina_1.setShuntConversionTime(INA3221_REG_CONF_CT_588US);
 
     pinMode(led_pin,OUTPUT);
     pinMode(PCA_EN_pin,OUTPUT);
@@ -100,6 +121,7 @@ void setup(){
     digitalWrite(PCA_EN_pin,HIGH);
     lidar_servo.attach(LIDAR_SV_PIN,500,2500);
     lidar_servo.write(90);
+    INA_timer = millis();
 }
 
 void loop(){
@@ -184,7 +206,10 @@ void loop(){
                 enable_timer_pot(star_scan);
             }
             break;
-
+        case 4: //Lectura de voltajes y corrientes
+            get_ina();
+            jetson.send_command(4,12,INA_vals);
+            break;
         default:
             break;
         }
@@ -216,4 +241,22 @@ void loop1(){
         lidar.read_lidar_scan();
         control_servo();
     }
+}
+
+void get_ina(){
+  INA_vals[0] = round(ina_0.getCurrent(INA3221_CH1) * 1000);
+  INA_vals[1] = round(ina_0.getCurrent(INA3221_CH2) * 1000);
+  INA_vals[2] = round(ina_0.getCurrent(INA3221_CH3) * 1000);
+
+  INA_vals[3] = round(ina_1.getCurrent(INA3221_CH1) * 1000);
+  INA_vals[4] = round(ina_1.getCurrent(INA3221_CH2) * 1000);
+  INA_vals[5] = round(ina_1.getCurrent(INA3221_CH3) * 1000);
+
+  INA_vals[6] = round(ina_0.getVoltage(INA3221_CH1) * 1000);
+  INA_vals[7] = round(ina_0.getVoltage(INA3221_CH2) * 1000);
+  INA_vals[8] = round(ina_0.getVoltage(INA3221_CH3) * 1000);
+
+  INA_vals[9] = round(ina_1.getVoltage(INA3221_CH1) * 1000);
+  INA_vals[10] = round(ina_1.getVoltage(INA3221_CH2) * 1000);
+  INA_vals[11] = round(ina_1.getVoltage(INA3221_CH3) * 1000);
 }
