@@ -143,3 +143,26 @@ class pro_Serial():
 
                         return [X,Y,z]
         return None
+    
+    def read_ina_vals(self):
+        self.send_command(4,"B",[5,5,5])
+        sleep(1)
+        print(self.Serial.in_waiting)
+        tipo,medidas = self.read_command()
+        print("Respuesta: ", tipo, medidas)
+        if(len(medidas) == 12):
+            Corriente = [0.0,0.0,0.0,0.0,0.0,0.0]
+            voltaje = [0.0,0.0,0.0,0.0,0.0,0.0]
+            Corriente_sum = 0.0
+            voltaje_prom = 0.0
+            
+            for i in range(6):
+                Corriente[i] = medidas[i]/1000.0
+                voltaje[i] = medidas[i+6]/1000.0
+
+                Corriente_sum += Corriente[i]
+                voltaje_prom += voltaje[i]/6.0
+
+            return Corriente_sum,voltaje_prom,Corriente, voltaje
+        else:
+            return None, None, None, None

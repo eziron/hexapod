@@ -6,14 +6,13 @@ import serial
 import json
 import socket
 from struct import pack,unpack
-import asyncio
 from time import time
 # Create a TCP/IP socket
 
 server_address = ('0.0.0.0', 10000)
 json_PATH = "/home/pi/hexapod/hexapod/jetson_nano/ajustes_hexapod.json"
-RPI_port = "/dev/ttyS0"
-
+#RPI_port = "/dev/ttyS0"
+RPI_port = "/dev/ttyACM0"
 limites = [
         [45,135], #desde el centro
         [55,125], #desde rotacion 
@@ -108,6 +107,14 @@ sock.listen(1)
 trigger_on = True
 estado_bucle = True
 control_timer = time()
+INA_timer = time()
+voltaje = 0.0
+corriente = 0.0
+send_redy = False
+
+corriente, voltaje,_,_ = serial_com.read_ina_vals()
+print(corriente,voltaje)
+
 while estado_bucle:
     # Wait for a connection
     print('waiting for a connection')
@@ -118,12 +125,20 @@ while estado_bucle:
         # Receive the data in small chunks and retransmit it
         while True:
             try:
-                estado_g,estado_p,_,_,_,_ =hexapod.actualizar_cord()
-                serial_com.send_duty(hexapod.sv_duty())
+                if(time() - INA_timer > 1.0):
+                    INA_timer = time()
+                    corriente, voltaje,_,_ = serial_com.read_ina_vals()
+                    print("INA", round(voltaje,2),"V - ",round(corriente,2),"A")
+                else:
+                    estado_g,estado_p,_,_,_,_ =hexapod.actualizar_cord()
+                    send_redy = serial_com.send_duty(hexapod.sv_duty())
+                
+                
             except KeyboardInterrupt:
                 estado_bucle = False
                 break
-            except:
+            except Exception as err:
+                print(f"Unexpected {err=}, {type(err)=}")
                 estado_g = False
                 estado_p = False
 
@@ -143,7 +158,7 @@ while estado_bucle:
                 Hexapod_dic["H"] = Hexapod_vals[8]/10
                 Hexapod_dic["Z"] = Hexapod_vals[9]/10
                 Hexapod_dic["arco"] = Hexapod_vals[10]/10
-                print(Hexapod_dic)
+                #print(send_redy, round(voltaje,2),"V - ",round(corriente,2),"A / ",Hexapod_dic)
             if(Hexapod_dic["ON"]):
                 trigger_on = True
 
