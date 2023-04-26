@@ -1,7 +1,10 @@
 import math
 from time import sleep, time
+import multiprocessing
 
 class Hexapod():
+    mul_pool = multiprocessing.Pool()
+
     H = [20.0 ,20.0 ,0.0 ]
 
     delta_time = [0.0,0.0]
@@ -115,6 +118,7 @@ class Hexapod():
 
     
     estado_rot_desp = [True,True,True,True,True,True]
+    rot_rad = [0.0,0.0,0.0]
     rotacion = [
             [0.0,0.0,0.0], #[0] actual
             [0.0,0.0,0.0], #[1] target
@@ -130,8 +134,9 @@ class Hexapod():
             [0.0,0.0,0.0], #[1] target
             [0.0,0.0,0.0]  #[2] velocidad
         ]
-
     
+    
+
 
     all_duty_us = [869, 1560, 1027, 719, 1580, 1215, 939, 1540, 1570, 2031, 1785, 1500, 2131, 1983, 1500, 2061, 1075, 1855]
 
@@ -404,64 +409,58 @@ class Hexapod():
         self.set_ang_pierna(index,alfa_0,alfa_1,alfa_2)
 
     #calcula las rotaciones y desplazamientos
-    def actualizar_rot_desp(self):
-        rot = [0.0,0.0,0.0]
-        for i in range(3):
-            rot[i] = math.radians(self.rotacion[0][i])
-        
+    def actualizar_rot_desp(self,n):
+        if(self.estado_rot_desp[n]):
+            new_cords = [0.0,0.0,0.0]
+            for i in range(3):
+                new_cords[i] = self.cord_global[n][i]-self.punto_rotacion[0][i]
 
-        for n in range(6):
-            if(self.estado_rot_desp[n]):
-                new_cords = [0.0,0.0,0.0]
-                for i in range(3):
-                    new_cords[i] = self.cord_global[n][i]-self.punto_rotacion[0][i]
+            #new_cords[0] = X
+            #new_cords[1] = Y
+            #new_cords[2] = Z
 
-                #new_cords[0] = X
-                #new_cords[1] = Y
-                #new_cords[2] = Z
-
-                #rotacion en X
-                if(self.rotacion[0] != 0):
-                    #hipotesuna Y,Z
-                    hipo = self.hipotenusa_R2(new_cords[1],new_cords[2])
-                    if(round(hipo,5) == 0.0):
-                        new_cords[1] = 0.0
-                        new_cords[2] = 0.0
-                    else:
-                        angulo = math.atan2(new_cords[2],new_cords[1])+rot[0]
-                        new_cords[1] = math.cos(angulo)*hipo
-                        new_cords[2] = math.sin(angulo)*hipo
-                    
-                #rotacion en Y
-                if(self.rotacion[1] != 0):
-                    #hipotesuna X,Z
-                    hipo = self.hipotenusa_R2(new_cords[0],new_cords[2])
-                    if(round(hipo,5) == 0.0):
-                        new_cords[0] = 0.0
-                        new_cords[2] = 0.0
-                    else:
-                        angulo = math.atan2(new_cords[2],new_cords[0])+rot[1]
-                        new_cords[0] = math.cos(angulo)*hipo
-                        new_cords[2] = math.sin(angulo)*hipo
-
-                #rotacion en Z
-                if(self.rotacion[2] != 0):
-                    #hipotesuna Y,X
-                    hipo = self.hipotenusa_R2(new_cords[1],new_cords[0])
-                    if(round(hipo,5) == 0.0):
-                        new_cords[1] = 0.0
-                        new_cords[0] = 0.0
-                    else:
-                        angulo = math.atan2(new_cords[0],new_cords[1])+rot[2]
-                        new_cords[1] = math.cos(angulo)*hipo
-                        new_cords[0] = math.sin(angulo)*hipo
+            #rotacion en X
+            if(self.rotacion[0] != 0):
+                #hipotesuna Y,Z
+                hipo = self.hipotenusa_R2(new_cords[1],new_cords[2])
+                if(round(hipo,5) == 0.0):
+                    new_cords[1] = 0.0
+                    new_cords[2] = 0.0
+                else:
+                    angulo = math.atan2(new_cords[2],new_cords[1])+self.rot_rad[0]
+                    new_cords[1] = math.cos(angulo)*hipo
+                    new_cords[2] = math.sin(angulo)*hipo
                 
-                for i in range(3):
-                    new_cords[i]+=self.punto_rotacion[0][i]+self.desplazamiento_cuerpo[0][i]
+            #rotacion en Y
+            if(self.rotacion[1] != 0):
+                #hipotesuna X,Z
+                hipo = self.hipotenusa_R2(new_cords[0],new_cords[2])
+                if(round(hipo,5) == 0.0):
+                    new_cords[0] = 0.0
+                    new_cords[2] = 0.0
+                else:
+                    angulo = math.atan2(new_cords[2],new_cords[0])+self.rot_rad[1]
+                    new_cords[0] = math.cos(angulo)*hipo
+                    new_cords[2] = math.sin(angulo)*hipo
 
-                self.set_cord(n,new_cords)
-            else:
-                self.set_cord(n,self.cord_global[n])
+            #rotacion en Z
+            if(self.rotacion[2] != 0):
+                #hipotesuna Y,X
+                hipo = self.hipotenusa_R2(new_cords[1],new_cords[0])
+                if(round(hipo,5) == 0.0):
+                    new_cords[1] = 0.0
+                    new_cords[0] = 0.0
+                else:
+                    angulo = math.atan2(new_cords[0],new_cords[1])+self.rot_rad[2]
+                    new_cords[1] = math.cos(angulo)*hipo
+                    new_cords[0] = math.sin(angulo)*hipo
+            
+            for i in range(3):
+                new_cords[i]+=self.punto_rotacion[0][i]+self.desplazamiento_cuerpo[0][i]
+
+            self.set_cord(n,new_cords)
+        else:
+            self.set_cord(n,self.cord_global[n])
     
     #convierte una velocidad vectorial a las velocidades de cada eje
     def vector_seed(self,punto_inicial,punto_final,speed):
@@ -701,8 +700,10 @@ class Hexapod():
         rasult_p_rot = [True,False]
         rasult_desp = [True,False]
         result_general = True
+
+        result_por_pierna = self.mul_pool(self.condicion_objetivo,range(6))
         for i in range(6):
-            result_por_pierna[i] = self.condicion_objetivo(i)
+            #result_por_pierna[i] = self.condicion_objetivo(i)
             result_general = result_general and result_por_pierna[i]
             result_piernas = result_piernas and result_por_pierna[i]
         [
@@ -758,7 +759,13 @@ class Hexapod():
             rasult_desp[0] = rasult_desp[0] and rasult_desp[1]
 
         result_general = result_general and rasult_rot[0] and rasult_p_rot[0] and rasult_desp[0]
-        self.actualizar_rot_desp()
+
+        for i in range(3):
+            self.rot_rad[i] = math.radians(self.rotacion[0][i])
+        
+        self.mul_pool(self.actualizar_rot_desp,range(6))
+        #for n in range(6):
+        #    self.actualizar_rot_desp(n)
         return(result_general,result_piernas,result_H,rasult_rot[0],rasult_p_rot[0],rasult_desp[0])
 
     def bucle_movimiento(self):

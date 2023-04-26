@@ -1,18 +1,26 @@
-from math import atan2, sqrt,degrees
-from time import time, sleep
+from hexapod_util import dead_val_axis,rec_a_pol
 from servo_carteciano import Hexapod
 from protocolo_serial import pro_Serial
+
+from time import time, sleep
+from struct import unpack
 import serial
 import json
 import socket
-from struct import pack,unpack
-from time import time
-# Create a TCP/IP socket
+import os
+
 
 server_address = ('0.0.0.0', 10000)
-json_PATH = "/home/pi/hexapod/hexapod/jetson_nano/ajustes_hexapod.json"
-#RPI_port = "/dev/ttyS0"
+
+PATH = os.getcwd()
+#json_PATH = "/home/rodrigo/hexapod/hexapod/jetson_nano/ajustes_hexapod.json"
+#json_PATH = "/home/pi/hexapod/hexapod/jetson_nano/ajustes_hexapod.json"
+json_PATH = PATH+"/hexapod/jetson_nano/ajustes_hexapod.json"
+
+#RPI_port = "/dev/ttyTHS1" #GPIO UART Jetson nano
+#RPI_port = "/dev/ttyS0"   #GPIO UART Raspberry pi
 RPI_port = "/dev/ttyACM0"
+
 limites = [
         [45,135], #desde el centro
         [55,125], #desde rotacion 
@@ -22,108 +30,67 @@ limites = [
 pass_n_seq = -1
 n_seq = -1
 n_step = -1
-max_step = 6
-h = 120
-z = 60
-arco = 50
-speed = 300
-cam_speed = 300
+cam_speed = 0
+max_speed = 500
 caminata_p_rot = [1000000,0]
-ang_RX = 0.0
-ang_RY = 0.0
-ang_RZ = 0.0
 
 modo_mov = -1
 estado_p = True
 estado_g = True
 
-star = False
-loss_ref = 0
+trigger_on = True
+estado_bucle = True
+send_redy = False
+voltaje = 0.0
+corriente = 0.0
 
-Hexapod_vals = list([0,0,0,0,0,0,0,0,1200,700,700])
-Hexapod_dic = {
-    "ON":0,
-    "X":0,
-    "Y":0,
-    "RX":0,
-    "RY":0,
-    "RZ":0,
-    "DX":0,
-    "DY":0,
-    "H":0,
-    "Z":0,
-    "arco":0
-}
-def a_map(x:float, in_min:float, in_max:float, out_min:float, out_max:float):
-    return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min
+joystick_vals = list([0,0,0,0,0,0,0,0,1200,700,700])
+Hexapod_dic = {"ON":0,"X":0,"Y":0,"RX":0,"RY":0,"RZ":0,"DX":0,"DY":0,"H":0,"Z":0,"arco":0}
 
-
-def rec_a_pol(x,y,max_mod):
-    mod = min(sqrt((x**2)+(y**2)),max_mod)
-    ang = degrees(atan2(y,x))
-
-    return ang,mod
-
-def dead_val_axis(axis_val,dead_val):
-    dead_min = -(dead_val/100)
-    dead_max =  (dead_val/100)
-
-    if(axis_val >= dead_min and axis_val <= dead_max):
-        return 0.0
-    elif(axis_val > dead_max):
-        return a_map(axis_val,dead_max,1,0,1)
-    elif(axis_val < dead_min):
-        return a_map(axis_val,-1,dead_min,-1,0)
-    else:
-        return 0.0
-
-
-#json_PATH = "/home/rodrigo/hexapod/hexapod/jetson_nano/ajustes_hexapod.json"
 
 with open(json_PATH) as json_file:
     conf_hexapod = json.load(json_file)
 
-baud = conf_hexapod["general"]["baudrate"]
-
-Serial = serial.Serial(RPI_port,baud,timeout=0.05)
-
-serial_com = pro_Serial(Serial)
 hexapod = Hexapod(conf_hexapod)
+
+baud = conf_hexapod["general"]["baudrate"]
+Serial = serial.Serial(RPI_port,baud,timeout=0.05)
+serial_com = pro_Serial(Serial)
 
 while(serial_com.ping() is None):
     print("error al conectar con la RPI pico")
     sleep(0.1)
 
 serial_com.stop_lidar()
+
+hexapod.set_param_time(0.1,0,[0,0,0],[0,0,0],[0,0,0])
+for i in range(6):
+    hexapod.lineal_set_target_time(i,hexapod.Pierna_param[i][3],0.1)
+
+sleep(1)
+hexapod.actualizar_cord()
 serial_com.send_duty(hexapod.sv_duty())
 
-# Bind the socket to the port
-sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-print('starting up on {} port {}'.format(*server_address))
-sock.bind(server_address)
-
-# Listen for incoming connections
-sock.listen(1)
-trigger_on = True
-estado_bucle = True
-control_timer = time()
-INA_timer = time()
-voltaje = 0.0
-corriente = 0.0
-send_redy = False
-
+sleep(1)
 corriente, voltaje,_,_ = serial_com.read_ina_vals()
 print(corriente,voltaje)
 
+# Bind the socket to the port
+sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+sock.setblocking(False)
+sock.settimeout(0.001)
+print('starting up on {} port {}'.format(*server_address))
+sock.bind(server_address)
+sock.listen(1)
 while estado_bucle:
-    # Wait for a connection
     print('waiting for a connection')
     connection, client_address = sock.accept()
-    try:
-        print('connection from', client_address)
+    print('connection from', client_address)
 
-        # Receive the data in small chunks and retransmit it
-        while True:
+    control_timer = time()
+    INA_timer = time()
+    try:
+        while estado_bucle:
             try:
                 if(time() - INA_timer > 1.0):
                     INA_timer = time()
@@ -143,28 +110,29 @@ while estado_bucle:
                 estado_p = False
 
             data = connection.recv(21)
-            if(data):
-                Hexapod_vals = unpack(">BhhhhhhhHHH",data)
-                connection.sendall(bytes([0,127,255,55]))
+            if(not (data is None)):
+                if(len(data) == 21):
+                    joystick_vals = unpack(">BhhhhhhhHHH",data)
+                    connection.sendall(bytes([0,127,255,55]))
 
-                Hexapod_dic["ON"] = Hexapod_vals[0]
-                Hexapod_dic["X"] = dead_val_axis(Hexapod_vals[1]/1000,5)*500
-                Hexapod_dic["Y"] = dead_val_axis(Hexapod_vals[2]/1000,5)*500
-                Hexapod_dic["RX"] = Hexapod_vals[3]/100
-                Hexapod_dic["RY"] = Hexapod_vals[4]/100
-                Hexapod_dic["RZ"] = Hexapod_vals[5]/100
-                Hexapod_dic["DX"] = Hexapod_vals[6]/10
-                Hexapod_dic["DY"] = Hexapod_vals[7]/10
-                Hexapod_dic["H"] = Hexapod_vals[8]/10
-                Hexapod_dic["Z"] = Hexapod_vals[9]/10
-                Hexapod_dic["arco"] = Hexapod_vals[10]/10
-                #print(send_redy, round(voltaje,2),"V - ",round(corriente,2),"A / ",Hexapod_dic)
+                    Hexapod_dic["ON"] = joystick_vals[0]
+                    Hexapod_dic["X"] = dead_val_axis(joystick_vals[1]/1000.0,5)
+                    Hexapod_dic["Y"] = dead_val_axis(joystick_vals[2]/1000.0,5)
+                    Hexapod_dic["RX"] = joystick_vals[3]/100
+                    Hexapod_dic["RY"] = joystick_vals[4]/100
+                    Hexapod_dic["RZ"] = joystick_vals[5]/100
+                    Hexapod_dic["DX"] = joystick_vals[6]/10
+                    Hexapod_dic["DY"] = joystick_vals[7]/10
+                    Hexapod_dic["H"] = joystick_vals[8]/10
+                    Hexapod_dic["Z"] = joystick_vals[9]/10
+                    Hexapod_dic["arco"] = joystick_vals[10]/10
+                    #print(send_redy, round(voltaje,2),"V - ",round(corriente,2),"A / ",Hexapod_dic)
             if(Hexapod_dic["ON"]):
                 trigger_on = True
 
-                ang, mod = rec_a_pol(Hexapod_dic["X"],Hexapod_dic["Y"],500)
-                if(mod > 0):
-                    cam_speed = mod+30
+                ang, mod = rec_a_pol(Hexapod_dic["X"],Hexapod_dic["Y"],1)
+                if(mod > 0.0):
+                    cam_speed = (mod*max_speed)+30
                     ang_abs = abs(ang)
 
                     if(ang_abs > limites[modo_mov][0] and ang_abs < limites[modo_mov][1]):
@@ -196,7 +164,6 @@ while estado_bucle:
                 if(n_seq != -1 and n_seq == pass_n_seq):
                     if(estado_g):
                         if(n_seq >= 0):
-                            max_step = 6
                             hexapod.polar_set_step_caminata(
                                     n_sec=n_seq,
                                     n_step=n_step,
@@ -210,7 +177,7 @@ while estado_bucle:
                                 )
 
                         n_step += 1
-                        if(n_step >= max_step):
+                        if(n_step >= 6):
                             n_step = 0
                 else:
                     pass_n_seq = n_seq
@@ -232,8 +199,6 @@ while estado_bucle:
                             Hexapod_dic["RZ"],
                         ],[0.0,0.0,0.0],
                         )
-
-
             else:
                 if(trigger_on):
                     trigger_on = False
@@ -241,6 +206,9 @@ while estado_bucle:
                         hexapod.lineal_set_target_time(i,hexapod.Pierna_param[i][3],1)
 
                     hexapod.set_param_time(1,0,[0,0,0],[0,0,0],[0,0,0])
+
+    except Exception as err:
+        print(f"Unexpected {err=}, {type(err)=}")
 
     finally:
         # Clean up the connection

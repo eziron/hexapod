@@ -24,7 +24,7 @@
 
 #define WIRE1_SDA_PIN 2
 #define WIRE1_SCL_PIN 3
-#define WIRE1_SDA_CLK 1400000
+#define WIRE1_SDA_CLK 1500000
 #define PCA_CLK 24943000
 
 #define INA_res 15
@@ -82,7 +82,8 @@ int16_t INA_vals[12];
 unsigned long INA_timer = 0;
 
 void setup(){
-    Serial.begin(2000000);
+    Serial.begin(10000000);
+    
     uart_init(uart0, BAUD_RATE0);
     gpio_set_function(13, GPIO_FUNC_UART);
     gpio_set_function(12, GPIO_FUNC_UART);
@@ -101,6 +102,7 @@ void setup(){
     sv16.attach(SV16_PIN,500,2500);
     sv17.attach(SV17_PIN,500,2500);
 
+
     ina_0.begin(&Wire1);
     ina_0.reset();
     ina_0.setShuntRes(INA_res, INA_res, INA_res);
@@ -118,10 +120,10 @@ void setup(){
     pinMode(led_pin,OUTPUT);
     pinMode(PCA_EN_pin,OUTPUT);
     analogReadResolution(12);
-    digitalWrite(PCA_EN_pin,HIGH);
+    digitalWrite(PCA_EN_pin,LOW);
     lidar_servo.attach(LIDAR_SV_PIN,500,2500);
     lidar_servo.write(90);
-    INA_timer = millis();
+    //INA_timer = millis();
 }
 
 void loop(){
@@ -134,7 +136,7 @@ void loop(){
                     jetson_buffer[i]++;
                 }
             }
-            jetson.send_command(jetson_cmd,jetson_d_len,jetson_buffer);
+            jetson.send_command(0,jetson_d_len,jetson_buffer);
             break;
 
         case 1: //escritura de los Servos
@@ -260,3 +262,4 @@ void get_ina(){
   INA_vals[10] = round(ina_1.getVoltage(INA3221_CH2) * 1000);
   INA_vals[11] = round(ina_1.getVoltage(INA3221_CH3) * 1000);
 }
+
