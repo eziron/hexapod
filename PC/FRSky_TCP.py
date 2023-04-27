@@ -3,14 +3,14 @@ import socket
 from struct import pack
 
 def boton_3p(val:int,out_min,out_med,out_max,lim_min=582,lim_max=1401):
-		if(val > lim_min and val < lim_max):
-			return out_med
-		elif(val > lim_max):
-			return out_max
-		elif(val < lim_min):
-			return out_min
-		else:
-			return out_med
+    if(val > lim_min and val < lim_max):
+        return out_med
+    elif(val > lim_max):
+        return out_max
+    elif(val < lim_min):
+        return out_min
+    else:
+        return out_med
     
 sbus_port = "COM7"
 Hexapod_ip = "rpi0.local"
@@ -80,8 +80,8 @@ try:
                 #if(len(Hexapod_vals) == 11):
                 message = pack(">BhhhhhhhHHH",*Hexapod_vals)
 
-        sock.sendall(message)
-        Respuesta = sock.recv(4)
+                sock.sendall(message)
+                Respuesta = sock.recv(4)
 
 finally:
     print('closing socket')
