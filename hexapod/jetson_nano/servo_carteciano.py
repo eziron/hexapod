@@ -1,10 +1,7 @@
 import math
 from time import sleep, time
-import multiprocessing
 
 class Hexapod():
-    mul_pool = multiprocessing.Pool()
-
     H = [20.0 ,20.0 ,0.0 ]
 
     delta_time = [0.0,0.0]
@@ -271,6 +268,14 @@ class Hexapod():
             self.movimiento_circular[0][n] = self.angulo_positivo(math.atan2(self.Pierna_param[n][3][1],self.Pierna_param[n][3][0]))
             self.movimiento_circular[1][n] = self.movimiento_circular[0][n]
             self.movimiento_circular[3][n] = self.dis_PaP_R2([0,0],[self.Pierna_param[n][3][0],self.Pierna_param[n][3][1]]) 
+
+        self.set_param_time(0.01,0,[0,0,0],[0,0,0],[0,0,0])
+        for i in range(6):
+            self.lineal_set_target_time(i,self.Pierna_param[i][3],0.01)
+        
+        estado_g = False
+        while(not estado_g):
+            estado_g,_,_,_,_,_ =self.actualizar_cord()
 
         sleep(1)
     
@@ -701,9 +706,8 @@ class Hexapod():
         rasult_desp = [True,False]
         result_general = True
 
-        result_por_pierna = self.mul_pool(self.condicion_objetivo,range(6))
         for i in range(6):
-            #result_por_pierna[i] = self.condicion_objetivo(i)
+            result_por_pierna[i] = self.condicion_objetivo(i)
             result_general = result_general and result_por_pierna[i]
             result_piernas = result_piernas and result_por_pierna[i]
         [
@@ -763,9 +767,9 @@ class Hexapod():
         for i in range(3):
             self.rot_rad[i] = math.radians(self.rotacion[0][i])
         
-        self.mul_pool(self.actualizar_rot_desp,range(6))
-        #for n in range(6):
-        #    self.actualizar_rot_desp(n)
+        for n in range(6):
+            self.actualizar_rot_desp(n)
+            
         return(result_general,result_piernas,result_H,rasult_rot[0],rasult_p_rot[0],rasult_desp[0])
 
     def bucle_movimiento(self):

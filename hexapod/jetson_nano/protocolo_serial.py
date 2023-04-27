@@ -146,7 +146,7 @@ class pro_Serial():
     
     def read_ina_vals(self):
         self.send_command(4,"B",[5,5,5])
-        sleep(1)
+        #sleep(1)
         print(self.Serial.in_waiting)
         tipo,medidas = self.read_command()
         print("Respuesta: ", tipo, medidas)
