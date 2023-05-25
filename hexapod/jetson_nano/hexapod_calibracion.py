@@ -10,14 +10,17 @@ with open(json_PATH) as json_file:
 
 baud = conf_hexapod["general"]["baudrate"]
 
+#PORT = "/dev/ttyTHS1" #GPIO UART Nano
+PORT = "/dev/ttyACM0" #USB
+
 while True:
     try:
-        Serial = serial.Serial("/dev/ttyTHS1",baud,timeout=0.05)
+        Serial = serial.Serial(PORT,baud,timeout=0.05)
         os.system("""echo 102938 | sudo renice -20 -p $(pgrep "python3")""")
         break
     except:
         print("Error al inisiar el serial")
-        os.system("echo 102938 | sudo -S chmod 666 /dev/ttyTHS1")
+        os.system("echo 102938 | sudo -S chmod 666 "+PORT)
 
 serial_com = pro_Serial(Serial)
 

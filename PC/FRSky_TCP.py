@@ -12,8 +12,12 @@ def boton_3p(val:int,out_min,out_med,out_max,lim_min=582,lim_max=1401):
     else:
         return out_med
     
-sbus_port = "COM7"
-Hexapod_ip = "rpi0.local"
+#sbus_port = "COM7"
+#Hexapod_ip = "rpi0.local"
+
+sbus_port = "/dev/ttyUSB0"
+Hexapod_ip = "localhost"
+
 Hexapod_port = 10000
 
 sbus = SBUSReceiver(sbus_port) 

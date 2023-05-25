@@ -5,7 +5,7 @@ from protocolo_serial import pro_Serial
 from time import time, sleep
 from struct import unpack
 import multiprocessing as mp
-import numpy as np
+#import numpy as np
 import serial
 import json
 import socket
@@ -75,9 +75,9 @@ PATH = os.getcwd()
 #json_PATH = "/home/pi/hexapod/hexapod/jetson_nano/ajustes_hexapod.json"
 json_PATH = PATH+"/hexapod/jetson_nano/ajustes_hexapod.json"
 
-#RPI_port = "/dev/ttyTHS1" #GPIO UART Jetson nano
-#RPI_port = "/dev/ttyS0"   #GPIO UART Raspberry pi
-RPI_port = "/dev/ttyACM0"
+#port = "/dev/ttyTHS1" #GPIO UART Jetson nano
+#port = "/dev/ttyS0"   #GPIO UART Raspberry pi
+port = "/dev/ttyACM0"  #USB
 
 limites = [
         [45,135], #desde el centro
@@ -112,7 +112,7 @@ with open(json_PATH) as json_file:
 hexapod = Hexapod(conf_hexapod)
 
 baud = conf_hexapod["general"]["baudrate"]
-Serial = serial.Serial(RPI_port,baud,timeout=0.05)
+Serial = serial.Serial(port,baud,timeout=0.05)
 serial_com = pro_Serial(Serial)
 
 while(serial_com.ping() is None):
