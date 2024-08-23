@@ -781,13 +781,17 @@ caminata_giro_der = [-500,0]
 giro_des_frontal = [0,500]
 giro_des_trasero = [0,-500]
 
-#samp_PATH = "/home/rodrigo/hexapod/PC/samples/"
-samp_PATH = "/home/pi/hexapod/PC/samples/"
+samp_PATH = "/home/rodrigo/hexapod/PC/samples/"
+#samp_PATH = "/home/pi/hexapod/PC/samples/"
 #json_PATH = '/home/rodrigo/hexapod/jetson_nano/ajustes_hexapod.json'
-#json_PATH = "/home/rodrigo/hexapod/hexapod/jetson_nano/ajustes_hexapod.json"
-json_PATH = "/home/pi/hexapod/hexapod/jetson_nano/ajustes_hexapod.json"
+json_PATH = "/home/rodrigo/hexapod/hexapod/jetson_nano/ajustes_hexapod.json"
+#json_PATH = "/home/pi/hexapod/hexapod/jetson_nano/ajustes_hexapod.json"
 with open(json_PATH) as json_file:
     conf_hexapod = json.load(json_file)
+
+#port = "/dev/ttyTHS1" #GPIO UART Jetson nano
+#port = "/dev/ttyS0"   #GPIO UART Raspberry pi
+port = "/dev/ttyACM0"  #USB
 
 baud = conf_hexapod["general"]["baudrate"]
 
@@ -795,7 +799,7 @@ while True:
     try:
         print("Iniciando Serial")
         #Serial = serial.Serial("/dev/ttyTHS1",baud,timeout=0.05)
-        Serial = serial.Serial("/dev/ttyS0",baud,timeout=0.05)
+        Serial = serial.Serial(port,baud,timeout=0.05)
         os.system("""echo 102938 | sudo renice -20 -p $(pgrep "python3")""")
 
         print("Serial Iniciado")
@@ -977,11 +981,15 @@ while estado:
     print("--------")
     print("10) baile 1")
     print("12) baile 2")
-    print("13) movimiento random")
-    print("14) rotacion")
-    print("15) salto")
-    print("16) test de carga")
-    print("17) baile lateral")
+    print("13) oversacion")
+    print("14) patada derecha")
+    print("15) patada izquierda")
+    print("17) embestida")
+    print("16) 1 2 upper")
+    print("18) rotacion")
+    #print("19) salto")
+    #print("20) test de carga")
+    #print("21) baile lateral")
     
 
     accion = int(input("ingrese el numero de accion: "))
@@ -1122,23 +1130,23 @@ while estado:
             hexapod.rotacion[1][0] = hexapod.rotacion[0][0]
             hexapod.rotacion[1][1] = hexapod.rotacion[0][1]
 
-            hexapod.actualizar_rot_desp()
+            hexapod.actualizar_cord()
             serial_com.send_duty(hexapod.sv_duty())
 
         hexapod.set_param_time(1,rot=[math.sin(ang)*max_ang,math.cos(ang)*max_ang,0])
         bucle_movimiento()
 
     #salto
-    elif(accion == 19):
-        ejecutar_secuencia(3,1)
+    #elif(accion == 19):
+    #    ejecutar_secuencia(3,1)
 
     #prueba de carga
-    elif(accion == 20):
-        ejecutar_secuencia(5,1)
+    #elif(accion == 20):
+    #    ejecutar_secuencia(5,1)
 
     #baile lateral
-    elif(accion == 21):
-        ejecutar_secuencia(6,2)
+    #elif(accion == 21):
+    #    ejecutar_secuencia(6,2)
 
     elif(accion == 5):
         hexapod.reset_dt()
